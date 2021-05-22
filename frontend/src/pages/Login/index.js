@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { TextField, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { validateUser } from '../../redux/user';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,21 +33,30 @@ const useStyles = makeStyles((theme) => ({
 
 const Login = (props) => {
   const classes = useStyles();
-  const [usuario, setUsuario] = useState('');
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  let history = useHistory();
   const { hasError } = props;
 
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+
+  const { isAuth } = user;
+
+  useEffect(() => {
+    if (isAuth) history.push('/');
+    return () => {};
+  }, [isAuth]);
+
   const onUserChange = (value) => {
-    setUsuario(value);
+    setUserName(value);
   };
   const onPasswordChange = (value) => {
     setPassword(value);
   };
 
-  const sendLogin = () => {
-    console.log('Click');
-  };
-  console.log(`Usuario: ${usuario}, password: ${password}`);
+  const sendLogin = async (userName, password) => {};
+
   return (
     <div className={classes.container}>
       <div className={classes.form}>
@@ -55,6 +67,7 @@ const Login = (props) => {
               id="outlined-error"
               label="Usuario"
               variant="outlined"
+              value={userName}
               onChange={(e) => onUserChange(e.target.value)}
             />
             <TextField
@@ -62,6 +75,7 @@ const Login = (props) => {
               id="standard-password-input"
               label="Password"
               type="password"
+              value={password}
               helperText={hasError ? 'Usuario o password incorrecto' : ''}
               variant="outlined"
               onChange={(e) => onPasswordChange(e.target.value)}
@@ -73,7 +87,7 @@ const Login = (props) => {
               style={{ width: '90%' }}
               color="primary"
               disableElevation
-              onClick={() => sendLogin()}
+              onClick={() => dispatch(validateUser({ userName, password }))}
             >
               Acceder
             </Button>

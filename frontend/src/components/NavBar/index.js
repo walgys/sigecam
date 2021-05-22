@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -6,7 +7,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
@@ -20,8 +20,10 @@ const useStyles = makeStyles((theme) => ({
   title: {
     display: 'none',
     [theme.breakpoints.up('sm')]: {
+      color: 'white',
       display: 'flex',
       alignText: 'center',
+      textDecoration: 'none',
     },
   },
   inputRoot: {
@@ -52,8 +54,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PrimarySearchAppBar(props) {
-  const { loggedIn } = props;
-  console.log(loggedIn);
+  const { isAuth } = props;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -123,13 +124,15 @@ export default function PrimarySearchAppBar(props) {
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
-            SIGECAM
-          </Typography>
+          <NavLink className={classes.title} to="/">
+            <Typography className={classes.title} variant="h6" noWrap>
+              SIGECAM
+            </Typography>
+          </NavLink>
 
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            {loggedIn && (
+            {isAuth && (
               <IconButton
                 edge="end"
                 aria-label="account of current user"
@@ -143,7 +146,7 @@ export default function PrimarySearchAppBar(props) {
             )}
           </div>
           <div className={classes.sectionMobile}>
-            {loggedIn && (
+            {isAuth && (
               <IconButton
                 aria-label="show more"
                 aria-controls={mobileMenuId}
