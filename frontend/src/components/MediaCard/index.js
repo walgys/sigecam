@@ -9,7 +9,17 @@ import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: 300,
+    width: 300,
+    boxShadow:
+      'rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px',
+    backfaceVisibility: 'hidden',
+    webkitTransform: 'translateZ(0) scale(1.0, 1.0)',
+    transform: 'translateZ(0)',
+    transition: 'all 0.5s',
+    '&:hover': {
+      transform: 'translate(10px, -10px)',
+      transition: 'all 0.5s',
+    },
   },
   icon: {
     fontSize: '10rem',
@@ -55,7 +65,7 @@ const MediaCard = (props) => {
 
   return (
     <Card className={classes.root}>
-      <CardActionArea component={component} to={to}>
+      <CardActionArea style={{ height: '100%' }} component={component} to={to}>
         <Icon className={`${classes.icon} ${iColorClassName}`} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
