@@ -22,7 +22,7 @@ const Menu = (props) => {
     <Container className={classes.container}>
       {allowedButtons.map((ab, idx) => (
         <MediaCard
-          id={`${ab.to}-${idx}`}
+          key={`${ab.to}-${idx}`}
           title={ab.title}
           text={ab.text}
           component={ab.component}

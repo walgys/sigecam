@@ -41,13 +41,6 @@ export const constants = createSlice({
           { route: '/gestiones/pacientes/baja', page: 'PacientesBaja' },
           { route: '/estadisticas', page: 'Estadistica' },
           { route: '/estadisticas/total', page: 'EstadisticasTotal' },
-          { route: '/estadisticas/nacional', page: 'EstadisticasNacional' },
-          { route: '/estadisticas/provincial', page: 'EstadisticasProvincial' },
-          { route: '/estadisticas/regional', page: 'EstadisticasRegional' },
-          {
-            route: '/estadisticas/institucion',
-            page: 'EstadisticasInstitucion',
-          },
           { route: '/mapa', page: 'Mapa' },
         ],
       },
