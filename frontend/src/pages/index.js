@@ -8,7 +8,6 @@ import GestUsuarios from './Gestiones/GestUsuarios';
 import GestRecGenerales from './Gestiones/GestRecursos/GestRecGenerales';
 import GestRecInstituciones from './Gestiones/GestRecursos/GestRecInstituciones';
 import Pacientes from './Gestiones/Pacientes';
-import PacientesBaja from './Gestiones/Pacientes/PacientesBaja';
 import PacientesDatos from './Gestiones/Pacientes/PacientesDatos';
 import PacientesDatosExistente from './Gestiones/Pacientes/PacientesDatos/PacientesDatosExistente';
 import PacientesDatosNuevo from './Gestiones/Pacientes/PacientesDatos/PacientesDatosNuevo';
@@ -33,7 +32,6 @@ export {
   GestRecGenerales,
   GestRecInstituciones,
   Pacientes,
-  PacientesBaja,
   PacientesDatos,
   PacientesDatosExistente,
   PacientesDatosNuevo,

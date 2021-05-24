@@ -25,7 +25,6 @@ const pageComponentMap = {
   PacientesDatosExistente: <pages.PacientesDatosExistente />,
   PacientesDatosNuevo: <pages.PacientesDatosNuevo />,
   PacientesEstado: <pages.PacientesEstado />,
-  PacientesBaja: <pages.PacientesBaja />,
   Estadistica: <pages.Estadisticas />,
   EstadisticasTotal: <pages.EstadisticasTotal />,
   EstadisticasNacional: <pages.EstadisticasNacional />,

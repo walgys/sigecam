@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -9,6 +9,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import Link from '@material-ui/core/Link';
+import HomeIcon from '@material-ui/icons/Home';
+import WhatshotIcon from '@material-ui/icons/Whatshot';
+import GrainIcon from '@material-ui/icons/Grain';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -51,11 +56,77 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  breadcrumbs: {
+    color: 'white',
+  },
+  link: {
+    display: 'flex',
+    color: 'silver',
+  },
+  currentLink: {
+    display: 'flex',
+    color: 'white',
+  },
+  icon: {
+    marginRight: theme.spacing(0.5),
+    width: 20,
+    height: 20,
+  },
 }));
 
 export default function PrimarySearchAppBar(props) {
   const { isAuth } = props;
   const classes = useStyles();
+  const location = useLocation();
+  const pathRoutes = location?.pathname?.split('/');
+
+  const breadcrumbs = pathRoutes?.map((p, idx) => {
+    if (p === '' && idx === 0) {
+      return (
+        <Link
+          component={NavLink}
+          key={`${idx}-${p}`}
+          color="inherit"
+          to="/"
+          className={classes.link}
+        >
+          <HomeIcon className={classes.icon} />
+          Home
+        </Link>
+      );
+    }
+    if (idx === pathRoutes?.length - 1 && p !== '') {
+      return (
+        <Typography
+          key={`${idx}-${p}`}
+          color="textPrimary"
+          className={classes.currentLink}
+        >
+          <GrainIcon className={classes.icon} />
+          {p}
+        </Typography>
+      );
+    }
+    let href = '';
+    pathRoutes?.forEach((pr, ind) => {
+      if (ind !== 0 && ind !== pathRoutes?.length - 1) href += `/${pr}`;
+    });
+
+    if (p !== '')
+      return (
+        <Link
+          component={NavLink}
+          key={`${idx}-${p}`}
+          color="inherit"
+          to={href}
+          className={classes.link}
+        >
+          <WhatshotIcon className={classes.icon} />
+          {p}
+        </Link>
+      );
+  });
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -119,7 +190,10 @@ export default function PrimarySearchAppBar(props) {
       </MenuItem>
     </Menu>
   );
-
+  function handleClick(event) {
+    event.preventDefault();
+    console.info('You clicked a breadcrumb.');
+  }
   return (
     <div className={classes.grow}>
       <AppBar position="static">
@@ -129,7 +203,10 @@ export default function PrimarySearchAppBar(props) {
               SIGECAM
             </Typography>
           </NavLink>
-
+          <div className={classes.grow} />
+          <Breadcrumbs className={classes.breadcrumbs} aria-label="breadcrumb">
+            {breadcrumbs}
+          </Breadcrumbs>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             {isAuth && (

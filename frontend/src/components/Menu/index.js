@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, styled } from '@material-ui/core/styles';
 import { Container } from '@material-ui/core';
 import MediaCard from '../../components/MediaCard';
 
@@ -12,6 +12,9 @@ const useStyles = makeStyles({
     justifyContent: 'space-around',
     flexWrap: 'wrap',
     rowGap: '2rem',
+  },
+  card: {
+    flex: (props) => props.flex,
   },
 });
 

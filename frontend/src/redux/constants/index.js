@@ -38,7 +38,6 @@ export const constants = createSlice({
             page: 'PacientesDatosNuevo',
           },
           { route: '/gestiones/pacientes/estado', page: 'PacientesEstado' },
-          { route: '/gestiones/pacientes/baja', page: 'PacientesBaja' },
           { route: '/estadisticas', page: 'Estadistica' },
           { route: '/estadisticas/total', page: 'EstadisticasTotal' },
           { route: '/mapa', page: 'Mapa' },
@@ -90,7 +89,6 @@ export const constants = createSlice({
             page: 'PacientesDatosNuevo',
           },
           { route: '/gestiones/pacientes/estado', page: 'PacientesEstado' },
-          { route: '/gestiones/pacientes/baja', page: 'PacientesBaja' },
           { route: '/estadisticas', page: 'Estadistica' },
           {
             route: '/estadisticas/institucion',
@@ -116,7 +114,6 @@ export const constants = createSlice({
             page: 'PacientesDatosNuevo',
           },
           { route: '/gestiones/pacientes/estado', page: 'PacientesEstado' },
-          { route: '/gestiones/pacientes/baja', page: 'PacientesBaja' },
 
           { route: '/mapa', page: 'Mapa' },
         ],
