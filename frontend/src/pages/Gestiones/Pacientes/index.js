@@ -7,6 +7,9 @@ import {
   GroupTwoTone,
   BusinessTwoTone,
   ExtensionTwoTone,
+  ContactsTwoTone,
+  AccountTreeTwoTone,
+  TransferWithinAStationTwoTone,
 } from '@material-ui/icons';
 import Menu from 'components/Menu';
 
@@ -20,7 +23,7 @@ const Pacientes = () => {
       text: 'Alta o modificación de datos de pacientes',
       component: Link,
       to: '/gestiones/pacientes/datos',
-      icon: GroupTwoTone,
+      icon: ContactsTwoTone,
       iconColor: colors.blue,
     },
     {
@@ -28,7 +31,7 @@ const Pacientes = () => {
       text: 'Asignar o quitar recursos a un paciente',
       component: Link,
       to: '/gestiones/pacientes/recursos',
-      icon: BusinessTwoTone,
+      icon: AccountTreeTwoTone,
       iconColor: colors.red,
     },
     {
@@ -36,7 +39,7 @@ const Pacientes = () => {
       text: 'Modificar el estado del paciente',
       component: Link,
       to: '/gestiones/pacientes/estado',
-      icon: AssignmentIndTwoTone,
+      icon: TransferWithinAStationTwoTone,
       iconColor: colors.green,
     },
   ];

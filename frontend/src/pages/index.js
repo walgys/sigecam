@@ -20,6 +20,7 @@ import EstadisticasProvincial from './Estadisticas/EstadisticasProvincial';
 import EstadisticasRegional from './Estadisticas/EstadisticasRegional';
 import EstadisticasInstitucion from './Estadisticas/EstadisticasInstitucion';
 import Mapa from './Mapa';
+import Logs from './Logs';
 
 export {
   Login,
@@ -43,5 +44,6 @@ export {
   EstadisticasProvincial,
   EstadisticasRegional,
   EstadisticasInstitucion,
+  Logs,
   Mapa,
 };

@@ -41,6 +41,7 @@ export const constants = createSlice({
           { route: '/estadisticas', page: 'Estadistica' },
           { route: '/estadisticas/total', page: 'EstadisticasTotal' },
           { route: '/mapa', page: 'Mapa' },
+          { route: '/logs', page: 'Logs' },
         ],
       },
       {

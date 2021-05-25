@@ -5,6 +5,7 @@ import {
   AccountBoxTwoTone,
   AssessmentTwoTone,
   EditLocationTwoTone,
+  PageviewTwoTone,
 } from '@material-ui/icons';
 import Menu from '../../components/Menu';
 
@@ -36,6 +37,14 @@ const Home = () => {
       to: '/mapa',
       icon: EditLocationTwoTone,
       iconColor: colors.red,
+    },
+    {
+      title: 'LOGS',
+      text: 'Busque transacciones en los logs',
+      component: Link,
+      to: '/logs',
+      icon: PageviewTwoTone,
+      iconColor: colors.black,
     },
   ];
 

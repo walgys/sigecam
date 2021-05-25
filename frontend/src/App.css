@@ -1,6 +1,7 @@
 .App {
   text-align: center;
   margin: 1rem 5% 1rem 5%;
-  height: 96vh;
+  padding-bottom: 2rem;
+  height: 100;
   background-color: white;
 }

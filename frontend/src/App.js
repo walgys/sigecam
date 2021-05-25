@@ -32,6 +32,7 @@ const pageComponentMap = {
   EstadisticasRegional: <pages.EstadisticasRegional />,
   EstadisticasInstitucion: <pages.EstadisticasInstitucion />,
   Mapa: <pages.Mapa />,
+  Logs: <pages.Logs />,
 };
 
 const App = () => {
