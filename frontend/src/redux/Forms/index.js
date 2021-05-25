@@ -38,7 +38,14 @@ export const formsSlice = createSlice({
       privadoLib: true,
     },
     antEpidemio: {},
-    infoClinica: {},
+    infoClinica: {
+      fechaFis: Date.now(),
+      semanaFis: '',
+      primeraConsulta: Date.now(),
+      estadoInternacion: '0',
+      signosSintomas: [],
+      comorbilidades: [],
+    },
     formOptions: {
       provincias: [],
       localidades: [],
@@ -48,6 +55,12 @@ export const formsSlice = createSlice({
   reducers: {
     onAltaChange: (state, { payload }) => {
       state.altaPaciente[payload.name] = payload.value;
+    },
+    onClinicaChange: (state, { payload }) => {
+      state.infoClinica[payload.name] = payload.value;
+    },
+    onEpidemioChange: (state, { payload }) => {
+      state.antEpidemio[payload.name] = payload.value;
     },
   },
   extraReducers: {
@@ -64,5 +77,6 @@ export const formsSlice = createSlice({
   },
 });
 
-export const { onAltaChange } = formsSlice.actions;
+export const { onAltaChange, onClinicaChange, onEpidemioChange } =
+  formsSlice.actions;
 export default formsSlice.reducer;

@@ -8,6 +8,12 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import AltaPacienteForm from 'components/Forms/AltaPacienteForm';
+import InfoClinicaForm from 'components/Forms/InfoClinicaForm';
+import {
+  AntEpidemioForm1,
+  AntEpidemioForm2,
+  AntEpidemioForm3,
+} from 'components/Forms/AntEpidemioForms';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -89,7 +95,11 @@ const PacientesDatosNuevo = () => {
         ))}
       </Stepper>
 
-      <AltaPacienteForm />
+      {activeStep === 0 && <AltaPacienteForm />}
+      {activeStep === 1 && <InfoClinicaForm />}
+      {activeStep === 2 && <AntEpidemioForm1 />}
+      {activeStep === 3 && <AntEpidemioForm2 />}
+      {activeStep === 4 && <AntEpidemioForm3 />}
 
       <div>
         {activeStep === steps.length ? (
