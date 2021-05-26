@@ -55,11 +55,17 @@ const App = () => {
       <Route exact path="/login">
         <pages.Login />
       </Route>
-      {allowedRoutes?.map((ar) => (
-        <Route key={ar.route} exact path={ar.route}>
-          {pageComponentMap[ar.page]}
+      {isAuth ? (
+        allowedRoutes?.map((ar) => (
+          <Route key={ar.route} exact path={ar.route}>
+            {pageComponentMap[ar.page]}
+          </Route>
+        ))
+      ) : (
+        <Route>
+          <Redirect to="/login" />
         </Route>
-      ))}
+      )}
     </Switch>
   );
 

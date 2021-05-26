@@ -43,31 +43,35 @@ router.post(
   '/login',
   cors({ origin: 'http://127.0.0.1:3000' }),
   async (req, res) => {
-    const { userName, password } = await req.body;
-    if (!userName || !password) res.json({ message: 'bad info' });
-    const queryResult = await queryAuth(userName);
-    if ((queryResult.length = 1)) {
-      const user = queryResult[0];
-      bcrypt
-        .compare(password, user.password)
-        .then((result) => {
-          if (result) {
-            const { password, ...userData } = user;
-            const token = jwt.sign(userData, JWT_SECRET, {
-              expiresIn: '1d',
-            });
-            req.session.jwt = token;
+    try {
+      const { userName, password } = await req.body;
+      if (!userName || !password) res.json({ message: 'bad info' });
+      const queryResult = await queryAuth(userName);
+      if ((queryResult.length = 1)) {
+        const user = queryResult[0];
+        bcrypt
+          .compare(password, user.password)
+          .then((result) => {
+            if (result) {
+              const { password, ...userData } = user;
+              const token = jwt.sign(userData, JWT_SECRET, {
+                expiresIn: '1d',
+              });
+              req.session.jwt = token;
 
-            res.json(createResponse(user, null, true));
-          } else {
-            res.json(createResponse(null, 'username or password incorrect'));
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      res.json(createResponse(null, 'Error with data'));
+              res.json(createResponse(user, null, true));
+            } else {
+              res.json(createResponse(null, 'username or password incorrect'));
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        res.json(createResponse(null, 'Error with data'));
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 );

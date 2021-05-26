@@ -106,44 +106,92 @@ const InfoClinicaForm = () => {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
+  const [modalType, setModalType] = useState('');
   const [modalChildren, setModalChildren] = useState([]);
+  const [currComorbilidad, setCurrComorbilidad] = useState('');
+  const [currComorbDescripcion, setCurrComorbDescripcion] = useState('');
+  const [comorbilidades, setComorbilidades] = useState([]);
+  const [currSignosSintomas, setCurrSignosSintomas] = useState('');
+  const [currSignosSintomasDescripcion, setCurrSignosSintomasDescripcion] =
+    useState('');
+  const [signosSintomas, setSignosSintomas] = useState([]);
 
   const handleModalClose = () => {
+    setCurrComorbilidad('');
+    setCurrComorbDescripcion('');
+    setModalOpen(false);
+  };
+  const handleModalAdd = () => {
+    if (modalType === 'Comorbilidades') {
+      setComorbilidades([
+        ...comorbilidades,
+        { comorbilidad: currComorbilidad, descripcion: currComorbDescripcion },
+      ]);
+      setCurrComorbilidad('');
+      setCurrComorbDescripcion('');
+    }
+    if (modalType === 'SignosSintomas') {
+      setSignosSintomas([
+        ...signosSintomas,
+        {
+          signoSintoma: currSignosSintomas,
+          descripcion: currSignosSintomasDescripcion,
+        },
+      ]);
+      setCurrSignosSintomas('');
+      setCurrSignosSintomasDescripcion('');
+    }
+
     setModalOpen(false);
   };
 
   const openComorbilidadesModal = () => {
     setModalTitle('Ingrese una Comorbilidad');
+    setModalType('Comorbilidades');
     setModalChildren([
       <TextField
         required
         id="comorbilidad-required"
+        key="comorbilidad-required"
         inputProps={{ name: 'comorbilidad' }}
         label="Comorbilidad"
         variant="outlined"
-        onChange={(e) =>
-          dispatch(
-            onClinicaChange({
-              name: e.target.name,
-              value: e.target.value,
-            })
-          )
-        }
+        onChange={(e) => setCurrComorbilidad(e.target.value)}
       />,
       <TextField
         required
-        id="nombre-required"
+        id="comorbilidadDescripcion-required"
+        key="comorbilidadDescripcion-required"
         inputProps={{ name: 'descripcionComorbilidad' }}
         label="Descripción"
         variant="outlined"
-        onChange={(e) =>
-          dispatch(
-            onClinicaChange({
-              name: e.target.name,
-              value: e.target.value,
-            })
-          )
-        }
+        onChange={(e) => setCurrComorbDescripcion(e.target.value)}
+      />,
+    ]);
+    setModalOpen(true);
+  };
+
+  const openSignosSintomasModal = () => {
+    setModalTitle('Ingrese un Signo o Síntoma');
+    setModalType('SignosSintomas');
+    setModalChildren([
+      <TextField
+        required
+        id="signosSintomas-required"
+        key="signosSintomas-required"
+        inputProps={{ name: 'signosSintomas' }}
+        label="Signo o Sintoma"
+        variant="outlined"
+        onChange={(e) => setCurrSignosSintomas(e.target.value)}
+      />,
+      <TextField
+        required
+        id="signosSintomasDescripcion-required"
+        key="signosSintomasDescripcion-required"
+        inputProps={{ name: 'descripcionSignosSintomas' }}
+        label="Descripción"
+        variant="outlined"
+        onChange={(e) => setCurrSignosSintomasDescripcion(e.target.value)}
       />,
     ]);
     setModalOpen(true);
@@ -152,6 +200,8 @@ const InfoClinicaForm = () => {
     <div>
       <DialogModal
         onClose={() => handleModalClose()}
+        onAdd={() => handleModalAdd()}
+        type={modalType}
         open={modalOpen}
         title={modalTitle}
       >
@@ -268,22 +318,33 @@ const InfoClinicaForm = () => {
           <div className={classes.formContent}>
             <div className={`${classes.formColumn} ${classes.formOutline}`}>
               <h3 style={{ margin: '0.3rem' }}>Signos y Síntomas</h3>
-              <Card className={classes.cardRoot} variant="outlined">
-                <CardContent className={classes.cardContent}>
-                  <Typography
-                    className={classes.title}
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    Evidencia Clínica y Radiológica de Neumonía
-                  </Typography>
-                </CardContent>
-                <CardActions className={classes.button}>
-                  <Button size="small">Borrar</Button>
-                </CardActions>
-              </Card>
+              {signosSintomas.map((c, idx) => (
+                <Card
+                  key={`${c.idx}-${c.comorbilidad}`}
+                  className={classes.cardRoot}
+                  variant="outlined"
+                >
+                  <CardContent className={classes.cardContent}>
+                    <Typography
+                      className={classes.title}
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      {c.signoSintoma}
+                    </Typography>
+                  </CardContent>
+                  <CardActions className={classes.button}>
+                    <Button size="small">Borrar</Button>
+                  </CardActions>
+                </Card>
+              ))}
 
-              <Fab color="primary" aria-label="add" className={classes.fab}>
+              <Fab
+                color="primary"
+                aria-label="add"
+                className={classes.fab}
+                onClick={() => openSignosSintomasModal()}
+              >
                 <AddIcon />
               </Fab>
             </div>
@@ -291,20 +352,26 @@ const InfoClinicaForm = () => {
               <h3 style={{ margin: '0.3rem' }}>
                 Enfermedades Previas/Comorbilidades
               </h3>
-              <Card className={classes.cardRoot} variant="outlined">
-                <CardContent className={classes.cardContent}>
-                  <Typography
-                    className={classes.title}
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    Asma
-                  </Typography>
-                </CardContent>
-                <CardActions className={classes.button}>
-                  <Button size="small">Borrar</Button>
-                </CardActions>
-              </Card>
+              {comorbilidades.map((c, idx) => (
+                <Card
+                  key={`${c.idx}-${c.comorbilidad}`}
+                  className={classes.cardRoot}
+                  variant="outlined"
+                >
+                  <CardContent className={classes.cardContent}>
+                    <Typography
+                      className={classes.title}
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      {c.comorbilidad}
+                    </Typography>
+                  </CardContent>
+                  <CardActions className={classes.button}>
+                    <Button size="small">Borrar</Button>
+                  </CardActions>
+                </Card>
+              ))}
               <Fab
                 color="primary"
                 aria-label="add"
