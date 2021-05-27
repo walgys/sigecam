@@ -37,7 +37,17 @@ export const formsSlice = createSlice({
       domBarrio: '',
       privadoLib: true,
     },
-    antEpidemio: {},
+    antEpidemio: {
+      viajoRiesgoFueraPais: '0',
+      viajoRiesgoDentroPais: '0',
+      contactoEstrechoCovid: '0',
+      contactoEstrechoCovidNombre: '',
+      idDniSnvs: '',
+      atencionSaludCovid: '0',
+      vacunacionGripal: '0',
+      fechaVacunaGripal: Date.now(),
+      trabajadorSalud: '0',
+    },
     infoClinica: {
       fechaFis: Date.now(),
       semanaFis: '',
@@ -54,24 +64,24 @@ export const formsSlice = createSlice({
   },
   reducers: {
     onAltaChange: (state, { payload }) => {
-      state.altaPaciente[payload.name] = payload.value;
+      state.altaPaciente[payload.name] = payload?.value;
     },
     onClinicaChange: (state, { payload }) => {
-      state.infoClinica[payload.name] = payload.value;
+      state.infoClinica[payload.name] = payload?.value;
     },
     onEpidemioChange: (state, { payload }) => {
-      state.antEpidemio[payload.name] = payload.value;
+      state.antEpidemio[payload.name] = payload?.value;
     },
   },
   extraReducers: {
     [getFormOptionsProvincias.fulfilled]: (state, { payload }) => {
-      state.formOptions.provincias = payload.provincias;
+      state.formOptions.provincias = payload?.provincias;
     },
-    [getFormOptionsLocalidades.pending]: (state, { payload }) => {
+    [getFormOptionsLocalidades.pending]: (state) => {
       state.formOptions.localidadesStatus = 'pending';
     },
     [getFormOptionsLocalidades.fulfilled]: (state, { payload }) => {
-      state.formOptions.localidades = payload.localidades;
+      state.formOptions.localidades = payload?.localidades;
       state.formOptions.localidadesStatus = 'ready';
     },
   },

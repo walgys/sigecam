@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { onClinicaChange, getFormOptionsLocalidades } from 'redux/Forms';
+import { onEpidemioChange } from 'redux/Forms';
 import {
   Container,
   FormControl,
@@ -13,7 +13,14 @@ import {
   RadioGroup,
   Select,
   TextField,
+  Typography,
 } from '@material-ui/core';
+import FormColumnTextYesNo from './FormColumnTextYesNo';
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,6 +54,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     rowGap: '0.5rem',
   },
+  formColumnBig: {
+    flex: '70%',
+    alignItems: 'flex-start',
+  },
+  formColumnSmall: {
+    flex: '30%',
+    alignItems: 'flex-end',
+  },
   backButton: {
     marginRight: theme.spacing(1),
   },
@@ -65,23 +80,58 @@ const useStyles = makeStyles((theme) => ({
 
 const AntEpidemioForm1 = () => {
   const classes = useStyles();
-  const formData = useSelector((state) => state.forms.infoClinicaForm);
+  const formData = useSelector((state) => state.forms.antEpidemio);
   const dispatch = useDispatch();
   return (
     <Container>
       <form className={classes.form} noValidate autoComplete="off">
-        <h3 style={{ margin: '0.3rem' }}>Información Clínica</h3>
+        <h3 style={{ margin: '0.3rem' }}>Antecedentes Epidemiológicos</h3>
+        <div className={`${classes.formContent}`}>
+          <div
+            className={`${classes.formColumn} ${classes.formContentBlue} ${classes.formColumnSmall}`}
+          >
+            <Typography>En los últimos 14 días</Typography>
+          </div>
+          <div
+            className={`${classes.formColumn} ${classes.formColumnBig}`}
+          ></div>
+        </div>
+
+        <FormColumnTextYesNo
+          classes={classes}
+          question="¿ Viajó a alguna zona de riesgo para COVID-19 fuera del país ?"
+          radioLabel="viajo-riesgo-fuera-pais"
+          radioName="viajoRiesgoFueraPais"
+          radioValue={formData?.viajoRiesgoFueraPais}
+        />
+        <FormColumnTextYesNo
+          classes={classes}
+          question="¿ Viajó a alguna zona de riesgo para COVID-19 dentro del país ?"
+          radioLabel="viajo-riesgo-dentro-pais"
+          radioName="viajoRiesgoDentroPais"
+          radioValue={formData?.viajoRiesgoDentroPais}
+        />
+        <FormColumnTextYesNo
+          classes={classes}
+          question="¿ Mantuvo contacto estrecho con casos informados de COVID-19 ?"
+          radioLabel="contacto-estrecho-covid"
+          radioName="contactoEstrechoCovid"
+          radioValue={formData?.contactoEstrechoCovid}
+        />
         <div className={classes.formContent}>
-          <div className={classes.formColumn}>
+          <div className={`${classes.formColumn} ${classes.formColumnBig}`}>
+            {' '}
             <TextField
-              id="fisDate"
-              inputProps={{ name: 'fisDate' }}
-              label="Nombres del Paciente"
+              style={{ width: '100%' }}
+              required
+              id="contactoEstrechoCovidNombre-required"
+              label="Apellido y nombre del caso"
+              name="contactoEstrechoCovidNombre"
               variant="outlined"
-              value={formData?.nombre}
+              value={formData?.contactoEstrechoCovidNombre}
               onChange={(e) =>
                 dispatch(
-                  onClinicaChange({
+                  onEpidemioChange({
                     name: e.target.name,
                     value: e.target.value,
                   })
@@ -89,85 +139,71 @@ const AntEpidemioForm1 = () => {
               }
             />
           </div>
-          <div className={classes.formColumn}>
-            <FormControl className={classes.formControl}>
-              <InputLabel id="edad-label">Edad</InputLabel>
-              <Select
-                labelId="edad-label"
-                name="edad"
-                id="edad"
-                value={formData.edad}
-                onChange={(e) =>
-                  dispatch(
-                    onClinicaChange({
-                      name: e.target.name,
-                      value: e.target.value,
-                    })
-                  )
-                }
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-        </div>
-        <div className={classes.formContent}>
-          <TextField
-            id="fisDate"
-            inputProps={{ name: 'fisDate' }}
-            label="Nombres del Paciente"
-            variant="outlined"
-            value={formData?.nombre}
-            onChange={(e) =>
-              dispatch(
-                onClinicaChange({
-                  name: e.target.name,
-                  value: e.target.value,
-                })
-              )
-            }
-          />
-          <FormControl component="fieldset" row>
-            <RadioGroup
-              aria-label="estadoInternacion"
-              name="estadoInternacion"
-              value={formData.estadoInternacion}
+          <div className={`${classes.formColumn} ${classes.formColumnSmall}`}>
+            {' '}
+            <TextField
+              required
+              id="idDniSnvs-required"
+              label="DNO o ID SNVS"
+              name="idDniSnvs"
+              variant="outlined"
+              value={formData?.idDniSnvs}
               onChange={(e) =>
                 dispatch(
-                  onClinicaChange({
+                  onEpidemioChange({
                     name: e.target.name,
                     value: e.target.value,
                   })
                 )
               }
-            >
-              <FormControlLabel
-                value="0"
-                control={<Radio />}
-                label="Ambulatorio"
-              />
-              <FormControlLabel
-                value="1"
-                control={<Radio />}
-                label="Internado"
-              />
-            </RadioGroup>
-          </FormControl>
-        </div>
-        <div className={classes.formContent}>
-          <div className={classes.formColumn}>
-            <h3 style={{ margin: '0.3rem' }}>Signos y Síntomas</h3>
+            />
           </div>
         </div>
-        <div className={classes.formContent}>
-          <div className={classes.formColumn}>
-            <h3 style={{ margin: '0.3rem' }}>
-              Enfermedades Previas/Comorbilidades
-            </h3>
+        <FormColumnTextYesNo
+          classes={classes}
+          question="¿ Recibió atención en algún centro de salud que atiende casos COVID-19 ?"
+          radioLabel="atencion-salud-covid"
+          radioName="atencionSaludCovid"
+          radioValue={formData?.contactoEstrechoCovid}
+        />
+        <FormColumnTextYesNo
+          classes={classes}
+          question="¿ Antecedentes vacunación gripal ?"
+          radioLabel="antecedentes-vacuna-gripal"
+          radioName="vacunacionGripal"
+          radioValue={formData?.vacunacionGripal}
+        >
+          <div className={`${classes.formColumn} ${classes.formColumnSmall}`}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                margin="normal"
+                id="fechaVacunaGripal"
+                label="Fecha de vacunación"
+                format="MM/dd/yyyy"
+                inputProps={{ name: 'fechaVacunaGripal' }}
+                value={formData?.fechaVacunaGripal}
+                onChange={(e) =>
+                  dispatch(
+                    onEpidemioChange({
+                      name: e.target.name,
+                      value: e.target.value,
+                    })
+                  )
+                }
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+              />
+            </MuiPickersUtilsProvider>
           </div>
-        </div>
+        </FormColumnTextYesNo>
+        <FormColumnTextYesNo
+          classes={classes}
+          question="¿ Es trabajador de salud ?"
+          radioLabel="trabajador-salud"
+          radioName="trabajadorSalud"
+          radioValue={formData?.trabajadorSalud}
+        />
       </form>
     </Container>
   );
@@ -175,166 +211,26 @@ const AntEpidemioForm1 = () => {
 
 const AntEpidemioForm2 = () => {
   const classes = useStyles();
-  const [formData, setFormData] = React.useState({
-    nombre: '',
-    apellido: '',
-    sexo: '',
-    edad: '',
-    tipoDoc: '',
-    numeroDoc: '',
-    nacionalidad: '',
-    provincia: '',
-    localidad: '',
-    domicilio: '',
-    domNum: '',
-    domPiso: '',
-    domDto: '',
-    domCP: '',
-    domBarrio: '',
-    privadoLib: false,
-  });
-  const handleFormChange = (event) => {
-    const name = event.target.name;
-    setFormData({
-      ...formData,
-      [name]: event.target.value,
-    });
-  };
 
   return (
     <Container>
       <form className={classes.form} noValidate autoComplete="off">
         <div className={classes.formContent}>
-          <div className={classes.formColumn}>
-            <TextField
-              required
-              id="nombre-required"
-              label="Nombres del Paciente"
-              variant="outlined"
-            />
-            <FormControl className={classes.formControl}>
-              <InputLabel id="edad-label">Edad</InputLabel>
-              <Select
-                labelId="edad-label"
-                name="edad"
-                id="edad"
-                value={formData.edad}
-                onChange={handleFormChange}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <div className={classes.formColumn}>
-            <TextField
-              required
-              id="apellido-required"
-              label="Apellidos del Paciente"
-              variant="outlined"
-            />
-            <FormControl className={classes.formControl}>
-              <InputLabel id="tipoDoc-label">Tipo Doc</InputLabel>
-              <Select
-                labelId="tipoDoc-label"
-                name="tipoDoc"
-                id="tipoDoc"
-                value={formData.tipoDoc}
-                onChange={handleFormChange}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <div className={classes.formColumn}>
-            <FormControl className={classes.formControl}>
-              <InputLabel id="sexo-label">Sexo</InputLabel>
-              <Select
-                labelId="sexo-label"
-                name="sexo"
-                id="sexo"
-                value={formData.sexo}
-                onChange={handleFormChange}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              required
-              id="numeroDoc-required"
-              label="Nro Documento"
-              variant="outlined"
-            />
-          </div>
+          <div className={classes.formColumn}></div>
+          <div className={classes.formColumn}></div>
+          <div className={classes.formColumn}></div>
         </div>
         <div className={classes.formContent}>
-          <div className={classes.formColumn}>
-            <FormControl className={classes.formControl}>
-              <InputLabel id="nacionalidad-label">Nacionalidad</InputLabel>
-              <Select
-                labelId="nacionalidad-label"
-                name="nacionalidad"
-                id="nacionalidad"
-                value={formData.nacionalidad}
-                onChange={handleFormChange}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
+          <div className={classes.formColumn}></div>
           <div className={classes.formColumn}></div>
           <div className={classes.formColumn}></div>
         </div>
         <div className={`${classes.form} ${classes.formContentBlue}`}>
           <h3 style={{ margin: '0.3rem' }}>Residencia del Paciente</h3>
           <div className={classes.formContent}>
-            <div className={classes.formColumn}>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="provincia-label">Provincia</InputLabel>
-                <Select
-                  labelId="provincia-label"
-                  name="provincia"
-                  id="provincia"
-                  value={formData.provincia}
-                  onChange={handleFormChange}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className={classes.formColumn}>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="localidad-label">Localidad</InputLabel>
-                <Select
-                  labelId="localidad-label"
-                  name="localidad"
-                  id="localidad"
-                  value={formData.localidad}
-                  onChange={handleFormChange}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className={classes.formColumn}>
-              <TextField
-                required
-                id="domCP-required"
-                label="Código Postal"
-                variant="outlined"
-              />
-            </div>
+            <div className={classes.formColumn}></div>
+            <div className={classes.formColumn}></div>
+            <div className={classes.formColumn}></div>
           </div>
         </div>
       </form>
@@ -374,136 +270,21 @@ const AntEpidemioForm3 = () => {
     <Container>
       <form className={classes.form} noValidate autoComplete="off">
         <div className={classes.formContent}>
-          <div className={classes.formColumn}>
-            <TextField
-              required
-              id="nombre-required"
-              label="Nombres del Paciente"
-              variant="outlined"
-            />
-            <FormControl className={classes.formControl}>
-              <InputLabel id="edad-label">Edad</InputLabel>
-              <Select
-                labelId="edad-label"
-                name="edad"
-                id="edad"
-                value={formData.edad}
-                onChange={handleFormChange}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <div className={classes.formColumn}>
-            <TextField
-              required
-              id="apellido-required"
-              label="Apellidos del Paciente"
-              variant="outlined"
-            />
-            <FormControl className={classes.formControl}>
-              <InputLabel id="tipoDoc-label">Tipo Doc</InputLabel>
-              <Select
-                labelId="tipoDoc-label"
-                name="tipoDoc"
-                id="tipoDoc"
-                value={formData.tipoDoc}
-                onChange={handleFormChange}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <div className={classes.formColumn}>
-            <FormControl className={classes.formControl}>
-              <InputLabel id="sexo-label">Sexo</InputLabel>
-              <Select
-                labelId="sexo-label"
-                name="sexo"
-                id="sexo"
-                value={formData.sexo}
-                onChange={handleFormChange}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              required
-              id="numeroDoc-required"
-              label="Nro Documento"
-              variant="outlined"
-            />
-          </div>
+          <div className={classes.formColumn}></div>
+          <div className={classes.formColumn}></div>
+          <div className={classes.formColumn}></div>
         </div>
         <div className={classes.formContent}>
-          <div className={classes.formColumn}>
-            <FormControl className={classes.formControl}>
-              <InputLabel id="nacionalidad-label">Nacionalidad</InputLabel>
-              <Select
-                labelId="nacionalidad-label"
-                name="nacionalidad"
-                id="nacionalidad"
-                value={formData.nacionalidad}
-                onChange={handleFormChange}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
+          <div className={classes.formColumn}></div>
           <div className={classes.formColumn}></div>
           <div className={classes.formColumn}></div>
         </div>
         <div className={`${classes.form} ${classes.formContentBlue}`}>
           <h3 style={{ margin: '0.3rem' }}>Residencia del Paciente</h3>
           <div className={classes.formContent}>
-            <div className={classes.formColumn}>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="provincia-label">Provincia</InputLabel>
-                <Select
-                  labelId="provincia-label"
-                  name="provincia"
-                  id="provincia"
-                  value={formData.provincia}
-                  onChange={handleFormChange}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className={classes.formColumn}>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="localidad-label">Localidad</InputLabel>
-                <Select
-                  labelId="localidad-label"
-                  name="localidad"
-                  id="localidad"
-                  value={formData.localidad}
-                  onChange={handleFormChange}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className={classes.formColumn}>
-              <TextField
-                required
-                id="domCP-required"
-                label="Código Postal"
-                variant="outlined"
-              />
-            </div>
+            <div className={classes.formColumn}></div>
+            <div className={classes.formColumn}></div>
+            <div className={classes.formColumn}></div>
           </div>
         </div>
       </form>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getFormOptionsProvincias } from 'redux/Forms';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
@@ -53,6 +53,10 @@ function getStepContent(stepIndex) {
       return 'What is an ad group anyways?';
     case 2:
       return 'This is the bit I really care about!';
+    case 3:
+      return 'This is the bit I really care about!';
+    case 4:
+      return 'This is the bit I really care about!';
     default:
       return 'Unknown stepIndex';
   }
@@ -62,18 +66,29 @@ const PacientesDatosNuevo = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = React.useState(0);
+  const trabajadorSalud = useSelector(
+    (state) => state.forms.antEpidemio.trabajadorSalud
+  );
 
   const steps = getSteps();
 
   const handleNext = () => {
     if (activeStep === steps.length) {
     } else {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      if (activeStep === 2 && trabajadorSalud !== '1') {
+        setActiveStep((prevActiveStep) => prevActiveStep + 2);
+      } else {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      }
     }
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    if (activeStep === 4 && trabajadorSalud !== '1') {
+      setActiveStep((prevActiveStep) => prevActiveStep - 2);
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
   };
 
   const handleReset = () => {
@@ -84,7 +99,6 @@ const PacientesDatosNuevo = () => {
     dispatch(getFormOptionsProvincias());
     return () => {};
   }, [dispatch]);
-
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} alternativeLabel>
@@ -105,9 +119,9 @@ const PacientesDatosNuevo = () => {
         {activeStep === steps.length ? (
           <div>
             <Typography className={classes.instructions}>
-              All steps completed
+              Alta Generada
             </Typography>
-            <Button onClick={handleReset}>Reset</Button>
+            <Button onClick={handleReset}>Volver</Button>
           </div>
         ) : (
           <div>

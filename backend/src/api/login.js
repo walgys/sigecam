@@ -26,16 +26,16 @@ const createResponse = (user, errorMessage = null, isAuth = false) => {
 };
 
 router.post('/session', (req, res) => {
-  if (req.session.jwt) {
-    try {
+  try {
+    if (req.session.jwt) {
       const user = jwt.verify(req.session.jwt, JWT_SECRET);
       res.json(createResponse(user, null, true));
-    } catch (err) {
-      console.log('Invalid token');
-      res.json(createResponse(null, 'Invalid token'));
+    } else {
+      res.json(createResponse(null, 'Session Expired'));
     }
-  } else {
-    res.json(createResponse(null, 'Session Expired'));
+  } catch (err) {
+    console.log('Invalid token');
+    res.json(createResponse(null, 'Invalid token'));
   }
 });
 
