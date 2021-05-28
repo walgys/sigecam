@@ -47,6 +47,13 @@ export const formsSlice = createSlice({
       vacunacionGripal: '0',
       fechaVacunaGripal: Date.now(),
       trabajadorSalud: '0',
+      trabajadorSaludColegaInfectado: '0',
+      trabajadorSaludDesconoceNexo: '0',
+      asistioCasosConfirmados: '0',
+      posibleTransmisionComunitaria: '0',
+      congloInstitucional: 'Hospital / Clinica Asistencial',
+      nombreDireccionInstitucion: '',
+      contactos: [],
     },
     infoClinica: {
       fechaFis: Date.now(),
@@ -72,6 +79,27 @@ export const formsSlice = createSlice({
     onEpidemioChange: (state, { payload }) => {
       state.antEpidemio[payload.name] = payload?.value;
     },
+    onAddSignosSintomas: (state, { payload }) => {
+      state.infoClinica.signosSintomas = [
+        ...state.infoClinica.signosSintomas,
+        {
+          signoSintoma: payload.currSignosSintomas,
+          descripcion: payload.currSignosSintomasDescripcion,
+        },
+      ];
+    },
+    onAddComorbilidades: (state, { payload }) => {
+      state.infoClinica.signosSintomas = [
+        ...state.infoClinica.comorbilidades,
+        {
+          comorbilidad: payload.currComorbilidad,
+          descripcion: payload.currComorbDescripcion,
+        },
+      ];
+    },
+    onAddContactos: (state, { payload }) => {
+      state.antEpidemio.contactos = [...state.antEpidemio.contactos, payload];
+    },
   },
   extraReducers: {
     [getFormOptionsProvincias.fulfilled]: (state, { payload }) => {
@@ -87,6 +115,12 @@ export const formsSlice = createSlice({
   },
 });
 
-export const { onAltaChange, onClinicaChange, onEpidemioChange } =
-  formsSlice.actions;
+export const {
+  onAltaChange,
+  onClinicaChange,
+  onEpidemioChange,
+  onAddSignosSintomas,
+  onAddComorbilidades,
+  onAddContactos,
+} = formsSlice.actions;
 export default formsSlice.reducer;

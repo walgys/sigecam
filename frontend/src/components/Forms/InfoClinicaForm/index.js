@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { onClinicaChange } from 'redux/Forms';
+import {
+  onClinicaChange,
+  onAddSignosSintomas,
+  onAddComorbilidades,
+} from 'redux/Forms';
 import DateFnsUtils from '@date-io/date-fns';
 import DialogModal from 'components/DialogModal';
 import {
@@ -110,11 +114,14 @@ const InfoClinicaForm = () => {
   const [modalChildren, setModalChildren] = useState([]);
   const [currComorbilidad, setCurrComorbilidad] = useState('');
   const [currComorbDescripcion, setCurrComorbDescripcion] = useState('');
-  const [comorbilidades, setComorbilidades] = useState([]);
   const [currSignosSintomas, setCurrSignosSintomas] = useState('');
   const [currSignosSintomasDescripcion, setCurrSignosSintomasDescripcion] =
     useState('');
-  const [signosSintomas, setSignosSintomas] = useState([]);
+
+  const comorbilidades =
+    useSelector((state) => state.forms.infoClinica.comorbilidades) || [];
+  const signosSintomas =
+    useSelector((state) => state.forms.infoClinica.signosSintomas) || [];
 
   const handleModalClose = () => {
     setCurrComorbilidad('');
@@ -123,21 +130,22 @@ const InfoClinicaForm = () => {
   };
   const handleModalAdd = () => {
     if (modalType === 'Comorbilidades') {
-      setComorbilidades([
-        ...comorbilidades,
-        { comorbilidad: currComorbilidad, descripcion: currComorbDescripcion },
-      ]);
+      dispatch(
+        onAddComorbilidades({
+          currComorbilidad,
+          currComorbDescripcion,
+        })
+      );
       setCurrComorbilidad('');
       setCurrComorbDescripcion('');
     }
     if (modalType === 'SignosSintomas') {
-      setSignosSintomas([
-        ...signosSintomas,
-        {
-          signoSintoma: currSignosSintomas,
-          descripcion: currSignosSintomasDescripcion,
-        },
-      ]);
+      dispatch(
+        onAddSignosSintomas({
+          currSignosSintomas,
+          currSignosSintomasDescripcion,
+        })
+      );
       setCurrSignosSintomas('');
       setCurrSignosSintomasDescripcion('');
     }
@@ -197,11 +205,10 @@ const InfoClinicaForm = () => {
     setModalOpen(true);
   };
   return (
-    <div>
+    <>
       <DialogModal
         onClose={() => handleModalClose()}
         onAdd={() => handleModalAdd()}
-        type={modalType}
         open={modalOpen}
         title={modalTitle}
       >
@@ -320,7 +327,7 @@ const InfoClinicaForm = () => {
               <h3 style={{ margin: '0.3rem' }}>Signos y Síntomas</h3>
               {signosSintomas.map((c, idx) => (
                 <Card
-                  key={`${c.idx}-${c.comorbilidad}`}
+                  key={`${c.idx}-${c.signoSintoma}`}
                   className={classes.cardRoot}
                   variant="outlined"
                 >
@@ -384,7 +391,7 @@ const InfoClinicaForm = () => {
           </div>
         </form>
       </Container>
-    </div>
+    </>
   );
 };
 
