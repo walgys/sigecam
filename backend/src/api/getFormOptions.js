@@ -30,20 +30,23 @@ router.post('/getFormOptions/provincias', async (req, res) => {
 
 router.post('/getFormOptions/localidades', async (req, res) => {
   try {
-    const queryResult = await axios({
-      url: `${API_URL}/api/v1/internal/getFormOptions/localidades`,
-      method: 'POST', // *GET, POST, PUT, DELETE, etc
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json',
-        Token: req.session.jwt,
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      data: req.body,
-    })
-      .then((result) => result.data)
-      .catch((err) => console.log(err));
-    res.json(queryResult);
+    console.log(req.body);
+    if (req.body) {
+      const queryResult = await axios({
+        url: `${API_URL}/api/v1/internal/getFormOptions/localidades`,
+        method: 'POST', // *GET, POST, PUT, DELETE, etc
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+          Token: req.session.jwt,
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        data: req.body,
+      })
+        .then((result) => result.data)
+        .catch((err) => console.log(err));
+      res.json(queryResult);
+    }
   } catch (err) {
     console.log(err);
     res.json({ message: 'Error' });

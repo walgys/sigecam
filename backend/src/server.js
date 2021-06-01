@@ -34,7 +34,12 @@ const sessionStore = new MySQLStore(
   },
   MySQLConn
 );
-app.use(cors({ credentials: true, origin: true }));
+app.use(
+  cors({
+    credentials: true,
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  })
+);
 app.use(
   express.urlencoded({
     extended: true,

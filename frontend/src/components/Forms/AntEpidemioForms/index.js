@@ -105,8 +105,8 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 700,
   },
   subTitle: {
-    fontSize: 10,
-    fontWeight: 300,
+    fontSize: 12,
+    fontWeight: 500,
   },
 }));
 
@@ -134,21 +134,21 @@ const AntEpidemioForm1 = () => {
           question="¿ Viajó a alguna zona de riesgo para COVID-19 fuera del país ?"
           radioLabel="viajo-riesgo-fuera-pais"
           radioName="viajoRiesgoFueraPais"
-          radioValue={formData?.viajoRiesgoFueraPais}
+          radioValue={formData?.viajoRiesgoFueraPais.value}
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Viajó a alguna zona de riesgo para COVID-19 dentro del país ?"
           radioLabel="viajo-riesgo-dentro-pais"
           radioName="viajoRiesgoDentroPais"
-          radioValue={formData?.viajoRiesgoDentroPais}
+          radioValue={formData?.viajoRiesgoDentroPais.value}
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Mantuvo contacto estrecho con casos informados de COVID-19 ?"
           radioLabel="contacto-estrecho-covid"
           radioName="contactoEstrechoCovid"
-          radioValue={formData?.contactoEstrechoCovid}
+          radioValue={formData?.contactoEstrechoCovid.value}
         />
         <div className={classes.formContent}>
           <div className={`${classes.formColumn} ${classes.formColumnBig}`}>
@@ -160,7 +160,7 @@ const AntEpidemioForm1 = () => {
               label="Apellido y nombre del caso"
               name="contactoEstrechoCovidNombre"
               variant="outlined"
-              value={formData?.contactoEstrechoCovidNombre}
+              value={formData?.contactoEstrechoCovidNombre.value}
               onChange={(e) =>
                 dispatch(
                   onEpidemioChange({
@@ -179,7 +179,7 @@ const AntEpidemioForm1 = () => {
               label="DNO o ID SNVS"
               name="idDniSnvs"
               variant="outlined"
-              value={formData?.idDniSnvs}
+              value={formData?.idDniSnvs.value}
               onChange={(e) =>
                 dispatch(
                   onEpidemioChange({
@@ -196,14 +196,14 @@ const AntEpidemioForm1 = () => {
           question="¿ Recibió atención en algún centro de salud que atiende casos COVID-19 ?"
           radioLabel="atencion-salud-covid"
           radioName="atencionSaludCovid"
-          radioValue={formData?.contactoEstrechoCovid}
+          radioValue={formData?.contactoEstrechoCovid.value}
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Antecedentes vacunación gripal ?"
           radioLabel="antecedentes-vacuna-gripal"
           radioName="vacunacionGripal"
-          radioValue={formData?.vacunacionGripal}
+          radioValue={formData?.vacunacionGripal.value}
         >
           <div className={`${classes.formColumn} ${classes.formColumnSmall}`}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -213,7 +213,7 @@ const AntEpidemioForm1 = () => {
                 label="Fecha de vacunación"
                 format="MM/dd/yyyy"
                 inputProps={{ name: 'fechaVacunaGripal' }}
-                value={formData?.fechaVacunaGripal}
+                value={formData?.fechaVacunaGripal.value}
                 onChange={(e) =>
                   dispatch(
                     onEpidemioChange({
@@ -234,7 +234,7 @@ const AntEpidemioForm1 = () => {
           question="¿ Es trabajador de salud ?"
           radioLabel="trabajador-salud"
           radioName="trabajadorSalud"
-          radioValue={formData?.trabajadorSalud}
+          radioValue={formData?.trabajadorSalud.value}
         />
       </form>
     </Container>
@@ -266,28 +266,28 @@ const AntEpidemioForm2 = () => {
           question="¿ Es trabajador de la salud y pudo haberse contagiado de un colega infectado ?"
           radioLabel="trabajador-salud-colega-infectado"
           radioName="trabajadorSaludColegaInfectado"
-          radioValue={formData?.trabajadorSaludColegaInfectado}
+          radioValue={formData?.trabajadorSaludColegaInfectado.value}
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Es trabajador de la salud y desconoce el nexo epidemiológico ?"
           radioLabel="trabajador-salud-desconoce-nexo"
           radioName="trabajadorSaludDesconoceNexo"
-          radioValue={formData?.trabajadorSaludDesconoceNexo}
+          radioValue={formData?.trabajadorSaludDesconoceNexo.value}
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Asistió como personal de salud a casos confirmados de COVID-19 ?"
           radioLabel="asistio-casos-confirmados-covid"
           radioName="asistioCasosConfirmados"
-          radioValue={formData?.asistioCasosConfirmados}
+          radioValue={formData?.asistioCasosConfirmados.value}
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Posible transmisión comunitaria ?"
           radioLabel="posible-transmision-comunitaria-covid"
           radioName="posibleTransmisionComunitaria"
-          radioValue={formData?.posibleTransmisionComunitaria}
+          radioValue={formData?.posibleTransmisionComunitaria.value}
         />
         <div className={`${classes.form} ${classes.formContentBlue}`}>
           <div className={classes.formColumnFull}>
@@ -296,7 +296,7 @@ const AntEpidemioForm2 = () => {
               question="¿ Posible transmisión comunitaria ?"
               radioLabel="posible-transmision-comunitaria-covid"
               radioName="posibleTransmisionComunitaria"
-              radioValue={formData?.posibleTransmisionComunitaria}
+              radioValue={formData?.posibleTransmisionComunitaria.value}
             ></FormColumnTextYesNo>
             <div className={`${classes.formContent}`}>
               <div className={classes.formColumnBig}>
@@ -311,9 +311,9 @@ const AntEpidemioForm2 = () => {
                     labelId="congloInstitucional-label"
                     inputProps={{ name: 'congloInstitucional' }}
                     id="congloInstitucional"
-                    value={formData?.congloInstitucional}
+                    value={formData?.congloInstitucional.value}
                     disabled={
-                      formData?.posibleTransmisionComunitaria !== '1'
+                      formData?.posibleTransmisionComunitaria.value !== '1'
                         ? false
                         : true
                     }
@@ -342,7 +342,7 @@ const AntEpidemioForm2 = () => {
                   name="nombreDireccionInstitucion"
                   label="Nombre y dirección de la institución"
                   variant="outlined"
-                  value={formData?.nombreDireccionInstitucion}
+                  value={formData?.nombreDireccionInstitucion.value}
                   onChange={(e) =>
                     dispatch(
                       onEpidemioChange({
@@ -516,7 +516,7 @@ const AntEpidemioForm3 = () => {
               <div className={classes.formContent}>
                 {formData?.contactos.map((c, idx) => (
                   <Card
-                    key={`${c.idx}-${c.dni}`}
+                    key={`${c.idx}-${c.dni.value}`}
                     className={classes.cardRoot}
                     variant="outlined"
                   >
@@ -533,7 +533,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.nombre}
+                        {c.nombre.value}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -547,7 +547,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.dni}
+                        {c.dni.value}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -561,7 +561,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.telefono}
+                        {c.telefono.value}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -575,7 +575,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.domicilio}
+                        {c.domicilio.value}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -589,7 +589,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.fechaUltimoContacto}
+                        {c.fechaUltimoContacto.value}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -603,7 +603,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.tipoContacto}
+                        {c.tipoContacto.value}
                       </Typography>
                     </CardContent>
                     <CardActions className={classes.button}>

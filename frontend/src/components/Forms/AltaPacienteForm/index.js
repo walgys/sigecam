@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { onAltaChange, getFormOptionsLocalidades } from 'redux/Forms';
 import { makeStyles } from '@material-ui/core/styles';
@@ -66,18 +66,21 @@ const AltaPacienteForm = () => {
   const provincias = useSelector((state) => state.forms.formOptions.provincias);
   const localidades =
     useSelector((state) => state.forms.formOptions.localidades) || [];
-  const localidadesStatus = useSelector(
-    (state) => state.forms.formOptions.localidadesStatus
-  );
   const formData = useSelector((state) => state.forms.altaPaciente);
-  const provincia = useSelector((state) => state.forms.altaPaciente.provincia);
+  const provincia = useSelector(
+    (state) => state.forms.altaPaciente.provincia.value
+  );
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (provincia !== '' && localidadesStatus === 'ready')
+  const getLocalidades = useCallback(() => {
+    if (provincia !== '0' && provincia !== null)
       dispatch(getFormOptionsLocalidades(provincia));
+  }, [provincia, dispatch]);
+
+  useEffect(() => {
+    getLocalidades();
     return () => {};
-  }, [provincia]);
+  }, [getLocalidades]);
 
   return (
     <Container>
@@ -90,7 +93,8 @@ const AltaPacienteForm = () => {
               inputProps={{ name: 'nombre' }}
               label="Nombres del Paciente"
               variant="outlined"
-              value={formData?.nombre}
+              value={formData?.nombre?.value}
+              error={formData?.nombre?.error}
               onChange={(e) =>
                 dispatch(
                   onAltaChange({
@@ -106,7 +110,8 @@ const AltaPacienteForm = () => {
                 labelId="edad-label"
                 inputProps={{ name: 'edad' }}
                 id="edad"
-                value={formData?.edad}
+                value={formData?.edad.value}
+                error={formData?.edad.error}
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -116,7 +121,7 @@ const AltaPacienteForm = () => {
                   )
                 }
               >
-                <option aria-label="None" value="" />
+                <option aria-label="None" value="0" />
                 {[...Array(140).keys()].map((k) => (
                   <option key={`edad-${k}`} value={k + 1}>
                     {k + 1}
@@ -132,7 +137,8 @@ const AltaPacienteForm = () => {
               name="apellido"
               label="Apellidos del Paciente"
               variant="outlined"
-              value={formData?.apellido}
+              value={formData?.apellido.value}
+              error={formData?.apellido.error}
               onChange={(e) =>
                 dispatch(
                   onAltaChange({
@@ -148,7 +154,8 @@ const AltaPacienteForm = () => {
                 labelId="tipoDoc-label"
                 inputProps={{ name: 'tipoDoc' }}
                 id="tipoDoc"
-                value={formData?.tipoDoc}
+                value={formData?.tipoDoc.value}
+                error={formData?.tipoDoc.error}
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -158,7 +165,9 @@ const AltaPacienteForm = () => {
                   )
                 }
               >
-                <option aria-label="None" value="" />
+                <option aria-label="None" value="0" />
+                <option value={1}>DNI</option>
+                <option value={2}>Pasaporte</option>
               </NativeSelect>
             </FormControl>
           </div>
@@ -169,7 +178,8 @@ const AltaPacienteForm = () => {
                 labelId="sexo-label"
                 inputProps={{ name: 'sexo' }}
                 id="sexo"
-                value={formData?.sexo}
+                value={formData?.sexo.value}
+                error={formData?.sexo.error}
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -179,10 +189,10 @@ const AltaPacienteForm = () => {
                   )
                 }
               >
-                <option aria-label="None" value="" />
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
+                <option aria-label="None" value="0" />
+                <option value={1}>Masculino</option>
+                <option value={2}>Femenino</option>
+                <option value={3}>Otro</option>
               </NativeSelect>
             </FormControl>
             <TextField
@@ -191,7 +201,8 @@ const AltaPacienteForm = () => {
               name="numeroDoc"
               label="Nro Documento"
               variant="outlined"
-              value={formData?.numeroDoc}
+              value={formData?.numeroDoc.value}
+              error={formData?.numeroDoc.error}
               onChange={(e) =>
                 dispatch(
                   onAltaChange({ name: e.target.name, value: e.target.value })
@@ -208,7 +219,8 @@ const AltaPacienteForm = () => {
                 labelId="nacionalidad-label"
                 inputProps={{ name: 'nacionalidad' }}
                 id="nacionalidad"
-                value={formData?.nacionalidad}
+                value={formData?.nacionalidad.value}
+                error={formData?.nacionalidad.error}
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -218,7 +230,7 @@ const AltaPacienteForm = () => {
                   )
                 }
               >
-                <option aria-label="None" value="" />
+                <option aria-label="None" value="0" />
                 <option value={10}>Ten</option>
                 <option value={20}>Twenty</option>
                 <option value={30}>Thirty</option>
@@ -238,7 +250,8 @@ const AltaPacienteForm = () => {
                   labelId="provincia-label"
                   inputProps={{ name: 'provincia' }}
                   id="provincia"
-                  value={formData?.provincia}
+                  value={formData?.provincia.value}
+                  error={formData?.provincia.error}
                   onChange={(e) =>
                     dispatch(
                       onAltaChange({
@@ -248,8 +261,8 @@ const AltaPacienteForm = () => {
                     )
                   }
                 >
-                  <option aria-label="None" value="" />
-                  {provincias.map((p) => (
+                  <option aria-label="None" value="0" />
+                  {provincias?.map((p) => (
                     <option key={`${p.id}-${p.nombre}`} value={p.id}>
                       {p.nombre}
                     </option>
@@ -264,7 +277,8 @@ const AltaPacienteForm = () => {
                   labelId="localidad-label"
                   inputProps={{ name: 'localidad' }}
                   id="localidad"
-                  value={formData?.localidad}
+                  error={formData?.localidad.error}
+                  value={formData?.localidad.value}
                   onChange={(e) =>
                     dispatch(
                       onAltaChange({
@@ -274,7 +288,7 @@ const AltaPacienteForm = () => {
                     )
                   }
                 >
-                  <option aria-label="None" value="" />
+                  <option aria-label="None" value="0" />
                   {localidades.map((p) => (
                     <option key={`${p.id}-${p.nombre}`} value={p.id}>
                       {p.nombre}
@@ -290,7 +304,8 @@ const AltaPacienteForm = () => {
                 name="domCP"
                 label="Código Postal"
                 variant="outlined"
-                value={formData?.domCP}
+                value={formData?.domCP.value}
+                error={formData?.domCP.error}
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -310,7 +325,8 @@ const AltaPacienteForm = () => {
                 name="domicilio"
                 label="Domicilio"
                 variant="outlined"
-                value={formData?.domicilio}
+                value={formData?.domicilio.value}
+                error={formData?.domicilio.error}
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -321,14 +337,15 @@ const AltaPacienteForm = () => {
                 }
               />
             </div>
-            <div className={classes.formColumn}>
+            <div className={classes.formColumn.value}>
               <TextField
                 required
                 id="nroDom-required"
                 label="Número"
                 name="nroDom"
                 variant="outlined"
-                value={formData?.nroDom}
+                value={formData?.nroDom.value}
+                error={formData?.nroDom.error}
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -344,9 +361,10 @@ const AltaPacienteForm = () => {
                 required
                 id="domPiso-required"
                 label="Piso"
-                nombre="domPiso"
+                name="domPiso"
                 variant="outlined"
-                value={formData?.domPiso}
+                value={formData?.domPiso.value}
+                error={formData?.domPiso.error}
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -360,9 +378,20 @@ const AltaPacienteForm = () => {
             <div className={classes.formColumn} style={{ flex: '8%' }}>
               <TextField
                 required
+                name="domDto"
                 id="domDto-required"
                 label="Dto."
                 variant="outlined"
+                value={formData?.domDto.value}
+                error={formData?.domDto.error}
+                onChange={(e) =>
+                  dispatch(
+                    onAltaChange({
+                      name: e.target.name,
+                      value: e.target.value,
+                    })
+                  )
+                }
               />
             </div>
           </div>
@@ -370,11 +399,12 @@ const AltaPacienteForm = () => {
             <div className={classes.formColumn} style={{ flex: '59%' }}>
               <TextField
                 required
-                id="domDto-required"
-                name="domDto"
-                label="Dto."
+                id="domBarrio-required"
+                name="domBarrio"
+                label="Barrio / Villa"
                 variant="outlined"
-                value={formData?.domDto}
+                value={formData?.domBarrio.value}
+                error={formData?.domBarrio.error}
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -390,7 +420,7 @@ const AltaPacienteForm = () => {
                 style={{ justifyContent: 'center' }}
                 control={
                   <Checkbox
-                    checked={formData?.privadoLib}
+                    checked={formData?.privadoLib.value}
                     onChange={(e) =>
                       dispatch(
                         onAltaChange({

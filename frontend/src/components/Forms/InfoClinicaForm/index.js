@@ -226,7 +226,7 @@ const InfoClinicaForm = () => {
                   label="Fecha de inicio 1° síntoma(fis)"
                   format="MM/dd/yyyy"
                   inputProps={{ name: 'fechaFis' }}
-                  value={formData?.fechaFis}
+                  value={formData?.fechaFis.value}
                   onChange={(e) =>
                     dispatch(
                       onClinicaChange({
@@ -250,7 +250,7 @@ const InfoClinicaForm = () => {
                   labelId="semanaFis-label"
                   name="semanaFis"
                   id="semanaFis"
-                  value={formData?.semanaFis}
+                  value={formData?.semanaFis.value}
                   onChange={(e) =>
                     dispatch(
                       onClinicaChange({
@@ -276,7 +276,7 @@ const InfoClinicaForm = () => {
                   label="Fecha de 1° consulta"
                   format="MM/dd/yyyy"
                   inputProps={{ name: 'primeraConsulta' }}
-                  value={formData?.primeraConsulta}
+                  value={formData?.primeraConsulta.value}
                   onChange={(e) =>
                     dispatch(
                       onClinicaChange({
@@ -298,7 +298,7 @@ const InfoClinicaForm = () => {
                   row
                   aria-label="estadoInternacion"
                   name="estadoInternacion"
-                  value={formData?.estadoInternacion}
+                  value={formData?.estadoInternacion.value}
                   onChange={(e) =>
                     dispatch(
                       onClinicaChange({
@@ -337,7 +337,7 @@ const InfoClinicaForm = () => {
                       color="textSecondary"
                       gutterBottom
                     >
-                      {c.signoSintoma}
+                      {c.signoSintoma.value}
                     </Typography>
                   </CardContent>
                   <CardActions className={classes.button}>
@@ -371,7 +371,7 @@ const InfoClinicaForm = () => {
                       color="textSecondary"
                       gutterBottom
                     >
-                      {c.comorbilidad}
+                      {c.comorbilidad.value}
                     </Typography>
                   </CardContent>
                   <CardActions className={classes.button}>

@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { AntEpidemioForm1 } from 'components/Forms/AntEpidemioForms';
 import { useDispatch } from 'react-redux';
 import formsAPI from './formsAPI';
 
@@ -16,68 +17,108 @@ export const getFormOptionsLocalidades = createAsyncThunk(
   }
 );
 
+export const altaPacienteInitialState = {
+  nombre: { value: '', error: false },
+  apellido: { value: '', error: false },
+  sexo: { value: '1' },
+  edad: { value: '0', error: false },
+  tipoDoc: { value: '1' },
+  numeroDoc: { value: '', error: false },
+  nacionalidad: { value: '', error: false },
+  provincia: { value: '0', error: false },
+  localidad: { value: '0', error: false },
+  domicilio: { value: '', error: false },
+  nroDom: { value: '', error: false },
+  domPiso: { value: '', error: false },
+  domDto: { value: '', error: false },
+  domCP: { value: '', error: false },
+  domBarrio: { value: '', error: false },
+  privadoLib: { value: false },
+};
+
+export const antEpidemioInitialState = {
+  viajoRiesgoFueraPais: { value: '0' },
+  viajoRiesgoDentroPais: { value: '0' },
+  contactoEstrechoCovid: { value: '0' },
+  contactoEstrechoCovidNombre: { value: '', error: false },
+  idDniSnvs: { value: '', error: false },
+  atencionSaludCovid: { value: '0' },
+  vacunacionGripal: { value: '0' },
+  fechaVacunaGripal: { value: Date.now() },
+  trabajadorSalud: { value: '0' },
+  trabajadorSaludColegaInfectado: { value: '0' },
+  trabajadorSaludDesconoceNexo: { value: '0' },
+  asistioCasosConfirmados: { value: '0' },
+  posibleTransmisionComunitaria: { value: '0' },
+  congloInstitucional: { value: 'Hospital / Clinica Asistencial' },
+  nombreDireccionInstitucion: { value: '', error: false },
+  contactos: [],
+};
+
+export const infoClinicaInitialState = {
+  fechaFis: { value: Date.now() },
+  semanaFis: { value: '', error: false },
+  primeraConsulta: { value: Date.now() },
+  estadoInternacion: { value: '0' },
+  signosSintomas: [],
+  comorbilidades: [],
+};
+
 export const formsSlice = createSlice({
   name: 'forms',
   initialState: {
-    altaPaciente: {
-      nombre: '',
-      apellido: '',
-      sexo: '',
-      edad: '',
-      tipoDoc: '',
-      numeroDoc: '',
-      nacionalidad: '',
-      provincia: '',
-      localidad: '',
-      domicilio: '',
-      domNum: '',
-      domPiso: '',
-      domDto: '',
-      domCP: '',
-      domBarrio: '',
-      privadoLib: true,
+    requiredFields: {
+      altaPaciente: [
+        'nombre',
+        'apellido',
+        'sexo',
+        'edad',
+        'tipoDoc',
+        'numeroDoc',
+        'nacionalidad',
+        'domBarrio',
+        'provincia',
+        'localidad',
+        'domicilio',
+        'domNum',
+        'domPiso',
+        'domDto',
+        'domCP',
+      ],
+      antEpidemio: [{ form1: [] }, { form2: [] }, { form3: [] }],
+
+      infoClinica: [],
     },
-    antEpidemio: {
-      viajoRiesgoFueraPais: '0',
-      viajoRiesgoDentroPais: '0',
-      contactoEstrechoCovid: '0',
-      contactoEstrechoCovidNombre: '',
-      idDniSnvs: '',
-      atencionSaludCovid: '0',
-      vacunacionGripal: '0',
-      fechaVacunaGripal: Date.now(),
-      trabajadorSalud: '0',
-      trabajadorSaludColegaInfectado: '0',
-      trabajadorSaludDesconoceNexo: '0',
-      asistioCasosConfirmados: '0',
-      posibleTransmisionComunitaria: '0',
-      congloInstitucional: 'Hospital / Clinica Asistencial',
-      nombreDireccionInstitucion: '',
-      contactos: [],
-    },
-    infoClinica: {
-      fechaFis: Date.now(),
-      semanaFis: '',
-      primeraConsulta: Date.now(),
-      estadoInternacion: '0',
-      signosSintomas: [],
-      comorbilidades: [],
-    },
+    altaPaciente: altaPacienteInitialState,
+    antEpidemio: antEpidemioInitialState,
+    infoClinica: infoClinicaInitialState,
     formOptions: {
       provincias: [],
       localidades: [],
-      localidadesStatus: 'ready',
     },
   },
   reducers: {
     onAltaChange: (state, { payload }) => {
-      state.altaPaciente[payload.name] = payload?.value;
+      console.log(payload);
+      if (typeof payload?.value !== 'undefined')
+        state.altaPaciente[payload.name].value = payload?.value;
+
+      if (typeof payload?.error !== 'undefined')
+        state.altaPaciente[payload.name].error = payload?.error;
     },
     onClinicaChange: (state, { payload }) => {
-      state.infoClinica[payload.name] = payload?.value;
+      if (typeof payload?.value !== 'undefined')
+        state.infoClinica[payload.name].value = payload?.value;
+
+      if (typeof payload?.error !== 'undefined')
+        state.infoClinica[payload.name].error = payload?.error;
     },
     onEpidemioChange: (state, { payload }) => {
-      state.antEpidemio[payload.name] = payload?.value;
+      if (typeof payload?.value !== 'undefined')
+        state.antEpidemio[payload.name].value = payload?.value;
+
+      if (typeof payload?.error !== 'undefined')
+        state.antEpidemio[payload.name].error = payload?.error;
     },
     onAddSignosSintomas: (state, { payload }) => {
       state.infoClinica.signosSintomas = [
@@ -105,12 +146,8 @@ export const formsSlice = createSlice({
     [getFormOptionsProvincias.fulfilled]: (state, { payload }) => {
       state.formOptions.provincias = payload?.provincias;
     },
-    [getFormOptionsLocalidades.pending]: (state) => {
-      state.formOptions.localidadesStatus = 'pending';
-    },
     [getFormOptionsLocalidades.fulfilled]: (state, { payload }) => {
       state.formOptions.localidades = payload?.localidades;
-      state.formOptions.localidadesStatus = 'ready';
     },
   },
 });

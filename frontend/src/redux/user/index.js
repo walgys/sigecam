@@ -28,9 +28,9 @@ export const userSlice = createSlice({
   reducers: {},
   extraReducers: {
     [validateUser.fulfilled]: (state, { payload }) => {
-      state.isAuth = payload.isAuth;
-      state.userData = payload.data;
-      state.errorMessage = payload.errorMessage;
+      state.isAuth = payload?.isAuth;
+      state.userData = payload?.data;
+      state.errorMessage = payload?.errorMessage;
       state.status = 'success';
     },
     [validateSession.fulfilled]: (state, { payload }) => {

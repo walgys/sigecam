@@ -1,6 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getFormOptionsProvincias } from 'redux/Forms';
+import {
+  getFormOptionsProvincias,
+  onAltaChange,
+  onClinicaChange,
+  onEpidemioChange,
+} from 'redux/Forms';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -10,10 +15,17 @@ import Typography from '@material-ui/core/Typography';
 import AltaPacienteForm from 'components/Forms/AltaPacienteForm';
 import InfoClinicaForm from 'components/Forms/InfoClinicaForm';
 import {
+  antEpidemioInitialState,
+  altaPacienteInitialState,
+  infoClinicaInitialState,
+} from 'redux/Forms';
+import {
   AntEpidemioForm1,
   AntEpidemioForm2,
   AntEpidemioForm3,
 } from 'components/Forms/AntEpidemioForms';
+import { EmojiObjects } from '@material-ui/icons';
+import { set } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,20 +78,59 @@ const PacientesDatosNuevo = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = React.useState(0);
+
   const trabajadorSalud = useSelector(
     (state) => state.forms.antEpidemio.trabajadorSalud
   );
+  const forms = useSelector((state) => state.forms);
 
   const steps = getSteps();
 
-  const handleNext = () => {
-    if (activeStep === steps.length) {
-    } else {
+  const checkMissingData = async () => {
+    let result;
+    switch (activeStep) {
+      case 0:
+        const rf = forms?.requiredFields?.altaPaciente;
+        const apFields = Object.entries(forms?.altaPaciente);
+
+        const fieldsToCheck = apFields.filter((apf) => rf.includes(apf[0]));
+
+        result = fieldsToCheck.filter((f) => {
+          if (altaPacienteInitialState[f[0]].value === f[1].value) {
+            dispatch(onAltaChange({ name: f[0], error: true }));
+            return true;
+          } else {
+            console.log(`dispatching ${f[0]}`);
+            dispatch(onAltaChange({ name: f[0], error: false }));
+          }
+        });
+
+        break;
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+      default:
+        break;
+    }
+    console.log(result);
+    if (result.length === 0) {
       if (activeStep === 2 && trabajadorSalud !== '1') {
         setActiveStep((prevActiveStep) => prevActiveStep + 2);
       } else {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
+    }
+  };
+
+  const handleNext = async () => {
+    if (activeStep === steps.length - 1) {
+    } else {
+      checkMissingData();
     }
   };
 
@@ -99,6 +150,7 @@ const PacientesDatosNuevo = () => {
     dispatch(getFormOptionsProvincias());
     return () => {};
   }, [dispatch]);
+
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} alternativeLabel>
@@ -137,7 +189,7 @@ const PacientesDatosNuevo = () => {
                 Back
               </Button>
               <Button variant="contained" color="primary" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                {activeStep === steps.length - 1 ? 'Guardar' : 'Continuar'}
               </Button>
             </div>
           </div>

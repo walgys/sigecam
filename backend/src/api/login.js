@@ -41,7 +41,7 @@ router.post('/session', (req, res) => {
 
 router.post(
   '/login',
-  cors({ origin: 'http://127.0.0.1:3000' }),
+
   async (req, res) => {
     try {
       const { userName, password } = await req.body;
