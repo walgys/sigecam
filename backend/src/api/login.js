@@ -44,29 +44,41 @@ router.post(
 
   async (req, res) => {
     try {
+      console.log(req.body);
       const { userName, password } = await req.body;
-      if (!userName || !password) res.json({ message: 'bad info' });
+      if (
+        !userName ||
+        (!password &&
+          (typeof userName !== 'undefined' || typeof password !== 'undefined'))
+      )
+        res.json({ message: 'bad info' });
       const queryResult = await queryAuth(userName);
       if ((queryResult.length = 1)) {
         const user = queryResult[0];
-        bcrypt
-          .compare(password, user.password)
-          .then((result) => {
-            if (result) {
-              const { password, ...userData } = user;
-              const token = jwt.sign(userData, JWT_SECRET, {
-                expiresIn: '1d',
-              });
-              req.session.jwt = token;
+        if (typeof user !== 'undefined') {
+          bcrypt
+            .compare(password, user.password)
+            .then((result) => {
+              if (result) {
+                const { password, ...userData } = user;
+                const token = jwt.sign(userData, JWT_SECRET, {
+                  expiresIn: '1d',
+                });
+                req.session.jwt = token;
 
-              res.json(createResponse(user, null, true));
-            } else {
-              res.json(createResponse(null, 'username or password incorrect'));
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+                res.json(createResponse(user, null, true));
+              } else {
+                res.json(
+                  createResponse(null, 'username or password incorrect')
+                );
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        } else {
+          res.json(createResponse(null, 'username or password incorrect'));
+        }
       } else {
         res.json(createResponse(null, 'Error with data'));
       }

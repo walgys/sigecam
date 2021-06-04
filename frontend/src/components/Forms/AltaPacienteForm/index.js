@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     rowGap: '0.5rem',
   },
+  field: {
+    height: '80px',
+  },
   backButton: {
     marginRight: theme.spacing(1),
   },
@@ -55,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
+    margin: 0,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -88,6 +92,7 @@ const AltaPacienteForm = () => {
         <div className={classes.formContent}>
           <div className={classes.formColumn}>
             <TextField
+              className={classes.field}
               required
               id="nombre-required"
               inputProps={{ name: 'nombre' }}
@@ -95,6 +100,9 @@ const AltaPacienteForm = () => {
               variant="outlined"
               value={formData?.nombre?.value}
               error={formData?.nombre?.error}
+              helperText={
+                formData?.nombre?.error ? formData?.nombre?.errorText : ''
+              }
               onChange={(e) =>
                 dispatch(
                   onAltaChange({
@@ -104,7 +112,7 @@ const AltaPacienteForm = () => {
                 )
               }
             />
-            <FormControl className={classes.formControl}>
+            <FormControl className={`${classes.formControl} ${classes.field}`}>
               <InputLabel id="edad-label">Edad</InputLabel>
               <NativeSelect
                 labelId="edad-label"
@@ -112,6 +120,9 @@ const AltaPacienteForm = () => {
                 id="edad"
                 value={formData?.edad.value}
                 error={formData?.edad.error}
+                helperText={
+                  formData?.edad?.error ? formData?.edad?.errorText : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -132,6 +143,7 @@ const AltaPacienteForm = () => {
           </div>
           <div className={classes.formColumn}>
             <TextField
+              className={classes.field}
               required
               id="apellido-required"
               name="apellido"
@@ -139,6 +151,9 @@ const AltaPacienteForm = () => {
               variant="outlined"
               value={formData?.apellido.value}
               error={formData?.apellido.error}
+              helperText={
+                formData?.apellido?.error ? formData?.apellido?.errorText : ''
+              }
               onChange={(e) =>
                 dispatch(
                   onAltaChange({
@@ -148,7 +163,7 @@ const AltaPacienteForm = () => {
                 )
               }
             />
-            <FormControl className={classes.formControl}>
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
               <InputLabel id="tipoDoc-label">Tipo Doc</InputLabel>
               <NativeSelect
                 labelId="tipoDoc-label"
@@ -156,6 +171,9 @@ const AltaPacienteForm = () => {
                 id="tipoDoc"
                 value={formData?.tipoDoc.value}
                 error={formData?.tipoDoc.error}
+                helperText={
+                  formData?.tipoDoc?.error ? formData?.tipoDoc?.errorText : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -172,7 +190,7 @@ const AltaPacienteForm = () => {
             </FormControl>
           </div>
           <div className={classes.formColumn}>
-            <FormControl className={classes.formControl}>
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
               <InputLabel id="sexo-label">Sexo</InputLabel>
               <NativeSelect
                 labelId="sexo-label"
@@ -180,6 +198,9 @@ const AltaPacienteForm = () => {
                 id="sexo"
                 value={formData?.sexo.value}
                 error={formData?.sexo.error}
+                helperText={
+                  formData?.sexo?.error ? formData?.sexo?.errorText : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -196,6 +217,7 @@ const AltaPacienteForm = () => {
               </NativeSelect>
             </FormControl>
             <TextField
+              className={classes.field}
               required
               id="numeroDoc-required"
               name="numeroDoc"
@@ -203,6 +225,9 @@ const AltaPacienteForm = () => {
               variant="outlined"
               value={formData?.numeroDoc.value}
               error={formData?.numeroDoc.error}
+              helperText={
+                formData?.numeroDoc?.error ? formData?.numeroDoc?.errorText : ''
+              }
               onChange={(e) =>
                 dispatch(
                   onAltaChange({ name: e.target.name, value: e.target.value })
@@ -213,7 +238,7 @@ const AltaPacienteForm = () => {
         </div>
         <div className={classes.formContent}>
           <div className={classes.formColumn}>
-            <FormControl className={classes.formControl}>
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
               <InputLabel id="nacionalidad-label">Nacionalidad</InputLabel>
               <NativeSelect
                 labelId="nacionalidad-label"
@@ -221,6 +246,11 @@ const AltaPacienteForm = () => {
                 id="nacionalidad"
                 value={formData?.nacionalidad.value}
                 error={formData?.nacionalidad.error}
+                helperText={
+                  formData?.nacionalidad?.error
+                    ? formData?.nombre?.errorText
+                    : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -244,7 +274,9 @@ const AltaPacienteForm = () => {
           <h3 style={{ margin: '0.3rem' }}>Residencia del Paciente</h3>
           <div className={classes.formContent}>
             <div className={classes.formColumn}>
-              <FormControl className={classes.formControl}>
+              <FormControl
+                className={`${classes.formControl} ${classes.field} `}
+              >
                 <InputLabel id="provincia-label">Provincia</InputLabel>
                 <NativeSelect
                   labelId="provincia-label"
@@ -252,6 +284,11 @@ const AltaPacienteForm = () => {
                   id="provincia"
                   value={formData?.provincia.value}
                   error={formData?.provincia.error}
+                  helperText={
+                    formData?.provincia?.error
+                      ? formData?.provincia?.errorText
+                      : ''
+                  }
                   onChange={(e) =>
                     dispatch(
                       onAltaChange({
@@ -271,7 +308,9 @@ const AltaPacienteForm = () => {
               </FormControl>
             </div>
             <div className={classes.formColumn}>
-              <FormControl className={classes.formControl}>
+              <FormControl
+                className={`${classes.formControl} ${classes.field}`}
+              >
                 <InputLabel id="localidad-label">Localidad</InputLabel>
                 <NativeSelect
                   labelId="localidad-label"
@@ -279,6 +318,11 @@ const AltaPacienteForm = () => {
                   id="localidad"
                   error={formData?.localidad.error}
                   value={formData?.localidad.value}
+                  helperText={
+                    formData?.localidad?.error
+                      ? formData?.localidad?.errorText
+                      : ''
+                  }
                   onChange={(e) =>
                     dispatch(
                       onAltaChange({
@@ -299,6 +343,7 @@ const AltaPacienteForm = () => {
             </div>
             <div className={classes.formColumn}>
               <TextField
+                className={classes.field}
                 required
                 id="domCP-required"
                 name="domCP"
@@ -306,6 +351,9 @@ const AltaPacienteForm = () => {
                 variant="outlined"
                 value={formData?.domCP.value}
                 error={formData?.domCP.error}
+                helperText={
+                  formData?.domCP?.error ? formData?.domCP?.errorText : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -320,6 +368,7 @@ const AltaPacienteForm = () => {
           <div className={classes.formContent}>
             <div className={classes.formColumn}>
               <TextField
+                className={classes.field}
                 required
                 id="domicilio-required"
                 name="domicilio"
@@ -327,6 +376,11 @@ const AltaPacienteForm = () => {
                 variant="outlined"
                 value={formData?.domicilio.value}
                 error={formData?.domicilio.error}
+                helperText={
+                  formData?.domicilio?.error
+                    ? formData?.domicilio?.errorText
+                    : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -339,6 +393,7 @@ const AltaPacienteForm = () => {
             </div>
             <div className={classes.formColumn.value}>
               <TextField
+                className={classes.field}
                 required
                 id="nroDom-required"
                 label="Número"
@@ -346,6 +401,9 @@ const AltaPacienteForm = () => {
                 variant="outlined"
                 value={formData?.nroDom.value}
                 error={formData?.nroDom.error}
+                helperText={
+                  formData?.nroDom?.error ? formData?.nroDom?.errorText : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -358,6 +416,7 @@ const AltaPacienteForm = () => {
             </div>
             <div className={classes.formColumn} style={{ flex: '8%' }}>
               <TextField
+                className={classes.field}
                 required
                 id="domPiso-required"
                 label="Piso"
@@ -365,6 +424,9 @@ const AltaPacienteForm = () => {
                 variant="outlined"
                 value={formData?.domPiso.value}
                 error={formData?.domPiso.error}
+                helperText={
+                  formData?.domPiso?.error ? formData?.domPiso?.errorText : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -377,6 +439,7 @@ const AltaPacienteForm = () => {
             </div>
             <div className={classes.formColumn} style={{ flex: '8%' }}>
               <TextField
+                className={classes.field}
                 required
                 name="domDto"
                 id="domDto-required"
@@ -384,6 +447,9 @@ const AltaPacienteForm = () => {
                 variant="outlined"
                 value={formData?.domDto.value}
                 error={formData?.domDto.error}
+                helperText={
+                  formData?.domDto?.error ? formData?.domDto?.errorText : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({
@@ -398,6 +464,7 @@ const AltaPacienteForm = () => {
           <div className={classes.formContent}>
             <div className={classes.formColumn} style={{ flex: '59%' }}>
               <TextField
+                className={classes.field}
                 required
                 id="domBarrio-required"
                 name="domBarrio"
@@ -405,6 +472,11 @@ const AltaPacienteForm = () => {
                 variant="outlined"
                 value={formData?.domBarrio.value}
                 error={formData?.domBarrio.error}
+                helperText={
+                  formData?.domBarrio?.error
+                    ? formData?.domBarrio?.errorText
+                    : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onAltaChange({

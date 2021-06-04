@@ -325,7 +325,7 @@ const InfoClinicaForm = () => {
           <div className={classes.formContent}>
             <div className={`${classes.formColumn} ${classes.formOutline}`}>
               <h3 style={{ margin: '0.3rem' }}>Signos y Síntomas</h3>
-              {signosSintomas.map((c, idx) => (
+              {signosSintomas.value.map((c, idx) => (
                 <Card
                   key={`${c.idx}-${c.signoSintoma}`}
                   className={classes.cardRoot}
@@ -359,7 +359,7 @@ const InfoClinicaForm = () => {
               <h3 style={{ margin: '0.3rem' }}>
                 Enfermedades Previas/Comorbilidades
               </h3>
-              {comorbilidades.map((c, idx) => (
+              {comorbilidades.value.map((c, idx) => (
                 <Card
                   key={`${c.idx}-${c.comorbilidad}`}
                   className={classes.cardRoot}
