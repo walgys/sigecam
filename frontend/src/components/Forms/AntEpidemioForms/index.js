@@ -514,7 +514,7 @@ const AntEpidemioForm3 = () => {
           <div className={classes.formContent}>
             <div className={classes.form}>
               <div className={classes.formContent}>
-                {formData?.contactos.map((c, idx) => (
+                {formData?.contactos.value.map((c, idx) => (
                   <Card
                     key={`${c.idx}-${c.dni.value}`}
                     className={classes.cardRoot}
