@@ -112,7 +112,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AntEpidemioForm1 = () => {
   const classes = useStyles();
-  const formData = useSelector((state) => state.forms.antEpidemio);
+  const formData = useSelector((state) => state.forms.antEpidemio.form1);
   const dispatch = useDispatch();
   return (
     <Container>
@@ -135,6 +135,7 @@ const AntEpidemioForm1 = () => {
           radioLabel="viajo-riesgo-fuera-pais"
           radioName="viajoRiesgoFueraPais"
           radioValue={formData?.viajoRiesgoFueraPais.value}
+          form="form1"
         />
         <FormColumnTextYesNo
           classes={classes}
@@ -142,6 +143,7 @@ const AntEpidemioForm1 = () => {
           radioLabel="viajo-riesgo-dentro-pais"
           radioName="viajoRiesgoDentroPais"
           radioValue={formData?.viajoRiesgoDentroPais.value}
+          form="form1"
         />
         <FormColumnTextYesNo
           classes={classes}
@@ -149,6 +151,7 @@ const AntEpidemioForm1 = () => {
           radioLabel="contacto-estrecho-covid"
           radioName="contactoEstrechoCovid"
           radioValue={formData?.contactoEstrechoCovid.value}
+          form="form1"
         />
         <div className={classes.formContent}>
           <div className={`${classes.formColumn} ${classes.formColumnBig}`}>
@@ -161,11 +164,18 @@ const AntEpidemioForm1 = () => {
               name="contactoEstrechoCovidNombre"
               variant="outlined"
               value={formData?.contactoEstrechoCovidNombre.value}
+              error={formData?.contactoEstrechoCovidNombre.error}
+              helperText={
+                formData?.contactoEstrechoCovidNombre.error
+                  ? formData?.contactoEstrechoCovidNombre.errorText
+                  : ''
+              }
               onChange={(e) =>
                 dispatch(
                   onEpidemioChange({
                     name: e.target.name,
                     value: e.target.value,
+                    form: 'form1',
                   })
                 )
               }
@@ -176,15 +186,20 @@ const AntEpidemioForm1 = () => {
             <TextField
               required
               id="idDniSnvs-required"
-              label="DNO o ID SNVS"
+              label="DNI o ID SNVS"
               name="idDniSnvs"
               variant="outlined"
               value={formData?.idDniSnvs.value}
+              error={formData?.idDniSnvs.error}
+              helperText={
+                formData?.idDniSnvs.error ? formData?.idDniSnvs.errorText : ''
+              }
               onChange={(e) =>
                 dispatch(
                   onEpidemioChange({
                     name: e.target.name,
                     value: e.target.value,
+                    form: 'form1',
                   })
                 )
               }
@@ -196,7 +211,8 @@ const AntEpidemioForm1 = () => {
           question="¿ Recibió atención en algún centro de salud que atiende casos COVID-19 ?"
           radioLabel="atencion-salud-covid"
           radioName="atencionSaludCovid"
-          radioValue={formData?.contactoEstrechoCovid.value}
+          radioValue={formData?.atencionSaludCovid.value}
+          form="form1"
         />
         <FormColumnTextYesNo
           classes={classes}
@@ -204,6 +220,7 @@ const AntEpidemioForm1 = () => {
           radioLabel="antecedentes-vacuna-gripal"
           radioName="vacunacionGripal"
           radioValue={formData?.vacunacionGripal.value}
+          form="form1"
         >
           <div className={`${classes.formColumn} ${classes.formColumnSmall}`}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -214,11 +231,18 @@ const AntEpidemioForm1 = () => {
                 format="MM/dd/yyyy"
                 inputProps={{ name: 'fechaVacunaGripal' }}
                 value={formData?.fechaVacunaGripal.value}
+                error={formData?.fechaVacunaGripal.error}
+                helperText={
+                  formData?.fechaVacunaGripal.error
+                    ? formData?.fechaVacunaGripal.errorText
+                    : ''
+                }
                 onChange={(e) =>
                   dispatch(
                     onEpidemioChange({
-                      name: e.target.name,
-                      value: e.target.value,
+                      name: 'fechaVacunaGripal',
+                      value: e.getTime(),
+                      form: 'form1',
                     })
                   )
                 }
@@ -235,6 +259,7 @@ const AntEpidemioForm1 = () => {
           radioLabel="trabajador-salud"
           radioName="trabajadorSalud"
           radioValue={formData?.trabajadorSalud.value}
+          form="form1"
         />
       </form>
     </Container>
@@ -243,7 +268,7 @@ const AntEpidemioForm1 = () => {
 
 const AntEpidemioForm2 = () => {
   const classes = useStyles();
-  const formData = useSelector((state) => state.forms.antEpidemio);
+  const formData = useSelector((state) => state.forms.antEpidemio.form2);
   const dispatch = useDispatch();
 
   const conglomeradosInstitucionales = [
@@ -267,6 +292,7 @@ const AntEpidemioForm2 = () => {
           radioLabel="trabajador-salud-colega-infectado"
           radioName="trabajadorSaludColegaInfectado"
           radioValue={formData?.trabajadorSaludColegaInfectado.value}
+          form="form2"
         />
         <FormColumnTextYesNo
           classes={classes}
@@ -274,6 +300,7 @@ const AntEpidemioForm2 = () => {
           radioLabel="trabajador-salud-desconoce-nexo"
           radioName="trabajadorSaludDesconoceNexo"
           radioValue={formData?.trabajadorSaludDesconoceNexo.value}
+          form="form2"
         />
         <FormColumnTextYesNo
           classes={classes}
@@ -281,6 +308,7 @@ const AntEpidemioForm2 = () => {
           radioLabel="asistio-casos-confirmados-covid"
           radioName="asistioCasosConfirmados"
           radioValue={formData?.asistioCasosConfirmados.value}
+          form="form2"
         />
         <FormColumnTextYesNo
           classes={classes}
@@ -288,6 +316,7 @@ const AntEpidemioForm2 = () => {
           radioLabel="posible-transmision-comunitaria-covid"
           radioName="posibleTransmisionComunitaria"
           radioValue={formData?.posibleTransmisionComunitaria.value}
+          form="form2"
         />
         <div className={`${classes.form} ${classes.formContentBlue}`}>
           <div className={classes.formColumnFull}>
@@ -297,6 +326,7 @@ const AntEpidemioForm2 = () => {
               radioLabel="posible-transmision-comunitaria-covid"
               radioName="posibleTransmisionComunitaria"
               radioValue={formData?.posibleTransmisionComunitaria.value}
+              form="form2"
             ></FormColumnTextYesNo>
             <div className={`${classes.formContent}`}>
               <div className={classes.formColumnBig}>
@@ -305,7 +335,7 @@ const AntEpidemioForm2 = () => {
                   style={{ width: '100%' }}
                 >
                   <InputLabel id="congloInstitucional-label">
-                    Tipo Doc
+                    Conglomerado institucional
                   </InputLabel>
                   <NativeSelect
                     labelId="congloInstitucional-label"
@@ -313,7 +343,7 @@ const AntEpidemioForm2 = () => {
                     id="congloInstitucional"
                     value={formData?.congloInstitucional.value}
                     disabled={
-                      formData?.posibleTransmisionComunitaria.value !== '1'
+                      formData?.posibleTransmisionComunitaria.value === '1'
                         ? false
                         : true
                     }
@@ -322,6 +352,7 @@ const AntEpidemioForm2 = () => {
                         onEpidemioChange({
                           name: e.target.name,
                           value: e.target.value,
+                          form: 'form2',
                         })
                       )
                     }
@@ -343,11 +374,18 @@ const AntEpidemioForm2 = () => {
                   label="Nombre y dirección de la institución"
                   variant="outlined"
                   value={formData?.nombreDireccionInstitucion.value}
+                  error={formData?.nombreDireccionInstitucion.error}
+                  helperText={
+                    formData?.nombreDireccionInstitucion.error
+                      ? formData?.nombreDireccionInstitucion.errorText
+                      : ''
+                  }
                   onChange={(e) =>
                     dispatch(
                       onEpidemioChange({
                         name: e.target.name,
                         value: e.target.value,
+                        form: 'form2',
                       })
                     )
                   }
@@ -372,7 +410,7 @@ const AntEpidemioForm3 = () => {
     fechaUltimoContacto: Date.now(),
     tipoContacto: '',
   });
-  const formData = useSelector((state) => state.forms.antEpidemio);
+  const formData = useSelector((state) => state.forms.antEpidemio.form3);
   const dispatch = useDispatch();
 
   const modalChildren = [
@@ -516,7 +554,7 @@ const AntEpidemioForm3 = () => {
               <div className={classes.formContent}>
                 {formData?.contactos.value.map((c, idx) => (
                   <Card
-                    key={`${c.idx}-${c.dni.value}`}
+                    key={`${idx}-${c.dni.value}`}
                     className={classes.cardRoot}
                     variant="outlined"
                   >

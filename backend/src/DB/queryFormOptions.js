@@ -17,6 +17,7 @@ const queryFormOptionsProvincias = async () => {
     console.log(err);
   } finally {
     conn.removeAllListeners();
+    conn.release();
   }
 };
 
@@ -37,6 +38,7 @@ const queryFormOptionsLocalidades = async (provincia) => {
     console.log(err);
   } finally {
     conn.removeAllListeners();
+    conn.release();
   }
 };
 

@@ -10,8 +10,15 @@ import { onEpidemioChange } from 'redux/Forms';
 import React from 'react';
 
 const FormColumnTextYesNo = (props) => {
-  const { classes, question, radioLabel, radioName, radioValue, children } =
-    props;
+  const {
+    classes,
+    question,
+    radioLabel,
+    radioName,
+    radioValue,
+    children,
+    form,
+  } = props;
   const dispatch = useDispatch();
   return (
     <div className={classes.formContent}>
@@ -32,6 +39,7 @@ const FormColumnTextYesNo = (props) => {
                 onEpidemioChange({
                   name: e.target.name,
                   value: e.target.value,
+                  form: form,
                 })
               )
             }

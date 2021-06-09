@@ -21,16 +21,15 @@ router.post('/getFormOptions/provincias', async (req, res) => {
     })
       .then((result) => result.data)
       .catch((err) => console.log(err));
-    res.json(queryResult);
+    res.json(queryResult).end();
   } catch (err) {
     console.log(err);
-    res.json({ message: 'Error' });
+    res.json({ message: 'Error' }).end();
   }
 });
 
 router.post('/getFormOptions/localidades', async (req, res) => {
   try {
-    console.log(req.body);
     if (req.body) {
       const queryResult = await axios({
         url: `${API_URL}/api/v1/internal/getFormOptions/localidades`,
@@ -45,11 +44,11 @@ router.post('/getFormOptions/localidades', async (req, res) => {
       })
         .then((result) => result.data)
         .catch((err) => console.log(err));
-      res.json(queryResult);
+      res.json(queryResult).end();
     }
   } catch (err) {
     console.log(err);
-    res.json({ message: 'Error' });
+    res.json({ message: 'Error' }).end();
   }
 });
 
@@ -57,13 +56,15 @@ router.post('/internal/getFormOptions/provincias', async (req, res) => {
   try {
     const user = jwt.verify(req.headers.token, JWT_SECRET);
     const queryResult = await queryFormOptions.queryFormOptionsProvincias();
-    res.json({
-      message: 'OK',
-      provincias: queryResult,
-    });
+    res
+      .json({
+        message: 'OK',
+        provincias: queryResult,
+      })
+      .end();
   } catch (err) {
     console.log(err);
-    res.json({ message: 'Error' });
+    res.json({ message: 'Error' }).end();
   }
 });
 
@@ -74,13 +75,15 @@ router.post('/internal/getFormOptions/localidades', async (req, res) => {
     const queryResult = await queryFormOptions.queryFormOptionsLocalidades(
       provincia
     );
-    res.json({
-      message: 'OK',
-      localidades: queryResult,
-    });
+    res
+      .json({
+        message: 'OK',
+        localidades: queryResult,
+      })
+      .end();
   } catch (err) {
     console.log(err);
-    res.json({ message: 'Error' });
+    res.json({ message: 'Error' }).end();
   }
 });
 module.exports = router;

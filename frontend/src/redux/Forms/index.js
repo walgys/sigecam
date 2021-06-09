@@ -37,30 +37,39 @@ export const altaPacienteInitialState = {
 };
 
 export const antEpidemioInitialState = {
-  viajoRiesgoFueraPais: { value: '0' },
-  viajoRiesgoDentroPais: { value: '0' },
-  contactoEstrechoCovid: { value: '0' },
-  contactoEstrechoCovidNombre: { value: '', error: false, errorText: '' },
-  idDniSnvs: { value: '', error: false, errorText: '' },
-  atencionSaludCovid: { value: '0' },
-  vacunacionGripal: { value: '0' },
-  fechaVacunaGripal: { value: Date.now() },
-  trabajadorSalud: { value: '0' },
-  trabajadorSaludColegaInfectado: { value: '0' },
-  trabajadorSaludDesconoceNexo: { value: '0' },
-  asistioCasosConfirmados: { value: '0' },
-  posibleTransmisionComunitaria: { value: '0' },
-  congloInstitucional: { value: 'Hospital / Clinica Asistencial' },
-  nombreDireccionInstitucion: { value: '', error: false, errorText: '' },
-  contactos: { value: [], error: false, errorText: '' },
+  form1: {
+    viajoRiesgoFueraPais: { value: '0', error: false, errorText: '' },
+    viajoRiesgoDentroPais: { value: '0', error: false, errorText: '' },
+    contactoEstrechoCovid: { value: '0', error: false, errorText: '' },
+    contactoEstrechoCovidNombre: { value: '', error: false, errorText: '' },
+    idDniSnvs: { value: '', error: false, errorText: '' },
+    atencionSaludCovid: { value: '0', error: false, errorText: '' },
+    vacunacionGripal: { value: '0', error: false, errorText: '' },
+    fechaVacunaGripal: { value: Date.now(), error: false, errorText: '' },
+    trabajadorSalud: { value: '0', error: false, errorText: '' },
+  },
+  form2: {
+    trabajadorSaludColegaInfectado: { value: '0', error: false, errorText: '' },
+    trabajadorSaludDesconoceNexo: { value: '0', error: false, errorText: '' },
+    asistioCasosConfirmados: { value: '0', error: false, errorText: '' },
+    posibleTransmisionComunitaria: { value: '0', error: false, errorText: '' },
+    congloInstitucional: {
+      value: 'Hospital / Clinica Asistencial',
+      error: false,
+      errorText: '',
+    },
+    nombreDireccionInstitucion: { value: '', error: false, errorText: '' },
+  },
+  form3: {
+    contactos: { value: [], error: false, errorText: '' },
+  },
 };
 
 export const infoClinicaInitialState = {
+  aplica: { value: '0' },
   fechaFis: { value: Date.now(), error: false, errorText: '' },
   semanaFis: {
-    value: '',
-    error: false,
-    errorText: '',
+    value: '0',
     error: false,
     errorText: '',
   },
@@ -73,28 +82,6 @@ export const infoClinicaInitialState = {
 export const formsSlice = createSlice({
   name: 'forms',
   initialState: {
-    requiredFields: {
-      altaPaciente: [
-        'nombre',
-        'apellido',
-        'sexo',
-        'edad',
-        'tipoDoc',
-        'numeroDoc',
-        'nacionalidad',
-        'domBarrio',
-        'provincia',
-        'localidad',
-        'domicilio',
-        'domNum',
-        'domPiso',
-        'domDto',
-        'domCP',
-      ],
-      antEpidemio: [{ form1: [] }, { form2: [] }, { form3: [] }],
-
-      infoClinica: [],
-    },
     altaPaciente: altaPacienteInitialState,
     antEpidemio: antEpidemioInitialState,
     infoClinica: infoClinicaInitialState,
@@ -120,15 +107,16 @@ export const formsSlice = createSlice({
     },
     onEpidemioChange: (state, { payload }) => {
       if (typeof payload?.value !== 'undefined')
-        state.antEpidemio[payload.name].value = payload?.value;
+        state.antEpidemio[payload.form][payload.name].value = payload?.value;
 
       if (typeof payload?.error !== 'undefined')
-        state.antEpidemio[payload.name].error = payload?.error;
+        state.antEpidemio[payload.form][payload.name].error = payload?.error;
     },
     onAddSignosSintomas: (state, { payload }) => {
       state.infoClinica.signosSintomas.value = [
         ...state.infoClinica.signosSintomas.value,
         {
+          id: payload.id,
           signoSintoma: payload.currSignosSintomas,
           descripcion: payload.currSignosSintomasDescripcion,
         },
@@ -138,16 +126,29 @@ export const formsSlice = createSlice({
       state.infoClinica.comorbilidades.value = [
         ...state.infoClinica.comorbilidades.value,
         {
+          id: payload.id,
           comorbilidad: payload.currComorbilidad,
           descripcion: payload.currComorbDescripcion,
         },
       ];
     },
     onAddContactos: (state, { payload }) => {
-      state.antEpidemio.contactos.value = [
-        ...state.antEpidemio.contactos.value,
+      state.antEpidemio.form3.contactos.value = [
+        ...state.antEpidemio.form3.contactos.value,
         payload,
       ];
+    },
+    onDelComorbilidades: (state, { payload }) => {
+      state.infoClinica.comorbilidades.value =
+        state.infoClinica.comorbilidades.value.filter(
+          (c) => c.id !== payload.id
+        );
+    },
+    onDelSignosSintomas: (state, { payload }) => {
+      state.infoClinica.signosSintomas.value =
+        state.infoClinica.signosSintomas.value.filter(
+          (c) => c.id !== payload.id
+        );
     },
     onAltaValidate: (state, { payload }) => {
       if (typeof payload?.value !== 'undefined') {
@@ -159,6 +160,34 @@ export const formsSlice = createSlice({
           payload.value.map((o) => {
             state.altaPaciente[o.name].error = o.error;
             state.altaPaciente[o.name].errorText = o.errorText;
+          });
+        }
+      }
+    },
+    onInfoClinicaValidate: (state, { payload }) => {
+      if (typeof payload?.value !== 'undefined') {
+        Object.entries(state.infoClinica).map(([k, ap]) => {
+          ap.error = false;
+          ap.errorText = '';
+        });
+        if (!payload?.isvalid) {
+          payload.value.map((o) => {
+            state.infoClinica[o.name].error = o.error;
+            state.infoClinica[o.name].errorText = o.errorText;
+          });
+        }
+      }
+    },
+    onEpidemioValidate: (state, { payload }) => {
+      if (typeof payload?.value !== 'undefined') {
+        Object.entries(state.antEpidemio[payload.form]).map(([k, ap]) => {
+          ap.error = false;
+          ap.errorText = '';
+        });
+        if (!payload?.isvalid) {
+          payload.value.map((o) => {
+            state.antEpidemio[payload.form][o.name].error = o.error;
+            state.antEpidemio[payload.form][o.name].errorText = o.errorText;
           });
         }
       }
@@ -178,9 +207,13 @@ export const {
   onAltaChange,
   onClinicaChange,
   onEpidemioChange,
+  onDelSignosSintomas,
   onAddSignosSintomas,
+  onDelComorbilidades,
   onAddComorbilidades,
   onAddContactos,
   onAltaValidate,
+  onInfoClinicaValidate,
+  onEpidemioValidate,
 } = formsSlice.actions;
 export default formsSlice.reducer;

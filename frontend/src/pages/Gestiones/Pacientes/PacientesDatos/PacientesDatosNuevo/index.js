@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getFormOptionsProvincias,
-  onAltaChange,
-  onClinicaChange,
-  onEpidemioChange,
+  onInfoClinicaValidate,
   onAltaValidate,
+  onEpidemioValidate,
 } from 'redux/Forms';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
@@ -20,7 +19,12 @@ import {
   AntEpidemioForm2,
   AntEpidemioForm3,
 } from 'components/Forms/AntEpidemioForms';
-import * as Yup from 'yup';
+import {
+  altaPacienteFormSchema,
+  infoClinicaSchema,
+  antEpidemioForm1Schema,
+  antEpidemioForm2Schema,
+} from './validation';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,78 +79,24 @@ const PacientesDatosNuevo = () => {
   const [activeStep, setActiveStep] = React.useState(0);
 
   const trabajadorSalud = useSelector(
-    (state) => state.forms.antEpidemio.trabajadorSalud
+    (state) => state.forms.antEpidemio.form1.trabajadorSalud
   );
   const forms = useSelector((state) => state.forms);
 
   const steps = getSteps();
 
-  const altaPacienteFormSchema = Yup.object().shape({
-    nombre: Yup.object({ value: Yup.string().required('campo requerido') }), // { value: '', error: false },
-    apellido: Yup.object({ value: Yup.string().required('campo requerido') }), // { value: '', error: false },
-    sexo: Yup.object({
-      value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
-    }), // { value: '1' },
-    edad: Yup.object({
-      value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
-    }), // { value: '0', error: false },
-    tipoDoc: Yup.object({
-      value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
-    }), // { value: '1' },
-    numeroDoc: Yup.object({
-      value: Yup.number()
-        .min(1000000, 'Al menos 7 digitos')
-        .required('campo requerido')
-        .typeError('Debe ser un número'),
-    }), // { value: '', error: false },
-    nacionalidad: Yup.object({
-      value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
-    }), // { value: '', error: false },
-    provincia: Yup.object({
-      value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
-    }), // { value: '0', error: false },
-    localidad: Yup.object({
-      value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
-    }), // { value: '0', error: false },
-    domicilio: Yup.object({
-      value: Yup.string().required('campo requerido'),
-    }), // { value: '', error: false },
-    nroDom: Yup.object({
-      value: Yup.number()
-        .required('campo requerido')
-        .typeError('Debe ser un número'),
-    }), // { value: '', error: false },
-    domPiso: Yup.object({
-      value: Yup.number()
-        .required('campo requerido')
-        .typeError('Debe ser un número'),
-    }), // { value: '', error: false },
-    domDto: Yup.object({ value: Yup.string().required('campo requerido') }), // { value: '', error: false },
-    domCP: Yup.object({ value: Yup.string().required('campo requerido') }), // { value: '', error: false },
-    domBarrio: Yup.object({
-      value: Yup.string().required('campo requerido'),
-    }), // { value: '', error: false },
-    privadoLib: Yup.object({ value: Yup.boolean().notRequired() }), //{ value: false },
-  });
-
   const checkMissingData = async () => {
     let isValid = false;
     switch (activeStep) {
       case 0:
-        await altaPacienteFormSchema
+        /* await altaPacienteFormSchema
           .validate(forms?.altaPaciente, { abortEarly: false })
           .then((value) => {
-            const payload = Object.entries(value).map(([key, value]) => ({
-              name: key,
-              error: value.error,
-              errorText: '',
-            }));
             dispatch(onAltaValidate({ value: [], isValid: true }));
             isValid = true;
           })
           .catch((err) => {
             if (err?.name === 'ValidationError') {
-              console.log(JSON.stringify(err));
               const payload = err.inner.map((e) => ({
                 name: e.path.replace('.value', ''),
                 error: true,
@@ -156,27 +106,88 @@ const PacientesDatosNuevo = () => {
               isValid = false;
             }
           });
-        /*const rf = forms?.requiredFields?.altaPaciente;
-        const apFields = Object.entries(forms?.altaPaciente);
-
-        const fieldsToCheck = apFields.filter((apf) => rf.includes(apf[0]));
-
-        result = fieldsToCheck.filter((f) => {
-          if (altaPacienteInitialState[f[0]].value === f[1].value) {
-            dispatch(onAltaChange({ name: f[0], error: true }));
-            return true;
-          } else {
-            console.log(`dispatching ${f[0]}`);
-            dispatch(onAltaChange({ name: f[0], error: false }));
-          }
-        });
 */
+        isValid = true;
         break;
       case 1:
+        if (forms?.infoClinica.aplica.value === '1') {
+          await infoClinicaSchema
+            .validate(forms?.infoClinica, { abortEarly: false })
+            .then((value) => {
+              dispatch(onInfoClinicaValidate({ value: [], isValid: true }));
+              isValid = true;
+            })
+            .catch((err) => {
+              if (err?.name === 'ValidationError') {
+                const payload = err.inner.map((e) => ({
+                  name: e.path.replace('.value', ''),
+                  error: true,
+                  errorText: e.message,
+                }));
+                dispatch(
+                  onInfoClinicaValidate({ value: payload, isValid: false })
+                );
+                isValid = false;
+              }
+            });
+        } else {
+          isValid = true;
+        }
+
         break;
       case 2:
+        await antEpidemioForm1Schema
+          .validate(forms?.antEpidemio.form1, { abortEarly: false })
+          .then((value) => {
+            dispatch(
+              onEpidemioValidate({ value: [], form: 'form1', isValid: true })
+            );
+            isValid = true;
+          })
+          .catch((err) => {
+            if (err?.name === 'ValidationError') {
+              const payload = err.inner.map((e) => ({
+                name: e.path.replace('.value', ''),
+                error: true,
+                errorText: e.message,
+              }));
+              dispatch(
+                onEpidemioValidate({
+                  value: payload,
+                  form: 'form1',
+                  isValid: false,
+                })
+              );
+              isValid = false;
+            }
+          });
         break;
       case 3:
+        await antEpidemioForm2Schema
+          .validate(forms?.antEpidemio.form2, { abortEarly: false })
+          .then((value) => {
+            dispatch(
+              onEpidemioValidate({ value: [], form: 'form2', isValid: true })
+            );
+            isValid = true;
+          })
+          .catch((err) => {
+            if (err?.name === 'ValidationError') {
+              const payload = err.inner.map((e) => ({
+                name: e.path.replace('.value', ''),
+                error: true,
+                errorText: e.message,
+              }));
+              dispatch(
+                onEpidemioValidate({
+                  value: payload,
+                  form: 'form2',
+                  isValid: false,
+                })
+              );
+              isValid = false;
+            }
+          });
         break;
       case 4:
         break;
@@ -185,7 +196,7 @@ const PacientesDatosNuevo = () => {
     }
 
     if (isValid) {
-      if (activeStep === 2 && trabajadorSalud !== '1') {
+      if (activeStep === 2 && trabajadorSalud.value !== '1') {
         setActiveStep((prevActiveStep) => prevActiveStep + 2);
       } else {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -201,7 +212,7 @@ const PacientesDatosNuevo = () => {
   };
 
   const handleBack = () => {
-    if (activeStep === 4 && trabajadorSalud !== '1') {
+    if (activeStep === 4 && trabajadorSalud.value !== '1') {
       setActiveStep((prevActiveStep) => prevActiveStep - 2);
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep - 1);

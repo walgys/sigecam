@@ -29,13 +29,13 @@ router.post('/session', (req, res) => {
   try {
     if (req.session.jwt) {
       const user = jwt.verify(req.session.jwt, JWT_SECRET);
-      res.json(createResponse(user, null, true));
+      res.json(createResponse(user, null, true)).end();
     } else {
-      res.json(createResponse(null, 'Session Expired'));
+      res.json(createResponse(null, 'Session Expired')).end();
     }
   } catch (err) {
     console.log('Invalid token');
-    res.json(createResponse(null, 'Invalid token'));
+    res.json(createResponse(null, 'Invalid token')).end();
   }
 });
 
@@ -66,24 +66,27 @@ router.post(
                 });
                 req.session.jwt = token;
 
-                res.json(createResponse(user, null, true));
+                res.json(createResponse(user, null, true)).end();
               } else {
-                res.json(
-                  createResponse(null, 'username or password incorrect')
-                );
+                res
+                  .json(createResponse(null, 'username or password incorrect'))
+                  .end();
               }
             })
             .catch((err) => {
               console.log(err);
             });
         } else {
-          res.json(createResponse(null, 'username or password incorrect'));
+          res
+            .json(createResponse(null, 'username or password incorrect'))
+            .end();
         }
       } else {
-        res.json(createResponse(null, 'Error with data'));
+        res.json(createResponse(null, 'Error with data')).end();
       }
     } catch (err) {
       console.log(err);
+      res.end();
     }
   }
 );

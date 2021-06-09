@@ -16,6 +16,7 @@ const queryAuth = async (userName) => {
     console.log(err);
   } finally {
     conn.removeAllListeners();
+    conn.release();
   }
 };
 
