@@ -21,6 +21,69 @@ const queryFormOptionsProvincias = async () => {
   }
 };
 
+const queryFormOptionsSexo = async () => {
+  const conn = await mysqlConn.getConnection();
+  try {
+    const [rows, fields] = await mysqlConn
+      .execute(`SELECT * FROM sexo`)
+      .then((results) => {
+        return results;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    return rows;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    conn.removeAllListeners();
+    conn.release();
+  }
+};
+
+const queryFormOptionsTipoDoc = async () => {
+  const conn = await mysqlConn.getConnection();
+  try {
+    const [rows, fields] = await mysqlConn
+      .execute(`SELECT * FROM tipo_documento`)
+      .then((results) => {
+        return results;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    return rows;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    conn.removeAllListeners();
+    conn.release();
+  }
+};
+
+const queryFormOptionsNacionalidades = async () => {
+  const conn = await mysqlConn.getConnection();
+  try {
+    const [rows, fields] = await mysqlConn
+      .execute(`SELECT * FROM nacionalidades ORDER BY nombre ASC`)
+      .then((results) => {
+        return results;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    return rows;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    conn.removeAllListeners();
+    conn.release();
+  }
+};
+
 const queryFormOptionsLocalidades = async (provincia) => {
   const conn = await mysqlConn.getConnection();
   try {
@@ -42,4 +105,10 @@ const queryFormOptionsLocalidades = async (provincia) => {
   }
 };
 
-module.exports = { queryFormOptionsProvincias, queryFormOptionsLocalidades };
+module.exports = {
+  queryFormOptionsProvincias,
+  queryFormOptionsLocalidades,
+  queryFormOptionsNacionalidades,
+  queryFormOptionsSexo,
+  queryFormOptionsTipoDoc,
+};

@@ -28,6 +28,7 @@ export const altaPacienteInitialState = {
   provincia: { value: '0', error: false, errorText: '' },
   localidad: { value: '0', error: false, errorText: '' },
   domicilio: { value: '', error: false, errorText: '' },
+  telefono: { value: '', error: false, errorText: '' },
   nroDom: { value: '', error: false, errorText: '' },
   domPiso: { value: '', error: false, errorText: '' },
   domDto: { value: '', error: false, errorText: '' },
@@ -88,6 +89,9 @@ export const formsSlice = createSlice({
     formOptions: {
       provincias: [],
       localidades: [],
+      nacionalidades: [],
+      tipoDoc: [],
+      sexo: [],
     },
   },
   reducers: {
@@ -196,6 +200,9 @@ export const formsSlice = createSlice({
   extraReducers: {
     [getFormOptionsProvincias.fulfilled]: (state, { payload }) => {
       state.formOptions.provincias = payload?.provincias;
+      state.formOptions.sexo = payload?.sexo;
+      state.formOptions.nacionalidades = payload?.nacionalidades;
+      state.formOptions.tipoDoc = payload?.tipoDoc;
     },
     [getFormOptionsLocalidades.fulfilled]: (state, { payload }) => {
       state.formOptions.localidades = payload?.localidades;

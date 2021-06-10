@@ -30,6 +30,9 @@ export const altaPacienteFormSchema = Yup.object().shape({
   domicilio: Yup.object({
     value: Yup.string().required('campo requerido'),
   }), // { value: '', error: false },
+  telefono: Yup.object({
+    value: Yup.string().required('campo requerido'),
+  }), // { value: '', error: false },
   nroDom: Yup.object({
     value: Yup.number()
       .required('campo requerido')

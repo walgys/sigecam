@@ -68,6 +68,11 @@ const useStyles = makeStyles((theme) => ({
 const AltaPacienteForm = () => {
   const classes = useStyles();
   const provincias = useSelector((state) => state.forms.formOptions.provincias);
+  const nacionalidades = useSelector(
+    (state) => state.forms.formOptions.nacionalidades
+  );
+  const sexo = useSelector((state) => state.forms.formOptions.sexo);
+  const tipoDoc = useSelector((state) => state.forms.formOptions.tipoDoc);
   const localidades =
     useSelector((state) => state.forms.formOptions.localidades) || [];
   const formData = useSelector((state) => state.forms.altaPaciente);
@@ -184,8 +189,11 @@ const AltaPacienteForm = () => {
                 }
               >
                 <option aria-label="None" value="0" />
-                <option value={1}>DNI</option>
-                <option value={2}>Pasaporte</option>
+                {tipoDoc?.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
               </NativeSelect>
             </FormControl>
           </div>
@@ -211,9 +219,11 @@ const AltaPacienteForm = () => {
                 }
               >
                 <option aria-label="None" value="0" />
-                <option value={1}>Masculino</option>
-                <option value={2}>Femenino</option>
-                <option value={3}>Otro</option>
+                {sexo?.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
               </NativeSelect>
             </FormControl>
             <TextField
@@ -261,13 +271,37 @@ const AltaPacienteForm = () => {
                 }
               >
                 <option aria-label="None" value="0" />
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
+                {nacionalidades?.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
               </NativeSelect>
             </FormControl>
           </div>
-          <div className={classes.formColumn}></div>
+          <div className={classes.formColumn}>
+            <TextField
+              className={classes.field}
+              required
+              id="telefono-required"
+              name="telefono"
+              label="Número de teléfono"
+              variant="outlined"
+              value={formData?.telefono.value}
+              error={formData?.telefono.error}
+              helperText={
+                formData?.telefono?.error ? formData?.telefono?.errorText : ''
+              }
+              onChange={(e) =>
+                dispatch(
+                  onAltaChange({
+                    name: e.target.name,
+                    value: e.target.value,
+                  })
+                )
+              }
+            />
+          </div>
           <div className={classes.formColumn}></div>
         </div>
         <div className={`${classes.form} ${classes.formContentBlue}`}>

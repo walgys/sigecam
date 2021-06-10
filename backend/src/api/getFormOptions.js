@@ -55,11 +55,19 @@ router.post('/getFormOptions/localidades', async (req, res) => {
 router.post('/internal/getFormOptions/provincias', async (req, res) => {
   try {
     const user = jwt.verify(req.headers.token, JWT_SECRET);
-    const queryResult = await queryFormOptions.queryFormOptionsProvincias();
+    const provincias = await queryFormOptions.queryFormOptionsProvincias();
+    const sexo = await queryFormOptions.queryFormOptionsSexo();
+    const nacionalidades =
+      await queryFormOptions.queryFormOptionsNacionalidades();
+    const tipoDoc = await queryFormOptions.queryFormOptionsTipoDoc();
+
     res
       .json({
         message: 'OK',
-        provincias: queryResult,
+        provincias,
+        sexo,
+        nacionalidades,
+        tipoDoc,
       })
       .end();
   } catch (err) {

@@ -402,150 +402,192 @@ const AntEpidemioForm2 = () => {
 const AntEpidemioForm3 = () => {
   const classes = useStyles();
   const [modalOpen, setModalOpen] = useState(false);
-  const [currContacto, setCurrContacto] = useState({
-    nombre: '',
-    dni: '',
-    telefono: '',
-    domicilio: '',
-    fechaUltimoContacto: Date.now(),
-    tipoContacto: '',
-  });
+
   const formData = useSelector((state) => state.forms.antEpidemio.form3);
   const dispatch = useDispatch();
 
-  const modalChildren = [
-    <TextField
-      required
-      id="nombre-required"
-      key="nombre-required"
-      inputProps={{ name: 'nombre' }}
-      label="Nombre"
-      variant="outlined"
-      onChange={(e) =>
-        setCurrContacto((prevState) => ({
-          ...prevState,
-          nombre: e.target.value,
-        }))
-      }
-    />,
-    <TextField
-      required
-      id="dni-required"
-      key="dni-required"
-      inputProps={{ name: 'dni' }}
-      label="DNI"
-      variant="outlined"
-      onChange={(e) =>
-        setCurrContacto((prevState) => ({
-          ...prevState,
-          dni: e.target.value,
-        }))
-      }
-    />,
-    <TextField
-      required
-      id="telefono-required"
-      key="telefono-required"
-      inputProps={{ name: 'telefono' }}
-      label="Telefono"
-      variant="outlined"
-      onChange={(e) =>
-        setCurrContacto((prevState) => ({
-          ...prevState,
-          telefono: e.target.value,
-        }))
-      }
-    />,
-    <TextField
-      required
-      id="domicilio-required"
-      key="domicilio-required"
-      inputProps={{ name: 'domicilio' }}
-      label="Domicilio"
-      variant="outlined"
-      onChange={(e) =>
-        setCurrContacto((prevState) => ({
-          ...prevState,
-          domicilio: e.target.value,
-        }))
-      }
-    />,
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <KeyboardDatePicker
-        margin="normal"
-        id="fechaUltimoContacto"
-        label="Fecha de inicio 1° síntoma(fis)"
-        format="MM/dd/yyyy"
-        inputProps={{ name: 'fechaFis' }}
-        value={Date.now()}
-        onChange={(e) =>
-          setCurrContacto((prevState) => ({
-            ...prevState,
-            fechaUltimoContacto: e.target.value,
-          }))
-        }
-        KeyboardButtonProps={{
-          'aria-label': 'change date',
-        }}
-      />
-    </MuiPickersUtilsProvider>,
-    <TextField
-      required
-      id="tipoContacto-required"
-      key="tipoContacto-required"
-      inputProps={{ name: 'tipoContacto' }}
-      label="Tipo de contacto"
-      variant="outlined"
-      onChange={(e) =>
-        setCurrContacto((prevState) => ({
-          ...prevState,
-          tipoContacto: e.target.value,
-        }))
-      }
-    />,
-  ];
-
-  const openAddContactoModal = () => {
-    setModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setCurrContacto({
-      nombre: '',
-      dni: '',
-      telefono: '',
-      domicilio: '',
-      fechaUltimoContacto: Date.now(),
-      tipoContacto: '',
+  const AddContactoModal = () => {
+    const [currContacto, setCurrContacto] = useState({
+      nombre: { value: '', error: false, errorText: '' },
+      apellido: { value: '', error: false, errorText: '' },
+      sexo: { value: '0', error: false, errorText: '' },
+      tipoDoc: { value: '0', error: false, errorText: '' },
+      numeroDoc: { value: '', error: false, errorText: '' },
+      nacionalidad: { value: '0', error: false, errorText: '' },
+      provincia: { value: '0', error: false, errorText: '' },
+      localidad: { value: '0', error: false, errorText: '' },
+      domicilio: { value: '', error: false, errorText: '' },
+      telefono: { value: '', error: false, errorText: '' },
+      nroDom: { value: '', error: false, errorText: '' },
+      domPiso: { value: '', error: false, errorText: '' },
+      domDto: { value: '', error: false, errorText: '' },
+      domCP: { value: '', error: false, errorText: '' },
+      domBarrio: { value: '', error: false, errorText: '' },
+      fechaUltimoContacto: { value: Date.now(), error: false, errorText: '' },
     });
-    setModalOpen(false);
-  };
-  const handleModalAdd = () => {
-    dispatch(onAddContactos(currContacto));
-    setCurrContacto({
-      nombre: '',
-      dni: '',
-      telefono: '',
-      domicilio: '',
-      fechaUltimoContacto: Date.now(),
-      tipoContacto: '',
-    });
-    setModalOpen(false);
-  };
 
-  return (
-    <>
+    const handleModalClose = () => {
+      setCurrContacto({
+        nombre: { value: '', error: false, errorText: '' },
+        apellido: { value: '', error: false, errorText: '' },
+        sexo: { value: '0', error: false, errorText: '' },
+        tipoDoc: { value: '0', error: false, errorText: '' },
+        numeroDoc: { value: '', error: false, errorText: '' },
+        nacionalidad: { value: '0', error: false, errorText: '' },
+        provincia: { value: '0', error: false, errorText: '' },
+        localidad: { value: '0', error: false, errorText: '' },
+        domicilio: { value: '', error: false, errorText: '' },
+        telefono: { value: '', error: false, errorText: '' },
+        nroDom: { value: '', error: false, errorText: '' },
+        domPiso: { value: '', error: false, errorText: '' },
+        domDto: { value: '', error: false, errorText: '' },
+        domCP: { value: '', error: false, errorText: '' },
+        domBarrio: { value: '', error: false, errorText: '' },
+        fechaUltimoContacto: { value: Date.now(), error: false, errorText: '' },
+      });
+      setModalOpen(false);
+    };
+    const handleModalAdd = () => {
+      dispatch(onAddContactos(currContacto));
+      setModalOpen(false);
+    };
+
+    return (
       <DialogModal
         onClose={() => handleModalClose()}
         onAdd={() => handleModalAdd()}
         open={modalOpen}
         title={'Agregar un contacto'}
       >
-        {modalChildren}
+        <div className={classes.formContent}>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="nombre-required"
+              key="nombre-required"
+              inputProps={{ name: 'nombre' }}
+              label="Nombre"
+              value={currContacto?.nombre.value}
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  nombre: e.target.value,
+                }))
+              }
+            />
+          </div>
+          <div className={classes.formColumn}></div>
+        </div>
+        <FormControl className={`${classes.formControl} ${classes.field} `}>
+          <InputLabel id="tipoDoc-label">Tipo Doc</InputLabel>
+          <NativeSelect
+            labelId="tipoDoc-label"
+            inputProps={{ name: 'tipoDoc' }}
+            id="tipoDoc"
+            value={currContacto?.tipoDoc.value}
+            error={currContacto?.tipoDoc.error}
+            helperText={
+              formData?.tipoDoc?.error ? formData?.tipoDoc?.errorText : ''
+            }
+            onChange={(e) =>
+              setCurrContacto((prevState) => ({
+                ...prevState,
+                nombre: e.target.value,
+              }))
+            }
+          >
+            <option aria-label="None" value="0" />
+            <option value={1}>DNI</option>
+            <option value={2}>Pasaporte</option>
+          </NativeSelect>
+        </FormControl>
+        <TextField
+          required
+          id="dni-required"
+          key="dni-required"
+          inputProps={{ name: 'dni' }}
+          label="DNI"
+          variant="outlined"
+          onChange={(e) =>
+            setCurrContacto((prevState) => ({
+              ...prevState,
+              dni: e.target.value,
+            }))
+          }
+        />
+        <TextField
+          required
+          id="telefono-required"
+          key="telefono-required"
+          inputProps={{ name: 'telefono' }}
+          label="Telefono"
+          variant="outlined"
+          onChange={(e) =>
+            setCurrContacto((prevState) => ({
+              ...prevState,
+              telefono: e.target.value,
+            }))
+          }
+        />
+        <TextField
+          required
+          id="domicilio-required"
+          key="domicilio-required"
+          inputProps={{ name: 'domicilio' }}
+          label="Domicilio"
+          variant="outlined"
+          onChange={(e) =>
+            setCurrContacto((prevState) => ({
+              ...prevState,
+              domicilio: e.target.value,
+            }))
+          }
+        />
+        ,
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <KeyboardDatePicker
+            margin="normal"
+            id="fechaUltimoContacto"
+            label="Fecha de inicio 1° síntoma(fis)"
+            format="MM/dd/yyyy"
+            inputProps={{ name: 'fechaFis' }}
+            value={Date.now()}
+            onChange={(e) =>
+              setCurrContacto((prevState) => ({
+                ...prevState,
+                fechaUltimoContacto: e.target.value,
+              }))
+            }
+            KeyboardButtonProps={{
+              'aria-label': 'change date',
+            }}
+          />
+        </MuiPickersUtilsProvider>
+        ,
+        <TextField
+          required
+          id="tipoContacto-required"
+          key="tipoContacto-required"
+          inputProps={{ name: 'tipoContacto' }}
+          label="Tipo de contacto"
+          variant="outlined"
+          onChange={(e) =>
+            setCurrContacto((prevState) => ({
+              ...prevState,
+              tipoContacto: e.target.value,
+            }))
+          }
+        />
       </DialogModal>
+    );
+  };
 
+  return (
+    <>
+      <AddContactoModal />
       <Container>
-        <form className={classes.form} noValidate autoComplete="off">
+        <div className={classes.form}>
           <h3 style={{ margin: '0.3rem' }}>
             Personas con las que estuvo en contacto durante la enfermedad
           </h3>
@@ -653,14 +695,14 @@ const AntEpidemioForm3 = () => {
                   color="primary"
                   aria-label="add"
                   className={classes.fab}
-                  onClick={() => openAddContactoModal()}
+                  onClick={() => setModalOpen(true)}
                 >
                   <AddIcon />
                 </Fab>
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </Container>
     </>
   );
