@@ -1,6 +1,10 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { onAltaChange, getFormOptionsLocalidades } from 'redux/Forms';
+import {
+  onAltaChange,
+  getFormOptionsLocalidades,
+  getFormOptionsProvincias,
+} from 'redux/Forms';
 import { makeStyles } from '@material-ui/core/styles';
 
 import {
@@ -73,23 +77,27 @@ const AltaPacienteForm = () => {
   );
   const sexo = useSelector((state) => state.forms.formOptions.sexo);
   const tipoDoc = useSelector((state) => state.forms.formOptions.tipoDoc);
-  const localidades =
-    useSelector((state) => state.forms.formOptions.localidades) || [];
+  const localidades = useSelector(
+    (state) => state.forms.formOptions.localidades
+  ) || [{ localidades: [] }];
   const formData = useSelector((state) => state.forms.altaPaciente);
   const provincia = useSelector(
     (state) => state.forms.altaPaciente.provincia.value
   );
+  const localidadesFiltradas = localidades.filter(
+    (l) => l.id === parseInt(provincia, 0)
+  )[0];
 
   const dispatch = useDispatch();
-  const getLocalidades = useCallback(() => {
-    if (provincia !== '0' && provincia !== null)
-      dispatch(getFormOptionsLocalidades(provincia));
-  }, [provincia, dispatch]);
+
+  const getProvincias = useCallback(() => {
+    dispatch(getFormOptionsProvincias());
+  }, [dispatch]);
 
   useEffect(() => {
-    getLocalidades();
+    getProvincias();
     return () => {};
-  }, [getLocalidades]);
+  }, [getProvincias]);
 
   return (
     <Container>
@@ -323,14 +331,14 @@ const AltaPacienteForm = () => {
                       ? formData?.provincia?.errorText
                       : ''
                   }
-                  onChange={(e) =>
+                  onChange={(e) => {
                     dispatch(
                       onAltaChange({
                         name: e.target.name,
                         value: e.target.value,
                       })
-                    )
-                  }
+                    );
+                  }}
                 >
                   <option aria-label="None" value="0" />
                   {provincias?.map((p) => (
@@ -367,7 +375,7 @@ const AltaPacienteForm = () => {
                   }
                 >
                   <option aria-label="None" value="0" />
-                  {localidades.map((p) => (
+                  {localidadesFiltradas?.localidades.map((p) => (
                     <option key={`${p.id}-${p.nombre}`} value={p.id}>
                       {p.nombre}
                     </option>

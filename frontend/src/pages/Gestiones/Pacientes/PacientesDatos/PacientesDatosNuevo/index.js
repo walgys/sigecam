@@ -223,11 +223,6 @@ const PacientesDatosNuevo = () => {
     setActiveStep(0);
   };
 
-  useEffect(() => {
-    dispatch(getFormOptionsProvincias());
-    return () => {};
-  }, [dispatch]);
-
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} alternativeLabel>

@@ -4,16 +4,9 @@ import { useDispatch } from 'react-redux';
 import formsAPI from './formsAPI';
 
 export const getFormOptionsProvincias = createAsyncThunk(
-  'forms/getFormOptions/provincias',
+  'forms/getFormOptions',
   async () => {
     return await formsAPI.getFormOptionsProvincias();
-  }
-);
-
-export const getFormOptionsLocalidades = createAsyncThunk(
-  'forms/getFormOptions/localidades',
-  async (provincia) => {
-    return await formsAPI.getFormOptionsLocalidades(provincia);
   }
 );
 
@@ -88,7 +81,7 @@ export const formsSlice = createSlice({
     infoClinica: infoClinicaInitialState,
     formOptions: {
       provincias: [],
-      localidades: [],
+      localidades: [{ id: 0, localidades: [{}] }],
       nacionalidades: [],
       tipoDoc: [],
       sexo: [],
@@ -200,12 +193,10 @@ export const formsSlice = createSlice({
   extraReducers: {
     [getFormOptionsProvincias.fulfilled]: (state, { payload }) => {
       state.formOptions.provincias = payload?.provincias;
+      state.formOptions.localidades = payload?.localidades;
       state.formOptions.sexo = payload?.sexo;
       state.formOptions.nacionalidades = payload?.nacionalidades;
       state.formOptions.tipoDoc = payload?.tipoDoc;
-    },
-    [getFormOptionsLocalidades.fulfilled]: (state, { payload }) => {
-      state.formOptions.localidades = payload?.localidades;
     },
   },
 });

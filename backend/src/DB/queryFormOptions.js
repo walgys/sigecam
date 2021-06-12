@@ -84,11 +84,11 @@ const queryFormOptionsNacionalidades = async () => {
   }
 };
 
-const queryFormOptionsLocalidades = async (provincia) => {
+const queryFormOptionsLocalidades = async () => {
   const conn = await mysqlConn.getConnection();
   try {
     const [rows, fields] = await mysqlConn
-      .execute(`SELECT * FROM localidades where idProvincia=${provincia}`)
+      .execute(`SELECT * FROM localidades`)
       .then((results) => {
         return results;
       })

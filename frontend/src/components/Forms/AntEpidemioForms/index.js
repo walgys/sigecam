@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { onEpidemioChange, onAddContactos } from 'redux/Forms';
+import {
+  onEpidemioChange,
+  onAddContactos,
+  getFormOptionsLocalidades,
+  getFormOptionsProvincias,
+} from 'redux/Forms';
 import {
   Button,
   Card,
@@ -402,11 +407,22 @@ const AntEpidemioForm2 = () => {
 const AntEpidemioForm3 = () => {
   const classes = useStyles();
   const [modalOpen, setModalOpen] = useState(false);
-
   const formData = useSelector((state) => state.forms.antEpidemio.form3);
-  const dispatch = useDispatch();
 
   const AddContactoModal = () => {
+    const provincias = useSelector(
+      (state) => state.forms.formOptions.provincias
+    );
+    const nacionalidades = useSelector(
+      (state) => state.forms.formOptions.nacionalidades
+    );
+    const sexo = useSelector((state) => state.forms.formOptions.sexo);
+    const tipoDoc = useSelector((state) => state.forms.formOptions.tipoDoc);
+    const localidades =
+      useSelector((state) => state.forms.formOptions.localidades) || [];
+
+    const dispatch = useDispatch();
+
     const [currContacto, setCurrContacto] = useState({
       nombre: { value: '', error: false, errorText: '' },
       apellido: { value: '', error: false, errorText: '' },
@@ -424,7 +440,14 @@ const AntEpidemioForm3 = () => {
       domCP: { value: '', error: false, errorText: '' },
       domBarrio: { value: '', error: false, errorText: '' },
       fechaUltimoContacto: { value: Date.now(), error: false, errorText: '' },
+      tipoContacto: { value: '0', error: false, errorText: '' },
     });
+    const localidadesFiltradas =
+      currContacto.provincia.value === '0'
+        ? { localidades: [] }
+        : localidades.filter(
+            (l) => l.id === parseInt(currContacto.provincia.value, 0)
+          )[0];
 
     const handleModalClose = () => {
       setCurrContacto({
@@ -444,6 +467,7 @@ const AntEpidemioForm3 = () => {
         domCP: { value: '', error: false, errorText: '' },
         domBarrio: { value: '', error: false, errorText: '' },
         fechaUltimoContacto: { value: Date.now(), error: false, errorText: '' },
+        tipoContacto: { value: '0', error: false, errorText: '' },
       });
       setModalOpen(false);
     };
@@ -472,64 +496,145 @@ const AntEpidemioForm3 = () => {
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
                   ...prevState,
-                  nombre: e.target.value,
+                  nombre: { ...prevState.nombre, value: e.target.value },
+                }))
+              }
+            />
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
+              <InputLabel id="tipoDoc-label">Tipo Doc</InputLabel>
+              <NativeSelect
+                labelId="tipoDoc-label"
+                inputProps={{ name: 'tipoDoc' }}
+                id="tipoDoc"
+                value={currContacto?.tipoDoc.value}
+                error={currContacto?.tipoDoc.error}
+                helperText={
+                  formData?.tipoDoc?.error ? formData?.tipoDoc?.errorText : ''
+                }
+                onChange={(e) =>
+                  setCurrContacto((prevState) => ({
+                    ...prevState,
+                    tipoDoc: { ...prevState.tipoDoc, value: e.target.value },
+                  }))
+                }
+              >
+                <option aria-label="None" value="0" />
+                {tipoDoc?.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
+              <InputLabel id="provincia-label">Provincia</InputLabel>
+              <NativeSelect
+                labelId="provincia-label"
+                inputProps={{ name: 'provincia' }}
+                id="provincia"
+                value={currContacto?.provincia.value}
+                error={currContacto?.provincia.error}
+                helperText={
+                  formData?.provincia?.error
+                    ? formData?.provincia?.errorText
+                    : ''
+                }
+                onChange={(e) =>
+                  setCurrContacto((prevState) => ({
+                    ...prevState,
+                    provincia: {
+                      ...prevState.provincia,
+                      value: e.target.value,
+                    },
+                  }))
+                }
+              >
+                <option aria-label="None" value="0" />
+                {provincias?.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
+          </div>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="apellido-required"
+              key="apellido-required"
+              inputProps={{ name: 'apellido' }}
+              label="apellido"
+              value={currContacto?.apellido.value}
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  apellido: { ...prevState.apellido, value: e.target.value },
+                }))
+              }
+            />
+            <TextField
+              required
+              id="numeroDoc-required"
+              key="numeroDoc-required"
+              inputProps={{ name: 'numeroDoc' }}
+              label="Nro de documento"
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  numeroDoc: { ...prevState.numeroDoc, value: e.target.value },
+                }))
+              }
+            />
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
+              <InputLabel id="localidad-label">Localidad</InputLabel>
+              <NativeSelect
+                labelId="localidad-label"
+                inputProps={{ name: 'localidad' }}
+                id="localidad"
+                value={currContacto?.localidad.value}
+                error={currContacto?.localidad.error}
+                helperText={
+                  formData?.localidad?.error
+                    ? formData?.localidad?.errorText
+                    : ''
+                }
+                onChange={(e) =>
+                  setCurrContacto((prevState) => ({
+                    ...prevState,
+                    localidad: {
+                      ...prevState.localidad,
+                      value: e.target.value,
+                    },
+                  }))
+                }
+              >
+                <option aria-label="None" value="0" />
+                {localidadesFiltradas.localidades.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
+            <TextField
+              required
+              id="telefono-required"
+              key="telefono-required"
+              inputProps={{ name: 'telefono' }}
+              label="Telefono"
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  telefono: { ...prevState.telefono, value: e.target.value },
                 }))
               }
             />
           </div>
-          <div className={classes.formColumn}></div>
         </div>
-        <FormControl className={`${classes.formControl} ${classes.field} `}>
-          <InputLabel id="tipoDoc-label">Tipo Doc</InputLabel>
-          <NativeSelect
-            labelId="tipoDoc-label"
-            inputProps={{ name: 'tipoDoc' }}
-            id="tipoDoc"
-            value={currContacto?.tipoDoc.value}
-            error={currContacto?.tipoDoc.error}
-            helperText={
-              formData?.tipoDoc?.error ? formData?.tipoDoc?.errorText : ''
-            }
-            onChange={(e) =>
-              setCurrContacto((prevState) => ({
-                ...prevState,
-                nombre: e.target.value,
-              }))
-            }
-          >
-            <option aria-label="None" value="0" />
-            <option value={1}>DNI</option>
-            <option value={2}>Pasaporte</option>
-          </NativeSelect>
-        </FormControl>
-        <TextField
-          required
-          id="dni-required"
-          key="dni-required"
-          inputProps={{ name: 'dni' }}
-          label="DNI"
-          variant="outlined"
-          onChange={(e) =>
-            setCurrContacto((prevState) => ({
-              ...prevState,
-              dni: e.target.value,
-            }))
-          }
-        />
-        <TextField
-          required
-          id="telefono-required"
-          key="telefono-required"
-          inputProps={{ name: 'telefono' }}
-          label="Telefono"
-          variant="outlined"
-          onChange={(e) =>
-            setCurrContacto((prevState) => ({
-              ...prevState,
-              telefono: e.target.value,
-            }))
-          }
-        />
         <TextField
           required
           id="domicilio-required"
@@ -540,7 +645,7 @@ const AntEpidemioForm3 = () => {
           onChange={(e) =>
             setCurrContacto((prevState) => ({
               ...prevState,
-              domicilio: e.target.value,
+              domicilio: { ...prevState.domicilio, value: e.target.value },
             }))
           }
         />
@@ -556,7 +661,10 @@ const AntEpidemioForm3 = () => {
             onChange={(e) =>
               setCurrContacto((prevState) => ({
                 ...prevState,
-                fechaUltimoContacto: e.target.value,
+                fechaUltimoContacto: {
+                  ...prevState.fechaUltimoContacto,
+                  value: e.getTime(),
+                },
               }))
             }
             KeyboardButtonProps={{
@@ -575,7 +683,10 @@ const AntEpidemioForm3 = () => {
           onChange={(e) =>
             setCurrContacto((prevState) => ({
               ...prevState,
-              tipoContacto: e.target.value,
+              tipoContacto: {
+                ...prevState.tipoContacto,
+                value: e.target.value,
+              },
             }))
           }
         />
