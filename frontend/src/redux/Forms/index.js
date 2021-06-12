@@ -81,7 +81,7 @@ export const formsSlice = createSlice({
     infoClinica: infoClinicaInitialState,
     formOptions: {
       provincias: [],
-      localidades: [{ id: 0, localidades: [{}] }],
+      localidades: [{ id: 0, localidades: [] }],
       nacionalidades: [],
       tipoDoc: [],
       sexo: [],

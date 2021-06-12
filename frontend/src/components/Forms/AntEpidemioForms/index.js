@@ -56,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     columnGap: '2rem',
   },
+  formContentWrap: {
+    flexWrap: 'wrap',
+  },
   formContentBlue: {
     width: '100%',
     background: '#EBF2FA',
@@ -413,9 +416,6 @@ const AntEpidemioForm3 = () => {
     const provincias = useSelector(
       (state) => state.forms.formOptions.provincias
     );
-    const nacionalidades = useSelector(
-      (state) => state.forms.formOptions.nacionalidades
-    );
     const sexo = useSelector((state) => state.forms.formOptions.sexo);
     const tipoDoc = useSelector((state) => state.forms.formOptions.tipoDoc);
     const localidades =
@@ -472,7 +472,26 @@ const AntEpidemioForm3 = () => {
       setModalOpen(false);
     };
     const handleModalAdd = () => {
-      dispatch(onAddContactos(currContacto));
+      dispatch(
+        onAddContactos({
+          nombre: currContacto.nombre.value,
+          apellido: currContacto.apellido.value,
+          sexo: currContacto.sexo.value,
+          numeroDoc: currContacto.numeroDoc.value,
+          nacionalidad: currContacto.nacionalidad.value,
+          provincia: currContacto.provincia.value,
+          localidad: currContacto.localidad.value,
+          domicilio: currContacto.domicilio.value,
+          telefono: currContacto.telefono.value,
+          nroDom: currContacto.nroDom.value,
+          domPiso: currContacto.domPiso.value,
+          domDto: currContacto.domDto.value,
+          domCP: currContacto.domCP.value,
+          domBarrio: currContacto.domBarrio.value,
+          fechaUltimoContacto: currContacto.fechaUltimoContacto.value,
+          tipoContacto: currContacto.tipoContacto.value,
+        })
+      );
       setModalOpen(false);
     };
 
@@ -500,6 +519,27 @@ const AntEpidemioForm3 = () => {
                 }))
               }
             />
+          </div>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="apellido-required"
+              key="apellido-required"
+              inputProps={{ name: 'apellido' }}
+              label="apellido"
+              value={currContacto?.apellido.value}
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  apellido: { ...prevState.apellido, value: e.target.value },
+                }))
+              }
+            />
+          </div>
+        </div>
+        <div className={classes.formContent}>
+          <div className={classes.formColumn}>
             <FormControl className={`${classes.formControl} ${classes.field} `}>
               <InputLabel id="tipoDoc-label">Tipo Doc</InputLabel>
               <NativeSelect
@@ -509,7 +549,9 @@ const AntEpidemioForm3 = () => {
                 value={currContacto?.tipoDoc.value}
                 error={currContacto?.tipoDoc.error}
                 helperText={
-                  formData?.tipoDoc?.error ? formData?.tipoDoc?.errorText : ''
+                  currContacto?.tipoDoc?.error
+                    ? currContacto?.tipoDoc?.errorText
+                    : ''
                 }
                 onChange={(e) =>
                   setCurrContacto((prevState) => ({
@@ -526,6 +568,29 @@ const AntEpidemioForm3 = () => {
                 ))}
               </NativeSelect>
             </FormControl>
+          </div>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="numeroDoc-required"
+              key="numeroDoc-required"
+              inputProps={{ name: 'numeroDoc' }}
+              label="Nro de documento"
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  numeroDoc: {
+                    ...prevState.numeroDoc,
+                    value: e.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+        </div>
+        <div className={classes.formContent}>
+          <div className={classes.formColumn}>
             <FormControl className={`${classes.formControl} ${classes.field} `}>
               <InputLabel id="provincia-label">Provincia</InputLabel>
               <NativeSelect
@@ -535,8 +600,8 @@ const AntEpidemioForm3 = () => {
                 value={currContacto?.provincia.value}
                 error={currContacto?.provincia.error}
                 helperText={
-                  formData?.provincia?.error
-                    ? formData?.provincia?.errorText
+                  currContacto?.provincia?.error
+                    ? currContacto?.provincia?.errorText
                     : ''
                 }
                 onChange={(e) =>
@@ -559,35 +624,6 @@ const AntEpidemioForm3 = () => {
             </FormControl>
           </div>
           <div className={classes.formColumn}>
-            <TextField
-              required
-              id="apellido-required"
-              key="apellido-required"
-              inputProps={{ name: 'apellido' }}
-              label="apellido"
-              value={currContacto?.apellido.value}
-              variant="outlined"
-              onChange={(e) =>
-                setCurrContacto((prevState) => ({
-                  ...prevState,
-                  apellido: { ...prevState.apellido, value: e.target.value },
-                }))
-              }
-            />
-            <TextField
-              required
-              id="numeroDoc-required"
-              key="numeroDoc-required"
-              inputProps={{ name: 'numeroDoc' }}
-              label="Nro de documento"
-              variant="outlined"
-              onChange={(e) =>
-                setCurrContacto((prevState) => ({
-                  ...prevState,
-                  numeroDoc: { ...prevState.numeroDoc, value: e.target.value },
-                }))
-              }
-            />
             <FormControl className={`${classes.formControl} ${classes.field} `}>
               <InputLabel id="localidad-label">Localidad</InputLabel>
               <NativeSelect
@@ -597,8 +633,8 @@ const AntEpidemioForm3 = () => {
                 value={currContacto?.localidad.value}
                 error={currContacto?.localidad.error}
                 helperText={
-                  formData?.localidad?.error
-                    ? formData?.localidad?.errorText
+                  currContacto?.localidad?.error
+                    ? currContacto?.localidad?.errorText
                     : ''
                 }
                 onChange={(e) =>
@@ -619,6 +655,41 @@ const AntEpidemioForm3 = () => {
                 ))}
               </NativeSelect>
             </FormControl>
+          </div>
+        </div>
+        <div className={classes.formContent}>
+          <div className={classes.formColumn}>
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
+              <InputLabel id="sexo-label">Sexo</InputLabel>
+              <NativeSelect
+                labelId="sexo-label"
+                inputProps={{ name: 'sexo' }}
+                id="sexo"
+                value={currContacto?.sexo.value}
+                error={currContacto?.sexo.error}
+                helperText={
+                  currContacto?.sexo?.error ? currContacto?.sexo?.errorText : ''
+                }
+                onChange={(e) =>
+                  setCurrContacto((prevState) => ({
+                    ...prevState,
+                    sexo: {
+                      ...prevState.sexo,
+                      value: e.target.value,
+                    },
+                  }))
+                }
+              >
+                <option aria-label="None" value="0" />
+                {sexo?.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
+          </div>
+          <div className={classes.formColumn}>
             <TextField
               required
               id="telefono-required"
@@ -635,61 +706,119 @@ const AntEpidemioForm3 = () => {
             />
           </div>
         </div>
-        <TextField
-          required
-          id="domicilio-required"
-          key="domicilio-required"
-          inputProps={{ name: 'domicilio' }}
-          label="Domicilio"
-          variant="outlined"
-          onChange={(e) =>
-            setCurrContacto((prevState) => ({
-              ...prevState,
-              domicilio: { ...prevState.domicilio, value: e.target.value },
-            }))
-          }
-        />
-        ,
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            margin="normal"
-            id="fechaUltimoContacto"
-            label="Fecha de inicio 1° síntoma(fis)"
-            format="MM/dd/yyyy"
-            inputProps={{ name: 'fechaFis' }}
-            value={Date.now()}
-            onChange={(e) =>
-              setCurrContacto((prevState) => ({
-                ...prevState,
-                fechaUltimoContacto: {
-                  ...prevState.fechaUltimoContacto,
-                  value: e.getTime(),
-                },
-              }))
-            }
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
-            }}
-          />
-        </MuiPickersUtilsProvider>
-        ,
-        <TextField
-          required
-          id="tipoContacto-required"
-          key="tipoContacto-required"
-          inputProps={{ name: 'tipoContacto' }}
-          label="Tipo de contacto"
-          variant="outlined"
-          onChange={(e) =>
-            setCurrContacto((prevState) => ({
-              ...prevState,
-              tipoContacto: {
-                ...prevState.tipoContacto,
-                value: e.target.value,
-              },
-            }))
-          }
-        />
+        <div className={classes.formContent}>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="domicilio-required"
+              key="domicilio-required"
+              inputProps={{ name: 'domicilio' }}
+              label="Domicilio"
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  domicilio: { ...prevState.domicilio, value: e.target.value },
+                }))
+              }
+            />
+          </div>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="nroDom-required"
+              key="nroDom-required"
+              inputProps={{ name: 'nroDom' }}
+              label="Nro"
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  nroDom: { ...prevState.domicilio, value: e.target.value },
+                }))
+              }
+            />
+          </div>
+        </div>
+        <div className={classes.formContent}>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="domPiso-required"
+              key="domPiso-required"
+              inputProps={{ name: 'domPiso' }}
+              label="domPiso"
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  domPiso: { ...prevState.domPiso, value: e.target.value },
+                }))
+              }
+            />
+          </div>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="domDto-required"
+              key="domDto-required"
+              inputProps={{ name: 'domDto' }}
+              label="domDto"
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  domDto: { ...prevState.domDto, value: e.target.value },
+                }))
+              }
+            />
+          </div>
+        </div>
+        <div className={classes.formContent}>
+          <div className={classes.formColumn}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                margin="normal"
+                id="fechaUltimoContacto"
+                label="Fecha 1° síntoma(fis)"
+                format="MM/dd/yyyy"
+                inputProps={{ name: 'fechaFis' }}
+                value={Date.now()}
+                onChange={(e) =>
+                  setCurrContacto((prevState) => ({
+                    ...prevState,
+                    fechaUltimoContacto: {
+                      ...prevState.fechaUltimoContacto,
+                      value: e.getTime(),
+                    },
+                  }))
+                }
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </div>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="tipoContacto-required"
+              key="tipoContacto-required"
+              inputProps={{ name: 'tipoContacto' }}
+              label="Tipo de contacto"
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  tipoContacto: {
+                    ...prevState.tipoContacto,
+                    value: e.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+        </div>
       </DialogModal>
     );
   };
@@ -704,10 +833,12 @@ const AntEpidemioForm3 = () => {
           </h3>
           <div className={classes.formContent}>
             <div className={classes.form}>
-              <div className={classes.formContent}>
-                {formData?.contactos.value.map((c, idx) => (
+              <div
+                className={`${classes.formContent} ${classes.formContentWrap}`}
+              >
+                {formData.contactos.value.map((c, idx) => (
                   <Card
-                    key={`${idx}-${c.dni.value}`}
+                    key={`${idx}-${c.dni}`}
                     className={classes.cardRoot}
                     variant="outlined"
                   >
@@ -724,7 +855,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.nombre.value}
+                        {c.nombre}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -738,7 +869,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.dni.value}
+                        {c.dni}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -752,7 +883,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.telefono.value}
+                        {c.telefono}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -766,7 +897,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.domicilio.value}
+                        {c.domicilio}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -780,7 +911,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.fechaUltimoContacto.value}
+                        {c.fechaUltimoContacto}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -794,7 +925,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.tipoContacto.value}
+                        {c.tipoContacto}
                       </Typography>
                     </CardContent>
                     <CardActions className={classes.button}>
