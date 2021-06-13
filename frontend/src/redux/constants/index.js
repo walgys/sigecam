@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export const constants = createSlice({
-  name: 'colors',
+  name: 'constants',
   initialState: {
     colors: {
       blue: 'blue',

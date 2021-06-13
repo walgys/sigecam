@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_URL = 'http://127.0.0.1:5000';
+import { API_URL } from 'utils';
 
 export const validateUser = async (userName, password) => {
   return axios({
@@ -27,7 +26,10 @@ export const validateSession = async () => {
     withCredentials: true,
   })
     .then((result) => result.data)
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      return { isAuth: false, data: {}, errorMessage: 'Error' };
+    });
 };
 
 export default { validateUser, validateSession };

@@ -7,9 +7,12 @@ import {
 } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { validateSession } from './redux/user';
+import { setOpenSnack, setSnack } from 'redux/variables';
 import { useEffect } from 'react';
 import NavBar from './components/NavBar';
 import * as pages from './pages/index';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const pageComponentMap = {
   Gestiones: <pages.Gestiones />,
@@ -35,12 +38,17 @@ const pageComponentMap = {
   Logs: <pages.Logs />,
 };
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const accessByUserType = useSelector(
     (state) => state.constants.accessByUserType
   );
+  const variables = useSelector((state) => state.variables);
   const { isAuth, sessionChecked } = user;
 
   const allowedRoutes = accessByUserType?.filter(
@@ -69,6 +77,10 @@ const App = () => {
     </Switch>
   );
 
+  const handleSnackClose = () => {
+    dispatch(setOpenSnack(false));
+  };
+
   useEffect(() => {
     if (sessionChecked === false) dispatch(validateSession());
     return () => {
@@ -78,6 +90,15 @@ const App = () => {
 
   return (
     <div className="App">
+      <Snackbar
+        open={variables.openSnack}
+        autoHideDuration={6000}
+        onClose={handleSnackClose}
+      >
+        <Alert onClose={handleSnackClose} severity={variables.snack.type}>
+          {variables.snack.message}
+        </Alert>
+      </Snackbar>
       <Router>
         <NavBar isAuth={isAuth} />
         {sessionChecked ? routingLogic : 'loading...'}

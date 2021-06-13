@@ -27,7 +27,16 @@ const useStyles = makeStyles({
 
 const DialogModal = (props) => {
   const classes = useStyles();
-  const { onClose, onAdd, title, open, children } = props;
+  const {
+    onClose,
+    onAdd,
+    title,
+    open,
+    children,
+    cancelText = 'Cancelar',
+    acceptText = 'Agregar',
+    showButtons = true,
+  } = props;
 
   return (
     <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open}>
@@ -36,24 +45,26 @@ const DialogModal = (props) => {
       </DialogTitle>
       <DialogContent className={classes.root}>
         {children}
-        <Container className={classes.buttons}>
-          <Button
-            size="small"
-            variant="contained"
-            color="primary"
-            onClick={onClose}
-          >
-            Cancelar
-          </Button>
-          <Button
-            size="small"
-            variant="contained"
-            color="primary"
-            onClick={onAdd}
-          >
-            Agregar
-          </Button>
-        </Container>
+        {showButtons && (
+          <Container className={classes.buttons}>
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={onClose}
+            >
+              {cancelText}
+            </Button>
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={onAdd}
+            >
+              {acceptText}
+            </Button>
+          </Container>
+        )}
       </DialogContent>
     </Dialog>
   );

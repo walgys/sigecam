@@ -14,6 +14,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import AltaPacienteForm from 'components/Forms/AltaPacienteForm';
 import InfoClinicaForm from 'components/Forms/InfoClinicaForm';
+import DialogModal from 'components/DialogModal';
 import {
   AntEpidemioForm1,
   AntEpidemioForm2,
@@ -25,6 +26,10 @@ import {
   antEpidemioForm1Schema,
   antEpidemioForm2Schema,
 } from './validation';
+import { CircularProgress } from '@material-ui/core';
+import { crearPaciente } from 'services/crearPaciente';
+import { setSnack, setOpenSnack } from 'redux/variables';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  colorPrimary: {
+    marginRight: '1rem',
+  },
 }));
 
 function getSteps() {
@@ -51,25 +59,25 @@ function getSteps() {
     'Datos personales',
     'Información clínica',
     'Antecedentes epidemiológicos',
-    'Antecedentes epidemiológicos 2',
-    'Antecedentes epidemiológicos 3',
+    'Trabajador de salud',
+    'Contactos',
   ];
 }
 
 function getStepContent(stepIndex) {
   switch (stepIndex) {
     case 0:
-      return 'Select campaign settings...';
+      return 'Datos Personales';
     case 1:
-      return 'What is an ad group anyways?';
+      return 'Información clínica';
     case 2:
-      return 'This is the bit I really care about!';
+      return 'Antecedentes Epidemiológicos';
     case 3:
-      return 'This is the bit I really care about!';
+      return 'Trabajador de salud';
     case 4:
-      return 'This is the bit I really care about!';
+      return 'Contactos';
     default:
-      return 'Unknown stepIndex';
+      return 'Índice desconocido';
   }
 }
 
@@ -77,10 +85,12 @@ const PacientesDatosNuevo = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = React.useState(0);
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isCommiting, setIsCommiting] = useState(false);
   const trabajadorSalud = useSelector(
     (state) => state.forms.antEpidemio.form1.trabajadorSalud
   );
+  const history = useHistory();
   const forms = useSelector((state) => state.forms);
 
   const steps = getSteps();
@@ -204,8 +214,26 @@ const PacientesDatosNuevo = () => {
     }
   };
 
+  const commitData = async () => {
+    setIsCommiting(true);
+    const result = await crearPaciente(forms);
+    if (result?.message === 'OK') {
+      dispatch(setSnack({ type: 'success', message: 'Nuevo paciente creado' }));
+      dispatch(setOpenSnack(true));
+      history.push('/gestiones/pacientes/datos');
+    }
+
+    if (result?.message === 'ERROR') {
+      dispatch(setSnack({ type: 'error', message: result.error }));
+      dispatch(setOpenSnack(true));
+    }
+
+    setIsCommiting(false);
+  };
+
   const handleNext = async () => {
     if (activeStep === steps.length - 1) {
+      setModalOpen(true);
     } else {
       checkMissingData();
     }
@@ -223,8 +251,40 @@ const PacientesDatosNuevo = () => {
     setActiveStep(0);
   };
 
+  const ConfirmationDialog = () => {
+    const handleModalYes = () => {
+      commitData();
+      setModalOpen(false);
+    };
+
+    const handleModalClose = () => {
+      setModalOpen(false);
+    };
+
+    return (
+      <DialogModal
+        onClose={() => handleModalClose()}
+        onAdd={() => handleModalYes()}
+        open={modalOpen}
+        title={'Crear Paciente'}
+        cancelText="NO"
+        acceptText="SI"
+      >
+        <Typography
+          className={classes.title}
+          color="textSecondary"
+          gutterBottom
+        >
+          ¿ Está seguro que desea crear el Paciente ?
+        </Typography>
+      </DialogModal>
+    );
+  };
+
   return (
     <div className={classes.root}>
+      <ConfirmationDialog />
+
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
           <Step key={label}>
@@ -243,7 +303,7 @@ const PacientesDatosNuevo = () => {
         {activeStep === steps.length ? (
           <div>
             <Typography className={classes.instructions}>
-              Alta Generada
+              Se ha creado el paciente
             </Typography>
             <Button onClick={handleReset}>Volver</Button>
           </div>
@@ -258,10 +318,21 @@ const PacientesDatosNuevo = () => {
                 onClick={handleBack}
                 className={classes.backButton}
               >
-                Back
+                Volver
               </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Guardar' : 'Continuar'}
+              <Button
+                disabled={isCommiting}
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+              >
+                {isCommiting && (
+                  <CircularProgress
+                    size="1rem"
+                    className={classes.colorPrimary}
+                  />
+                )}
+                {activeStep === steps.length - 1 ? 'Crear' : 'Continuar'}
               </Button>
             </div>
           </div>

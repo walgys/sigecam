@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import userAPI from './userAPI';
+import { setSnack, setOpenSnack } from 'redux/variables';
 
 export const validateUser = createAsyncThunk(
   'user/validateUser',
@@ -11,8 +12,15 @@ export const validateUser = createAsyncThunk(
 
 export const validateSession = createAsyncThunk(
   'user/validateSession',
-  async () => {
-    return await userAPI.validateSession();
+  async (payload, thunkAPI) => {
+    const result = await userAPI.validateSession();
+    if (result.errorMessage !== null) {
+      thunkAPI.dispatch(
+        setSnack({ type: 'error', message: result.errorMessage })
+      );
+      thunkAPI.dispatch(setOpenSnack(true));
+    }
+    return result;
   }
 );
 

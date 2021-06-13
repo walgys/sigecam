@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 var current = new Date();
-const tomorrow = new Date(current.getTime() + 864000);
+const tomorrow = new Date(current.getTime() + 8640000);
 
 export const addContactoModalSchema = Yup.object().shape({
   nombre: Yup.object({ value: Yup.string().required('campo requerido') }), // { value: '', error: false },

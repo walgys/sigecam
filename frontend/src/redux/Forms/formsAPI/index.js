@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_URL = 'http://127.0.0.1:5000';
+import { API_URL } from 'utils';
 
 export const getFormOptionsProvincias = async () => {
   return axios({

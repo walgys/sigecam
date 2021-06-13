@@ -915,7 +915,7 @@ const AntEpidemioForm3 = () => {
               <KeyboardDatePicker
                 margin="normal"
                 id="fechaUltimoContacto"
-                label="Fecha 1° síntoma(fis)"
+                label="Ultimo Contacto"
                 format="MM/dd/yyyy"
                 error={currContacto?.fechaUltimoContacto.error}
                 helperText={
