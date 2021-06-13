@@ -147,6 +147,12 @@ export const formsSlice = createSlice({
           (c) => c.id !== payload.id
         );
     },
+    onDelContactos: (state, { payload }) => {
+      state.antEpidemio.form3.contactos.value =
+        state.antEpidemio.form3.contactos.value.filter(
+          (c) => c.id !== payload.id
+        );
+    },
     onAltaValidate: (state, { payload }) => {
       if (typeof payload?.value !== 'undefined') {
         Object.entries(state.altaPaciente).map(([k, ap]) => {
@@ -210,6 +216,7 @@ export const {
   onDelComorbilidades,
   onAddComorbilidades,
   onAddContactos,
+  onDelContactos,
   onAltaValidate,
   onInfoClinicaValidate,
   onEpidemioValidate,

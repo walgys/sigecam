@@ -1,12 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  onEpidemioChange,
-  onAddContactos,
-  getFormOptionsLocalidades,
-  getFormOptionsProvincias,
-} from 'redux/Forms';
+import { onEpidemioChange, onAddContactos, onDelContactos } from 'redux/Forms';
+import AddIcon from '@material-ui/icons/Add';
 import {
   Button,
   Card,
@@ -14,15 +10,9 @@ import {
   CardContent,
   Container,
   Fab,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
   InputLabel,
-  MenuItem,
+  FormControl,
   NativeSelect,
-  Radio,
-  RadioGroup,
-  Select,
   TextField,
   Typography,
 } from '@material-ui/core';
@@ -32,8 +22,8 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import AddIcon from '@material-ui/icons/Add';
 import DialogModal from 'components/DialogModal';
+import { addContactoModalSchema } from './validation';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -108,12 +98,16 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     padding: '0',
   },
+  button: {
+    justifyContent: 'center',
+    padding: '0',
+  },
   title: {
     fontSize: 14,
     fontWeight: 700,
   },
   subTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: 500,
   },
 }));
@@ -411,6 +405,8 @@ const AntEpidemioForm3 = () => {
   const classes = useStyles();
   const [modalOpen, setModalOpen] = useState(false);
   const formData = useSelector((state) => state.forms.antEpidemio.form3);
+  const dispatch = useDispatch();
+  const [modalIndex, setModalIndex] = useState(1);
 
   const AddContactoModal = () => {
     const provincias = useSelector(
@@ -420,8 +416,6 @@ const AntEpidemioForm3 = () => {
     const tipoDoc = useSelector((state) => state.forms.formOptions.tipoDoc);
     const localidades =
       useSelector((state) => state.forms.formOptions.localidades) || [];
-
-    const dispatch = useDispatch();
 
     const [currContacto, setCurrContacto] = useState({
       nombre: { value: '', error: false, errorText: '' },
@@ -440,7 +434,7 @@ const AntEpidemioForm3 = () => {
       domCP: { value: '', error: false, errorText: '' },
       domBarrio: { value: '', error: false, errorText: '' },
       fechaUltimoContacto: { value: Date.now(), error: false, errorText: '' },
-      tipoContacto: { value: '0', error: false, errorText: '' },
+      tipoContacto: { value: '', error: false, errorText: '' },
     });
     const localidadesFiltradas =
       currContacto.provincia.value === '0'
@@ -467,32 +461,83 @@ const AntEpidemioForm3 = () => {
         domCP: { value: '', error: false, errorText: '' },
         domBarrio: { value: '', error: false, errorText: '' },
         fechaUltimoContacto: { value: Date.now(), error: false, errorText: '' },
-        tipoContacto: { value: '0', error: false, errorText: '' },
+        tipoContacto: { value: '', error: false, errorText: '' },
       });
       setModalOpen(false);
     };
-    const handleModalAdd = () => {
-      dispatch(
-        onAddContactos({
-          nombre: currContacto.nombre.value,
-          apellido: currContacto.apellido.value,
-          sexo: currContacto.sexo.value,
-          numeroDoc: currContacto.numeroDoc.value,
-          nacionalidad: currContacto.nacionalidad.value,
-          provincia: currContacto.provincia.value,
-          localidad: currContacto.localidad.value,
-          domicilio: currContacto.domicilio.value,
-          telefono: currContacto.telefono.value,
-          nroDom: currContacto.nroDom.value,
-          domPiso: currContacto.domPiso.value,
-          domDto: currContacto.domDto.value,
-          domCP: currContacto.domCP.value,
-          domBarrio: currContacto.domBarrio.value,
-          fechaUltimoContacto: currContacto.fechaUltimoContacto.value,
-          tipoContacto: currContacto.tipoContacto.value,
+
+    const handleModalAdd = async () => {
+      let isValid = false;
+      await addContactoModalSchema
+        .validate(currContacto, { abortEarly: false })
+        .then(async (value) => {
+          await dispatch(
+            onAddContactos({
+              id: modalIndex,
+              nombre: currContacto.nombre.value,
+              apellido: currContacto.apellido.value,
+              sexo: currContacto.sexo.value,
+              numeroDoc: currContacto.numeroDoc.value,
+              nacionalidad: currContacto.nacionalidad.value,
+              provincia: currContacto.provincia.value,
+              localidad: currContacto.localidad.value,
+              domicilio: currContacto.domicilio.value,
+              telefono: currContacto.telefono.value,
+              nroDom: currContacto.nroDom.value,
+              domPiso: currContacto.domPiso.value,
+              domDto: currContacto.domDto.value,
+              domCP: currContacto.domCP.value,
+              domBarrio: currContacto.domBarrio.value,
+              fechaUltimoContacto: currContacto.fechaUltimoContacto.value,
+              tipoContacto: currContacto.tipoContacto.value,
+            })
+          );
+          setModalIndex((prevState) => prevState + 1);
+          isValid = true;
         })
-      );
-      setModalOpen(false);
+        .catch((err) => {
+          if (err?.name === 'ValidationError') {
+            let updateCurrContacto = { ...currContacto };
+            err.inner.map((e) => {
+              updateCurrContacto[e.path.replace('.value', '')] = {
+                value: currContacto[e.path.replace('.value', '')].value,
+                error: true,
+                errorText: e.message,
+              };
+            });
+
+            console.log(JSON.stringify(updateCurrContacto));
+            setCurrContacto(updateCurrContacto);
+            isValid = false;
+          }
+        });
+      if (isValid) {
+        setCurrContacto({
+          nombre: { value: '', error: false, errorText: '' },
+          apellido: { value: '', error: false, errorText: '' },
+          sexo: { value: '0', error: false, errorText: '' },
+          tipoDoc: { value: '0', error: false, errorText: '' },
+          numeroDoc: { value: '', error: false, errorText: '' },
+          nacionalidad: { value: '0', error: false, errorText: '' },
+          provincia: { value: '0', error: false, errorText: '' },
+          localidad: { value: '0', error: false, errorText: '' },
+          domicilio: { value: '', error: false, errorText: '' },
+          telefono: { value: '', error: false, errorText: '' },
+          nroDom: { value: '', error: false, errorText: '' },
+          domPiso: { value: '', error: false, errorText: '' },
+          domDto: { value: '', error: false, errorText: '' },
+          domCP: { value: '', error: false, errorText: '' },
+          domBarrio: { value: '', error: false, errorText: '' },
+          fechaUltimoContacto: {
+            value: Date.now(),
+            error: false,
+            errorText: '',
+          },
+          tipoContacto: { value: '', error: false, errorText: '' },
+        });
+
+        setModalOpen(false);
+      }
     };
 
     return (
@@ -511,6 +556,10 @@ const AntEpidemioForm3 = () => {
               inputProps={{ name: 'nombre' }}
               label="Nombre"
               value={currContacto?.nombre.value}
+              error={currContacto?.nombre.error}
+              helperText={
+                currContacto?.nombre.error ? currContacto?.nombre.errorText : ''
+              }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
@@ -527,6 +576,12 @@ const AntEpidemioForm3 = () => {
               key="apellido-required"
               inputProps={{ name: 'apellido' }}
               label="apellido"
+              error={currContacto?.apellido.error}
+              helperText={
+                currContacto?.apellido.error
+                  ? currContacto?.apellido.errorText
+                  : ''
+              }
               value={currContacto?.apellido.value}
               variant="outlined"
               onChange={(e) =>
@@ -576,6 +631,12 @@ const AntEpidemioForm3 = () => {
               key="numeroDoc-required"
               inputProps={{ name: 'numeroDoc' }}
               label="Nro de documento"
+              error={currContacto?.numeroDoc.error}
+              helperText={
+                currContacto?.numeroDoc.error
+                  ? currContacto?.numeroDoc.errorText
+                  : ''
+              }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
@@ -584,6 +645,62 @@ const AntEpidemioForm3 = () => {
                     ...prevState.numeroDoc,
                     value: e.target.value,
                   },
+                }))
+              }
+            />
+          </div>
+        </div>
+
+        <div className={classes.formContent}>
+          <div className={classes.formColumn}>
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
+              <InputLabel id="sexo-label">Sexo</InputLabel>
+              <NativeSelect
+                labelId="sexo-label"
+                inputProps={{ name: 'sexo' }}
+                id="sexo"
+                value={currContacto?.sexo.value}
+                error={currContacto?.sexo.error}
+                helperText={
+                  currContacto?.sexo?.error ? currContacto?.sexo?.errorText : ''
+                }
+                onChange={(e) =>
+                  setCurrContacto((prevState) => ({
+                    ...prevState,
+                    sexo: {
+                      ...prevState.sexo,
+                      value: e.target.value,
+                    },
+                  }))
+                }
+              >
+                <option aria-label="None" value="0" />
+                {sexo?.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
+          </div>
+          <div className={classes.formColumn}>
+            <TextField
+              required
+              id="telefono-required"
+              key="telefono-required"
+              inputProps={{ name: 'telefono' }}
+              label="Telefono"
+              error={currContacto?.telefono.error}
+              helperText={
+                currContacto?.telefono.error
+                  ? currContacto?.telefono.errorText
+                  : ''
+              }
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  telefono: { ...prevState.telefono, value: e.target.value },
                 }))
               }
             />
@@ -659,61 +776,18 @@ const AntEpidemioForm3 = () => {
         </div>
         <div className={classes.formContent}>
           <div className={classes.formColumn}>
-            <FormControl className={`${classes.formControl} ${classes.field} `}>
-              <InputLabel id="sexo-label">Sexo</InputLabel>
-              <NativeSelect
-                labelId="sexo-label"
-                inputProps={{ name: 'sexo' }}
-                id="sexo"
-                value={currContacto?.sexo.value}
-                error={currContacto?.sexo.error}
-                helperText={
-                  currContacto?.sexo?.error ? currContacto?.sexo?.errorText : ''
-                }
-                onChange={(e) =>
-                  setCurrContacto((prevState) => ({
-                    ...prevState,
-                    sexo: {
-                      ...prevState.sexo,
-                      value: e.target.value,
-                    },
-                  }))
-                }
-              >
-                <option aria-label="None" value="0" />
-                {sexo?.map((p) => (
-                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
-                    {p.nombre}
-                  </option>
-                ))}
-              </NativeSelect>
-            </FormControl>
-          </div>
-          <div className={classes.formColumn}>
-            <TextField
-              required
-              id="telefono-required"
-              key="telefono-required"
-              inputProps={{ name: 'telefono' }}
-              label="Telefono"
-              variant="outlined"
-              onChange={(e) =>
-                setCurrContacto((prevState) => ({
-                  ...prevState,
-                  telefono: { ...prevState.telefono, value: e.target.value },
-                }))
-              }
-            />
-          </div>
-        </div>
-        <div className={classes.formContent}>
-          <div className={classes.formColumn}>
             <TextField
               required
               id="domicilio-required"
               key="domicilio-required"
               inputProps={{ name: 'domicilio' }}
               label="Domicilio"
+              error={currContacto?.domicilio.error}
+              helperText={
+                currContacto?.domicilio.error
+                  ? currContacto?.domicilio.errorText
+                  : ''
+              }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
@@ -730,6 +804,10 @@ const AntEpidemioForm3 = () => {
               key="nroDom-required"
               inputProps={{ name: 'nroDom' }}
               label="Nro"
+              error={currContacto?.nroDom.error}
+              helperText={
+                currContacto?.nroDom.error ? currContacto?.nroDom.errorText : ''
+              }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
@@ -744,10 +822,36 @@ const AntEpidemioForm3 = () => {
           <div className={classes.formColumn}>
             <TextField
               required
+              id="domCP-required"
+              key="domCP-required"
+              inputProps={{ name: 'domCP' }}
+              label="CP"
+              error={currContacto?.domCP.error}
+              helperText={
+                currContacto?.domCP.error ? currContacto?.domCP.errorText : ''
+              }
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  domCP: { ...prevState.domCP, value: e.target.value },
+                }))
+              }
+            />
+          </div>
+          <div className={classes.formColumn}>
+            <TextField
+              required
               id="domPiso-required"
               key="domPiso-required"
               inputProps={{ name: 'domPiso' }}
-              label="domPiso"
+              label="Piso"
+              error={currContacto?.domPiso.error}
+              helperText={
+                currContacto?.domPiso.error
+                  ? currContacto?.domPiso.errorText
+                  : ''
+              }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
@@ -763,12 +867,43 @@ const AntEpidemioForm3 = () => {
               id="domDto-required"
               key="domDto-required"
               inputProps={{ name: 'domDto' }}
-              label="domDto"
+              label="Dto"
+              error={currContacto?.domDto.error}
+              helperText={
+                currContacto?.domDto.error ? currContacto?.domDto.errorText : ''
+              }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
                   ...prevState,
                   domDto: { ...prevState.domDto, value: e.target.value },
+                }))
+              }
+            />
+          </div>
+        </div>
+        <div className={classes.formContent}>
+          <div className={classes.formColumnFull}>
+            <TextField
+              required
+              id="domBarrio-required"
+              key="domBarrio-required"
+              inputProps={{ name: 'domBarrio' }}
+              label="Barrio/Villa"
+              error={currContacto?.domBarrio.error}
+              helperText={
+                currContacto?.domBarrio.error
+                  ? currContacto?.domBarrio.errorText
+                  : ''
+              }
+              variant="outlined"
+              onChange={(e) =>
+                setCurrContacto((prevState) => ({
+                  ...prevState,
+                  domBarrio: {
+                    ...prevState.domBarrio,
+                    value: e.target.value,
+                  },
                 }))
               }
             />
@@ -782,8 +917,13 @@ const AntEpidemioForm3 = () => {
                 id="fechaUltimoContacto"
                 label="Fecha 1° síntoma(fis)"
                 format="MM/dd/yyyy"
-                inputProps={{ name: 'fechaFis' }}
-                value={Date.now()}
+                error={currContacto?.fechaUltimoContacto.error}
+                helperText={
+                  currContacto?.fechaUltimoContacto.error
+                    ? currContacto?.fechaUltimoContacto.errorText
+                    : ''
+                }
+                value={currContacto?.fechaUltimoContacto.value}
                 onChange={(e) =>
                   setCurrContacto((prevState) => ({
                     ...prevState,
@@ -806,6 +946,12 @@ const AntEpidemioForm3 = () => {
               key="tipoContacto-required"
               inputProps={{ name: 'tipoContacto' }}
               label="Tipo de contacto"
+              error={currContacto?.tipoContacto.error}
+              helperText={
+                currContacto?.tipoContacto.error
+                  ? currContacto?.tipoContacto.errorText
+                  : ''
+              }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
@@ -836,9 +982,9 @@ const AntEpidemioForm3 = () => {
               <div
                 className={`${classes.formContent} ${classes.formContentWrap}`}
               >
-                {formData.contactos.value.map((c, idx) => (
+                {formData.contactos.value.map((c) => (
                   <Card
-                    key={`${idx}-${c.dni}`}
+                    key={`${c.id}-${c.dni}`}
                     className={classes.cardRoot}
                     variant="outlined"
                   >
@@ -848,14 +994,14 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        Nombre
+                        Nombre y Apellido
                       </Typography>
                       <Typography
                         className={classes.subTitle}
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.nombre}
+                        {`${c.nombre} ${c.apellido}`}
                       </Typography>
                       <Typography
                         className={classes.title}
@@ -869,67 +1015,18 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.dni}
-                      </Typography>
-                      <Typography
-                        className={classes.title}
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        Teléfono
-                      </Typography>
-                      <Typography
-                        className={classes.subTitle}
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        {c.telefono}
-                      </Typography>
-                      <Typography
-                        className={classes.title}
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        Domicilio
-                      </Typography>
-                      <Typography
-                        className={classes.subTitle}
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        {c.domicilio}
-                      </Typography>
-                      <Typography
-                        className={classes.title}
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        Fecha último contacto
-                      </Typography>
-                      <Typography
-                        className={classes.subTitle}
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        {c.fechaUltimoContacto}
-                      </Typography>
-                      <Typography
-                        className={classes.title}
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        Tipo de contacto
-                      </Typography>
-                      <Typography
-                        className={classes.subTitle}
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        {c.tipoContacto}
+                        {c.numeroDoc}
                       </Typography>
                     </CardContent>
                     <CardActions className={classes.button}>
-                      <Button size="small">Borrar</Button>
+                      <Button
+                        onClick={() => {
+                          dispatch(onDelContactos({ id: c.id }));
+                        }}
+                        size="small"
+                      >
+                        Borrar
+                      </Button>
                     </CardActions>
                   </Card>
                 ))}
