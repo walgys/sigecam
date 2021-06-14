@@ -1,19 +1,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import userAPI from './userAPI';
+import ControlApiBackend from 'services/controlApiBackend';
 import { setSnack, setOpenSnack } from 'redux/variables';
 
-export const validateUser = createAsyncThunk(
-  'user/validateUser',
+const controlApiBackend = new ControlApiBackend();
+
+export const autentificarUsuario = createAsyncThunk(
+  'user/autentificarUsuario',
   async ({ userName, password }, thunkAPI) => {
-    return await userAPI.validateUser(userName, password);
+    return await controlApiBackend.autentificarUsuario(userName, password);
   }
 );
 
-export const validateSession = createAsyncThunk(
-  'user/validateSession',
+export const validarSesion = createAsyncThunk(
+  'user/validarSesion',
   async (payload, thunkAPI) => {
-    const result = await userAPI.validateSession();
+    const result = await controlApiBackend.validarSesion();
     if (result.errorMessage !== null) {
       thunkAPI.dispatch(
         setSnack({ type: 'error', message: result.errorMessage })
@@ -35,13 +37,13 @@ export const userSlice = createSlice({
   },
   reducers: {},
   extraReducers: {
-    [validateUser.fulfilled]: (state, { payload }) => {
+    [autentificarUsuario.fulfilled]: (state, { payload }) => {
       state.isAuth = payload?.isAuth;
       state.userData = payload?.data;
       state.errorMessage = payload?.errorMessage;
       state.status = 'success';
     },
-    [validateSession.fulfilled]: (state, { payload }) => {
+    [validarSesion.fulfilled]: (state, { payload }) => {
       state.isAuth = payload.isAuth;
       state.userData = payload.data;
       state.errorMessage = payload.errorMessage;

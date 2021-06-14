@@ -39,7 +39,6 @@ router.post('/internal/getFormOptions', async (req, res) => {
         localidades: localidades.filter((l) => l.idProvincia === p.id),
       };
     });
-    console.log(localidadesFiltradas);
     const sexo = await queryFormOptions.queryFormOptionsSexo();
     const nacionalidades =
       await queryFormOptions.queryFormOptionsNacionalidades();

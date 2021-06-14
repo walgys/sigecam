@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { TextField, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { validateUser } from '../../redux/user';
+import { autentificarUsuario } from '../../redux/user';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -87,7 +87,9 @@ const Login = (props) => {
               style={{ width: '90%' }}
               color="primary"
               disableElevation
-              onClick={() => dispatch(validateUser({ userName, password }))}
+              onClick={() =>
+                dispatch(autentificarUsuario({ userName, password }))
+              }
             >
               Acceder
             </Button>

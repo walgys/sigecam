@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   onAltaChange,
   getFormOptionsLocalidades,
-  getFormOptionsProvincias,
+  getDatosFormularios,
 } from 'redux/Forms';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -91,7 +91,7 @@ const AltaPacienteForm = () => {
   const dispatch = useDispatch();
 
   const getProvincias = useCallback(() => {
-    dispatch(getFormOptionsProvincias());
+    dispatch(getDatosFormularios());
   }, [dispatch]);
 
   useEffect(() => {

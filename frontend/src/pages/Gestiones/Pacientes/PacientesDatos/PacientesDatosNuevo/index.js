@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  getFormOptionsProvincias,
+  getDatosFormularios,
   onInfoClinicaValidate,
   onAltaValidate,
   onEpidemioValidate,
@@ -27,9 +27,10 @@ import {
   antEpidemioForm2Schema,
 } from './validation';
 import { CircularProgress } from '@material-ui/core';
-import { crearPaciente } from 'services/crearPaciente';
 import { setSnack, setOpenSnack } from 'redux/variables';
 import { useHistory } from 'react-router-dom';
+import ControlApiBackend from 'services/controlApiBackend';
+import * as _ from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +81,8 @@ function getStepContent(stepIndex) {
       return 'Índice desconocido';
   }
 }
+
+const controlApiBackend = new ControlApiBackend();
 
 const PacientesDatosNuevo = () => {
   const classes = useStyles();
@@ -214,9 +217,22 @@ const PacientesDatosNuevo = () => {
     }
   };
 
+  const transformPacientData = () => {
+    const altaPaciente = _.mapValues(forms.altaPaciente, (o) => o.value);
+    const infoClinica = _.mapValues(forms.infoClinica, (o) => o.value);
+    const antEpidemio = _.mapValues(
+      _.reduce(forms.antEpidemio, (res, v, k) => (res = { ...res, ...v }), {}),
+      (o) => o.value
+    );
+    return _.merge(altaPaciente, infoClinica, antEpidemio);
+  };
+
   const commitData = async () => {
     setIsCommiting(true);
-    const result = await crearPaciente(forms);
+    const result = await controlApiBackend.crudPaciente(
+      transformPacientData(),
+      1
+    );
     if (result?.message === 'OK') {
       dispatch(setSnack({ type: 'success', message: 'Nuevo paciente creado' }));
       dispatch(setOpenSnack(true));

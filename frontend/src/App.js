@@ -6,7 +6,7 @@ import {
   Redirect,
 } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { validateSession } from './redux/user';
+import { validarSesion } from './redux/user';
 import { setOpenSnack, setSnack } from 'redux/variables';
 import { useEffect } from 'react';
 import NavBar from './components/NavBar';
@@ -82,7 +82,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (sessionChecked === false) dispatch(validateSession());
+    if (sessionChecked === false) dispatch(validarSesion());
     return () => {
       //cleanup
     };

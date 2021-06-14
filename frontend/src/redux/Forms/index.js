@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { AntEpidemioForm1 } from 'components/Forms/AntEpidemioForms';
-import { useDispatch } from 'react-redux';
-import formsAPI from './formsAPI';
+import ControlApiBackend from 'services/controlApiBackend';
 
-export const getFormOptionsProvincias = createAsyncThunk(
+const controlApiBackend = new ControlApiBackend();
+
+export const getDatosFormularios = createAsyncThunk(
   'forms/getFormOptions',
   async () => {
-    return await formsAPI.getFormOptionsProvincias();
+    return await controlApiBackend.getDatosFormularios();
   }
 );
 
@@ -197,7 +197,7 @@ export const formsSlice = createSlice({
     },
   },
   extraReducers: {
-    [getFormOptionsProvincias.fulfilled]: (state, { payload }) => {
+    [getDatosFormularios.fulfilled]: (state, { payload }) => {
       state.formOptions.provincias = payload?.provincias;
       state.formOptions.localidades = payload?.localidades;
       state.formOptions.sexo = payload?.sexo;

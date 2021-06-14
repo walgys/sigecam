@@ -18,7 +18,7 @@ router.post('/createNewPacient', async (req, res) => {
         Token: req.session.jwt,
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: req.body,
+      data: req.body,
     })
       .then((result) => result.data)
       .catch((err) => console.log(err));
@@ -32,6 +32,7 @@ router.post('/createNewPacient', async (req, res) => {
 router.post('/internal/createNewPacient', async (req, res) => {
   try {
     const user = jwt.verify(req.headers.token, JWT_SECRET);
+    console.log(req.body);
     res
       .json({
         message: 'OK',
