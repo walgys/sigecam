@@ -5,6 +5,7 @@ import {
   onInfoClinicaValidate,
   onAltaValidate,
   onEpidemioValidate,
+  onInstitucionValidate,
 } from 'redux/Forms';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
@@ -25,9 +26,11 @@ import {
   infoClinicaSchema,
   antEpidemioForm1Schema,
   antEpidemioForm2Schema,
+  antEpidemioForm3Schema,
 } from './validation';
 import { CircularProgress } from '@material-ui/core';
 import { setSnack, setOpenSnack } from 'redux/variables';
+import { onTokenExpired } from 'redux/user';
 import { useHistory } from 'react-router-dom';
 import ControlApiBackend from 'services/controlApiBackend';
 import * as _ from 'lodash';
@@ -102,7 +105,7 @@ const PacientesDatosNuevo = () => {
     let isValid = false;
     switch (activeStep) {
       case 0:
-        /* await altaPacienteFormSchema
+        await altaPacienteFormSchema
           .validate(forms?.altaPaciente, { abortEarly: false })
           .then((value) => {
             dispatch(onAltaValidate({ value: [], isValid: true }));
@@ -119,33 +122,29 @@ const PacientesDatosNuevo = () => {
               isValid = false;
             }
           });
-*/
+
         isValid = true;
         break;
       case 1:
-        if (forms?.infoClinica.aplica.value === '1') {
-          await infoClinicaSchema
-            .validate(forms?.infoClinica, { abortEarly: false })
-            .then((value) => {
-              dispatch(onInfoClinicaValidate({ value: [], isValid: true }));
-              isValid = true;
-            })
-            .catch((err) => {
-              if (err?.name === 'ValidationError') {
-                const payload = err.inner.map((e) => ({
-                  name: e.path.replace('.value', ''),
-                  error: true,
-                  errorText: e.message,
-                }));
-                dispatch(
-                  onInfoClinicaValidate({ value: payload, isValid: false })
-                );
-                isValid = false;
-              }
-            });
-        } else {
-          isValid = true;
-        }
+        await infoClinicaSchema
+          .validate(forms?.infoClinica, { abortEarly: false })
+          .then((value) => {
+            dispatch(onInfoClinicaValidate({ value: [], isValid: true }));
+            isValid = true;
+          })
+          .catch((err) => {
+            if (err?.name === 'ValidationError') {
+              const payload = err.inner.map((e) => ({
+                name: e.path.replace('.value', ''),
+                error: true,
+                errorText: e.message,
+              }));
+              dispatch(
+                onInfoClinicaValidate({ value: payload, isValid: false })
+              );
+              isValid = false;
+            }
+          });
 
         break;
       case 2:
@@ -203,6 +202,26 @@ const PacientesDatosNuevo = () => {
           });
         break;
       case 4:
+        await antEpidemioForm3Schema
+          .validate(forms?.antEpidemio.form3, { abortEarly: false })
+          .then((value) => {
+            dispatch(onInstitucionValidate({ value: [], isValid: true }));
+            setModalOpen(true);
+          })
+          .catch((err) => {
+            if (err?.name === 'ValidationError') {
+              const payload = err.inner.map((e) => ({
+                error: true,
+                errorText: e.message,
+              }));
+              dispatch(
+                onInstitucionValidate({
+                  value: payload,
+                  isValid: false,
+                })
+              );
+            }
+          });
         break;
       default:
         break;
@@ -236,23 +255,20 @@ const PacientesDatosNuevo = () => {
     if (result?.message === 'OK') {
       dispatch(setSnack({ type: 'success', message: 'Nuevo paciente creado' }));
       dispatch(setOpenSnack(true));
-      history.push('/gestiones/pacientes/datos');
+      //history.push('/gestiones/pacientes/datos');
     }
 
     if (result?.message === 'ERROR') {
       dispatch(setSnack({ type: 'error', message: result.error }));
       dispatch(setOpenSnack(true));
+      if (result.errorMessae === 'Token expired') dispatch(onTokenExpired());
     }
 
     setIsCommiting(false);
   };
 
   const handleNext = async () => {
-    if (activeStep === steps.length - 1) {
-      setModalOpen(true);
-    } else {
-      checkMissingData();
-    }
+    checkMissingData();
   };
 
   const handleBack = () => {
@@ -348,7 +364,9 @@ const PacientesDatosNuevo = () => {
                     className={classes.colorPrimary}
                   />
                 )}
-                {activeStep === steps.length - 1 ? 'Crear' : 'Continuar'}
+                {activeStep === steps.length - 1
+                  ? 'Crear Paciente'
+                  : 'Continuar'}
               </Button>
             </div>
           </div>

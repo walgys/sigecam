@@ -25,7 +25,10 @@ class controlApiBackend {
       }), // body data type must match "Content-Type" header
     })
       .then((result) => result.data)
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        return { isAuth: false, data: {}, errorMessage: 'Error' };
+      });
   };
 
   validarSesion = async () => {
@@ -61,7 +64,10 @@ class controlApiBackend {
           data: JSON.stringify(paciente), // body data type must match "Content-Type" header
         })
           .then((result) => result.data)
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+            return { data: {}, errorMessage: 'Error' };
+          });
       default:
         break;
     }
@@ -96,7 +102,10 @@ class controlApiBackend {
       },
     })
       .then((result) => result.data)
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        return { data: {}, errorMessage: 'Error' };
+      });
   };
 
   getListaRegionesSanitarias = () => {};

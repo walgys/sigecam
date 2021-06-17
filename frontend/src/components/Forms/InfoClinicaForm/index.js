@@ -102,8 +102,10 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 250,
     margin: '2%',
     alignItems: 'center',
+    border: '1px solid gainsboro',
   },
   cardContent: {
+    borderBottom: '1px solid gainsboro',
     padding: '0',
   },
   cardContainer: {
@@ -127,40 +129,29 @@ const useStyles = makeStyles((theme) => ({
 const InfoClinicaForm = () => {
   const classes = useStyles();
   const formData = useSelector((state) => state.forms.infoClinica);
+  const signosSintomas =
+    useSelector((state) => state.forms.formOptions.signosSintomas) || [];
+  const comorbilidades =
+    useSelector((state) => state.forms.formOptions.comorbilidades) || [];
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState({
     signosSintomas: false,
     comorbilidades: false,
   });
-  const [modalIndexes, setModalIndexes] = useState({
-    signosSintomasIndex: 0,
-    comorbilidadesIndex: 0,
-  });
-
-  const comorbilidades =
-    useSelector((state) => state.forms.infoClinica.comorbilidades) || [];
-  const signosSintomas =
-    useSelector((state) => state.forms.infoClinica.signosSintomas) || [];
 
   const ComorbilidadesModal = () => {
     const [currComorbilidad, setCurrComorbilidad] = useState({
-      value: '',
-      error: false,
-      errorText: '',
-    });
-    const [currComorbDescripcion, setCurrComorbDescripcion] = useState({
-      value: '',
+      id: '0',
+      nombre: '',
+      descripcion: '',
       error: false,
       errorText: '',
     });
     const handleModalClose = () => {
       setCurrComorbilidad({
-        value: '',
-        error: false,
-        errorText: '',
-      });
-      setCurrComorbDescripcion({
-        value: '',
+        id: '0',
+        nombre: '',
+        descripcion: '',
         error: false,
         errorText: '',
       });
@@ -169,22 +160,13 @@ const InfoClinicaForm = () => {
     const handleModalAdd = async () => {
       let isValid = false;
       await comorbilidadesModalSchema
-        .validate(
-          { currComorbilidad, currComorbDescripcion },
-          { abortEarly: false }
-        )
+        .validate({ currComorbilidad }, { abortEarly: false })
         .then((value) => {
           dispatch(
             onAddComorbilidades({
-              id: modalIndexes.comorbilidadesIndex,
-              currComorbilidad: currComorbilidad.value,
-              currComorbDescripcion: currComorbDescripcion.value,
+              currComorbilidad,
             })
           );
-          setModalIndexes((prevState) => ({
-            ...prevState,
-            comorbilidadesIndex: prevState.comorbilidadesIndex + 1,
-          }));
           isValid = true;
         })
         .catch((err) => {
@@ -193,21 +175,14 @@ const InfoClinicaForm = () => {
             error: true,
             errorText: 'Campo requerido',
           }));
-          setCurrComorbDescripcion((prevStatus) => ({
-            ...prevStatus,
-            error: true,
-            errorText: 'Campo requerido',
-          }));
+
           isValid = false;
         });
       if (isValid) {
         setCurrComorbilidad({
-          value: '',
-          error: false,
-          errorText: '',
-        });
-        setCurrComorbDescripcion({
-          value: '',
+          id: '0',
+          nombre: '',
+          descripcion: '',
           error: false,
           errorText: '',
         });
@@ -225,42 +200,48 @@ const InfoClinicaForm = () => {
         open={modalOpen.comorbilidades}
         title={'Ingrese una Comorbilidad'}
       >
+        <FormControl className={`${classes.formControl} ${classes.field} `}>
+          <InputLabel id="comorbilidades-label">Comorbilidades</InputLabel>
+          <NativeSelect
+            labelId="comorbilidades-label"
+            inputProps={{ name: 'comorbilidades' }}
+            id="comorbilidades"
+            value={currComorbilidad?.id}
+            error={currComorbilidad?.error}
+            helperText={
+              currComorbilidad?.error ? currComorbilidad.errorText : ''
+            }
+            onChange={(e) =>
+              setCurrComorbilidad((prevState) => ({
+                ...prevState,
+                id: e.target.value,
+                nombre: e.target.selectedOptions[0].getAttribute('nombre'),
+                descripcion:
+                  e.target.selectedOptions[0].getAttribute('descripcion'),
+              }))
+            }
+          >
+            <option aria-label="None" value="0" />
+            {comorbilidades?.map((p) => (
+              <option
+                key={`${p.id}-${p.nombre}`}
+                value={p.id}
+                nombre={p.nombre}
+                descripcion={p.descripcion}
+              >
+                {p.nombre}
+              </option>
+            ))}
+          </NativeSelect>
+        </FormControl>
         <TextField
-          required
-          id="comorbilidad-required"
-          key="comorbilidad-required"
-          inputProps={{ name: 'comorbilidad' }}
-          value={currComorbilidad.value}
-          error={currComorbilidad.error}
-          helperText={currComorbilidad.error ? currComorbilidad.errorText : ''}
-          label="Comorbilidad"
-          variant="outlined"
-          onChange={(e) =>
-            setCurrComorbilidad((prevState) => ({
-              ...prevState,
-              value: e.target.value,
-            }))
-          }
-        />
-        ,
-        <TextField
-          required
           id="comorbilidadDescripcion-required"
           key="comorbilidadDescripcion-required"
           inputProps={{ name: 'descripcionComorbilidad' }}
-          value={currComorbDescripcion.value}
-          error={currComorbDescripcion.error}
-          helperText={
-            currComorbDescripcion.error ? currComorbDescripcion.errorText : ''
-          }
+          value={currComorbilidad.descripcion}
+          disabled
           label="Descripción"
           variant="outlined"
-          onChange={(e) =>
-            setCurrComorbDescripcion((prevState) => ({
-              ...prevState,
-              value: e.target.value,
-            }))
-          }
         />
       </DialogModal>
     );
@@ -268,25 +249,18 @@ const InfoClinicaForm = () => {
 
   const SignosSintomasModal = () => {
     const [currSignosSintomas, setCurrSignosSintomas] = useState({
-      value: '',
+      id: '0',
+      nombre: '',
+      descripcion: '',
       error: false,
       errorText: '',
     });
-    const [currSignosSintomasDescripcion, setCurrSignosSintomasDescripcion] =
-      useState({
-        value: '',
-        error: false,
-        errorText: '',
-      });
 
     const handleModalClose = () => {
       setCurrSignosSintomas({
-        value: '',
-        error: false,
-        errorText: '',
-      });
-      setCurrSignosSintomasDescripcion({
-        value: '',
+        id: '0',
+        nombre: '',
+        descripcion: '',
         error: false,
         errorText: '',
       });
@@ -296,23 +270,13 @@ const InfoClinicaForm = () => {
     const handleModalAdd = async () => {
       let isValid = false;
       await signosSintomasModalSchema
-        .validate(
-          { currSignosSintomas, currSignosSintomasDescripcion },
-          { abortEarly: false }
-        )
+        .validate({ currSignosSintomas }, { abortEarly: false })
         .then(async (value) => {
           await dispatch(
             onAddSignosSintomas({
-              id: modalIndexes.signosSintomasIndex,
-              currSignosSintomas: currSignosSintomas.value,
-              currSignosSintomasDescripcion:
-                currSignosSintomasDescripcion.value,
+              currSignosSintomas,
             })
           );
-          setModalIndexes((prevState) => ({
-            ...prevState,
-            signosSintomasIndex: prevState.signosSintomasIndex + 1,
-          }));
           isValid = true;
         })
         .catch((err) => {
@@ -321,21 +285,14 @@ const InfoClinicaForm = () => {
             error: true,
             errorText: 'Campo requerido',
           }));
-          setCurrSignosSintomasDescripcion((prevStatus) => ({
-            ...prevStatus,
-            error: true,
-            errorText: 'Campo requerido',
-          }));
+
           isValid = false;
         });
       if (isValid) {
         setCurrSignosSintomas({
-          value: '',
-          error: false,
-          errorText: '',
-        });
-        setCurrSignosSintomasDescripcion({
-          value: '',
+          id: '0',
+          nombre: '',
+          descripcion: '',
           error: false,
           errorText: '',
         });
@@ -349,46 +306,50 @@ const InfoClinicaForm = () => {
         open={modalOpen.signosSintomas}
         title={'Ingrese un Signo o Síntoma'}
       >
-        <TextField
-          required
-          id="signosSintomas-required"
-          key="signosSintomas-required"
-          inputProps={{ name: 'signosSintomas' }}
-          value={currSignosSintomas.value}
-          error={currSignosSintomas.error}
-          helperText={
-            currSignosSintomas.error ? currSignosSintomas.errorText : ''
-          }
-          label="Signo o Sintoma"
-          variant="outlined"
-          onChange={(e) =>
-            setCurrSignosSintomas((prevState) => ({
-              ...prevState,
-              value: e.target.value,
-            }))
-          }
-        />
-        ,
+        <FormControl className={`${classes.formControl} ${classes.field} `}>
+          <InputLabel id="signosSintomas-label">Signo o Síntoma</InputLabel>
+          <NativeSelect
+            labelId="signosSintomas-label"
+            inputProps={{ name: 'signosSintomas' }}
+            id="signosSintomas"
+            value={currSignosSintomas?.id}
+            error={currSignosSintomas?.error}
+            helperText={
+              currSignosSintomas?.error ? currSignosSintomas.errorText : ''
+            }
+            onChange={(e) => {
+              console.log(e);
+              setCurrSignosSintomas((prevState) => ({
+                ...prevState,
+                id: e.target.value,
+                nombre: e.target.selectedOptions[0].getAttribute('nombre'),
+                descripcion:
+                  e.target.selectedOptions[0].getAttribute('descripcion'),
+              }));
+            }}
+          >
+            <option aria-label="None" value="0" />
+            {signosSintomas?.map((p) => (
+              <option
+                key={`${p.id}-${p.nombre}`}
+                value={p.id}
+                nombre={p.nombre}
+                descripcion={p.descripcion}
+              >
+                {p.nombre}
+              </option>
+            ))}
+          </NativeSelect>
+        </FormControl>
         <TextField
           required
           id="signosSintomasDescripcion-required"
           key="signosSintomasDescripcion-required"
           inputProps={{ name: 'descripcionSignosSintomas' }}
-          value={currSignosSintomasDescripcion.value}
-          error={currSignosSintomasDescripcion.error}
-          helperText={
-            currSignosSintomasDescripcion.error
-              ? currSignosSintomasDescripcion.errorText
-              : ''
-          }
+          value={currSignosSintomas.descripcion}
           label="Descripción"
           variant="outlined"
-          onChange={(e) =>
-            setCurrSignosSintomasDescripcion((prevState) => ({
-              ...prevState,
-              value: e.target.value,
-            }))
-          }
+          disabled
         />
       </DialogModal>
     );
@@ -488,9 +449,11 @@ const InfoClinicaForm = () => {
                   }
                 >
                   <option aria-label="None" value="0" />
-                  <option value={10}>Ten</option>
-                  <option value={20}>Twenty</option>
-                  <option value={30}>Thirty</option>
+                  <option value={1}>Semana 1</option>
+                  <option value={2}>Semana 2</option>
+                  <option value={3}>Semana 3</option>
+                  <option value={4}>Semana 4</option>
+                  <option value={5}>Semana 5</option>
                 </NativeSelect>
               </FormControl>
             </div>
@@ -562,16 +525,16 @@ const InfoClinicaForm = () => {
           <div className={classes.formContent}>
             <div
               className={
-                signosSintomas.error
+                formData?.signosSintomas.error
                   ? `${classes.formColumn} ${classes.formOutlineError}`
                   : `${classes.formColumn} ${classes.formOutline}`
               }
             >
               <h3 style={{ margin: '0.3rem' }}>Signos y Síntomas</h3>
               <div className={classes.cardContainer}>
-                {signosSintomas.value.map((c) => (
+                {formData?.signosSintomas.value.map((c) => (
                   <Card
-                    key={`${c.id}-${c.signoSintoma}`}
+                    key={`${c.id}-${c.nombre}`}
                     className={classes.cardRoot}
                     raised
                   >
@@ -581,7 +544,7 @@ const InfoClinicaForm = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.signoSintoma}
+                        {c.nombre}
                       </Typography>
                     </CardContent>
                     <CardActions className={classes.button}>
@@ -618,34 +581,36 @@ const InfoClinicaForm = () => {
               <h3 style={{ margin: '0.3rem' }}>
                 Enfermedades Previas/Comorbilidades
               </h3>
-              {comorbilidades.value.map((c) => (
-                <Card
-                  key={`${c.id}-${c.comorbilidad}`}
-                  className={classes.cardRoot}
-                  variant="outlined"
-                >
-                  <CardContent className={classes.cardContent}>
-                    <Typography
-                      className={classes.title}
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      {c.comorbilidad}
-                    </Typography>
-                  </CardContent>
-                  <CardActions className={classes.button}>
-                    <Button
-                      onClick={() => {
-                        dispatch(onDelComorbilidades({ id: c.id }));
-                      }}
-                      size="small"
-                      disabled={formData?.aplica.value === '0' ? true : false}
-                    >
-                      Borrar
-                    </Button>
-                  </CardActions>
-                </Card>
-              ))}
+              <div className={classes.cardContainer}>
+                {formData.comorbilidades.value.map((c) => (
+                  <Card
+                    key={`${c.id}-${c.nombre}`}
+                    className={classes.cardRoot}
+                    raised
+                  >
+                    <CardContent className={classes.cardContent}>
+                      <Typography
+                        className={classes.title}
+                        color="textSecondary"
+                        gutterBottom
+                      >
+                        {c.nombre}
+                      </Typography>
+                    </CardContent>
+                    <CardActions className={classes.button}>
+                      <Button
+                        onClick={() => {
+                          dispatch(onDelComorbilidades({ id: c.id }));
+                        }}
+                        size="small"
+                        disabled={formData?.aplica.value === '0' ? true : false}
+                      >
+                        Borrar
+                      </Button>
+                    </CardActions>
+                  </Card>
+                ))}
+              </div>
               <Fab
                 disabled={formData?.aplica.value === '0' ? true : false}
                 color="primary"

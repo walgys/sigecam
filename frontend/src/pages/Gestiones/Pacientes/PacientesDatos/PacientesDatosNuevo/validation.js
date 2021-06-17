@@ -55,9 +55,18 @@ export const infoClinicaSchema = Yup.object().shape({
   aplica: Yup.object().shape({
     value: Yup.boolean(),
   }),
-  semanaFis: Yup.object({
-    value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
-  }), // { value: '1' },
+  semanaFis: Yup.object().when('aplica', (aplica, schema) => {
+    return aplica.value
+      ? schema.shape({
+          value: Yup.number()
+            .required('campo requerido')
+            .notOneOf(['0', '', 0]),
+        })
+      : schema.shape({
+          value: Yup.number(),
+        });
+  }),
+
   fechaFis: Yup.object().when('aplica', (aplica, schema) => {
     return aplica.value
       ? schema.shape({
@@ -96,9 +105,15 @@ export const infoClinicaSchema = Yup.object().shape({
           }),
         });
   }),
-  signosSintomas: Yup.object({
-    value: Yup.array().min(1).required('campo requerido'),
-  }), // { value: '', error: false },
+  signosSintomas: Yup.object().when('aplica', (aplica, schema) => {
+    return aplica.value
+      ? schema.shape({
+          value: Yup.array().min(1).required('campo requerido'),
+        })
+      : schema.shape({
+          value: Yup.array(),
+        });
+  }),
 });
 
 export const antEpidemioForm1Schema = Yup.object().shape({
@@ -182,4 +197,10 @@ export const antEpidemioForm2Schema = Yup.object().shape({
           });
     }
   ),
+});
+
+export const antEpidemioForm3Schema = Yup.object().shape({
+  institucion: Yup.object({
+    value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
+  }), // { value: '', error: false },
 });

@@ -8,7 +8,17 @@ const controlApiBackend = new ControlApiBackend();
 export const autentificarUsuario = createAsyncThunk(
   'user/autentificarUsuario',
   async ({ userName, password }, thunkAPI) => {
-    return await controlApiBackend.autentificarUsuario(userName, password);
+    const result = await controlApiBackend.autentificarUsuario(
+      userName,
+      password
+    );
+    if (result.errorMessage !== null) {
+      thunkAPI.dispatch(
+        setSnack({ type: 'error', message: result.errorMessage })
+      );
+      thunkAPI.dispatch(setOpenSnack(true));
+    }
+    return result;
   }
 );
 
@@ -35,7 +45,11 @@ export const userSlice = createSlice({
     validateUserStatus: null,
     errorMessage: null,
   },
-  reducers: {},
+  reducers: {
+    onTokenExpired: (state) => {
+      state.isAuth = false;
+    },
+  },
   extraReducers: {
     [autentificarUsuario.fulfilled]: (state, { payload }) => {
       state.isAuth = payload?.isAuth;
@@ -55,3 +69,4 @@ export const userSlice = createSlice({
 // Action creators are generated for each case reducer function
 
 export default userSlice.reducer;
+export const { onTokenExpired } = userSlice.actions;

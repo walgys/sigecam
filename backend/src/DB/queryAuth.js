@@ -2,7 +2,7 @@ const mysqlConn = require('../DB/connectDB');
 const queryAuth = async (userName) => {
   const conn = await mysqlConn.getConnection();
   try {
-    const [rows, fields] = await mysqlConn
+    const [rows, fields] = await conn
       .execute(`SELECT * FROM usuarios WHERE userName='${userName}'`)
       .then((results) => {
         return results;

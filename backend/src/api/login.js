@@ -5,17 +5,26 @@ require('dotenv').config();
 const cors = require('cors');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const { resultTypes } = require('../utils');
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 const JWT_SECRET = process.env.JWT_SECRET;
+require('../utils');
 
-const createResponse = (user, errorMessage = null, isAuth = false) => {
+const createResponse = (
+  user,
+  errorMessage = null,
+  resultType = resultTypes.OK,
+  isAuth = false
+) => {
   return {
     isAuth,
+    message: resultType,
     data:
       user !== null
         ? {
             id: user.id,
             tipoUsuario: user.tipoUsuario,
+            idInstitucion: user.idInstitucion,
             userName: user.userName,
             name: user.nombre,
             lastName: user.apellido,
@@ -29,7 +38,7 @@ router.post('/session', (req, res) => {
   try {
     if (req.session.jwt) {
       const user = jwt.verify(req.session.jwt, JWT_SECRET);
-      res.json(createResponse(user, null, true)).end();
+      res.json(createResponse(user, null, null, true)).end();
     } else {
       res.json(createResponse(null, 'Session Expired')).end();
     }
@@ -66,10 +75,16 @@ router.post(
                 });
                 req.session.jwt = token;
 
-                res.json(createResponse(user, null, true)).end();
+                res.json(createResponse(user, null, null, true)).end();
               } else {
                 res
-                  .json(createResponse(null, 'username or password incorrect'))
+                  .json(
+                    createResponse(
+                      null,
+                      'username or password incorrect',
+                      resultTypes.ERROR
+                    )
+                  )
                   .end();
               }
             })
@@ -78,11 +93,19 @@ router.post(
             });
         } else {
           res
-            .json(createResponse(null, 'username or password incorrect'))
+            .json(
+              createResponse(
+                null,
+                'username or password incorrect',
+                resultTypes.ERROR
+              )
+            )
             .end();
         }
       } else {
-        res.json(createResponse(null, 'Error with data')).end();
+        res
+          .json(createResponse(null, 'Error with data', resultTypes.ERROR))
+          .end();
       }
     } catch (err) {
       console.log(err);

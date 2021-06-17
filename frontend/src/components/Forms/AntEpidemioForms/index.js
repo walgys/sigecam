@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { onEpidemioChange, onAddContactos, onDelContactos } from 'redux/Forms';
+import {
+  onEpidemioChange,
+  onAddContactos,
+  onDelContactos,
+  onInstitucionChange,
+} from 'redux/Forms';
 import AddIcon from '@material-ui/icons/Add';
 import {
   Button,
@@ -94,8 +99,10 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 250,
     margin: '2%',
     alignItems: 'center',
+    border: '1px solid gainsboro'
   },
   cardContent: {
+    borderBottom: '1px solid gainsboro',
     padding: '0',
   },
   button: {
@@ -312,14 +319,7 @@ const AntEpidemioForm2 = () => {
           radioValue={formData?.asistioCasosConfirmados.value}
           form="form2"
         />
-        <FormColumnTextYesNo
-          classes={classes}
-          question="¿ Posible transmisión comunitaria ?"
-          radioLabel="posible-transmision-comunitaria-covid"
-          radioName="posibleTransmisionComunitaria"
-          radioValue={formData?.posibleTransmisionComunitaria.value}
-          form="form2"
-        />
+        
         <div className={`${classes.form} ${classes.formContentBlue}`}>
           <div className={classes.formColumnFull}>
             <FormColumnTextYesNo
@@ -407,6 +407,10 @@ const AntEpidemioForm3 = () => {
   const formData = useSelector((state) => state.forms.antEpidemio.form3);
   const dispatch = useDispatch();
   const [modalIndex, setModalIndex] = useState(1);
+  const instituciones = useSelector(
+    (state) => state.forms.formOptions.instituciones
+  );
+  const user = useSelector((state) => state.user.userData);
 
   const AddContactoModal = () => {
     const provincias = useSelector(
@@ -414,8 +418,9 @@ const AntEpidemioForm3 = () => {
     );
     const sexo = useSelector((state) => state.forms.formOptions.sexo);
     const tipoDoc = useSelector((state) => state.forms.formOptions.tipoDoc);
-    const localidades =
-      useSelector((state) => state.forms.formOptions.localidades) || [];
+    const localidades = useSelector(
+      (state) => state.forms.formOptions.localidades
+    );
 
     const [currContacto, setCurrContacto] = useState({
       nombre: { value: '', error: false, errorText: '' },
@@ -477,6 +482,7 @@ const AntEpidemioForm3 = () => {
               nombre: currContacto.nombre.value,
               apellido: currContacto.apellido.value,
               sexo: currContacto.sexo.value,
+              tipoDoc: currContacto.tipoDoc.value,
               numeroDoc: currContacto.numeroDoc.value,
               nacionalidad: currContacto.nacionalidad.value,
               provincia: currContacto.provincia.value,
@@ -986,7 +992,8 @@ const AntEpidemioForm3 = () => {
                   <Card
                     key={`${c.id}-${c.dni}`}
                     className={classes.cardRoot}
-                    variant="outlined"
+                    
+                    raised
                   >
                     <CardContent className={classes.cardContent}>
                       <Typography
@@ -1040,6 +1047,45 @@ const AntEpidemioForm3 = () => {
                 </Fab>
               </div>
             </div>
+          </div>
+          <div className={classes.formContent}>
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
+              <InputLabel id="instiucion-label">
+                Instiucion de creación
+              </InputLabel>
+              <NativeSelect
+                labelId="instiucion-label"
+                inputProps={{ name: 'instiucion' }}
+                id="instiucion"
+                value={
+                  user.tipoUsuario === 1
+                    ? formData?.institucion.value
+                    : user.idInstitucion
+                }
+                error={formData?.institucion?.error}
+                helperText={
+                  formData?.institucion.error
+                    ? formData?.institucion.errorText
+                    : ''
+                }
+                disabled={user.tipoUsuario === 1 ? false : true}
+                onChange={(e) =>
+                  dispatch(
+                    onInstitucionChange({
+                      ...formData?.institucion,
+                      value: e.target.value,
+                    })
+                  )
+                }
+              >
+                <option aria-label="None" value="0" />
+                {instituciones.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
           </div>
         </div>
       </Container>

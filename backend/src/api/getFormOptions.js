@@ -9,22 +9,26 @@ const API_URL = process.env.API_URL;
 
 router.post('/getFormOptions', async (req, res) => {
   try {
-    const queryResult = await axios({
-      url: `${API_URL}/api/v1/internal/getFormOptions`,
-      method: 'POST', // *GET, POST, PUT, DELETE, etc
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json',
-        Token: req.session.jwt,
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    })
-      .then((result) => result.data)
-      .catch((err) => console.log(err));
-    res.json(queryResult).end();
+    if (typeof req.session.jwt !== 'undefined') {
+      const queryResult = await axios({
+        url: `${API_URL}/api/v1/internal/getFormOptions`,
+        method: 'POST', // *GET, POST, PUT, DELETE, etc
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+          Token: req.session.jwt,
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      })
+        .then((result) => result.data)
+        .catch((err) => console.log(err));
+      res.json({ ...queryResult, message: 'OK' }).end();
+    } else {
+      res.json({ message: 'Error', errorMessage: 'Token expired' }).end();
+    }
   } catch (err) {
     console.log(err);
-    res.json({ message: 'Error' }).end();
+    res.json({ message: 'Error', errorMessage: 'Error' }).end();
   }
 });
 
@@ -43,20 +47,32 @@ router.post('/internal/getFormOptions', async (req, res) => {
     const nacionalidades =
       await queryFormOptions.queryFormOptionsNacionalidades();
     const tipoDoc = await queryFormOptions.queryFormOptionsTipoDoc();
+    const signosSintomas =
+      await queryFormOptions.queryFormOptionsSignosSintomas();
+    const comorbilidades =
+      await queryFormOptions.queryFormOptionsComorbilidades();
+    const instituciones =
+      await queryFormOptions.queryFormOptionsInstituciones();
 
     res
       .json({
         message: 'OK',
         provincias,
         localidades: localidadesFiltradas,
+        instituciones,
         sexo,
         nacionalidades,
         tipoDoc,
+        signosSintomas,
+        comorbilidades,
+        errorMessage: null,
       })
       .end();
   } catch (err) {
     console.log(err);
-    res.json({ message: 'Error' }).end();
+    res
+      .json({ message: 'Error', errorMessage: 'Error procesando pedido' })
+      .end();
   }
 });
 

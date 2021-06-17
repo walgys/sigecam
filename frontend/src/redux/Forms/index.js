@@ -1,12 +1,22 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import ControlApiBackend from 'services/controlApiBackend';
+import { setSnack, setOpenSnack } from 'redux/variables';
+import { onTokenExpired } from 'redux/user';
 
 const controlApiBackend = new ControlApiBackend();
 
 export const getDatosFormularios = createAsyncThunk(
   'forms/getFormOptions',
-  async () => {
-    return await controlApiBackend.getDatosFormularios();
+  async (payload, thunkAPI) => {
+    const result = await controlApiBackend.getDatosFormularios();
+    if (result.errorMessage !== null) {
+      thunkAPI.dispatch(
+        setSnack({ type: 'error', message: result.errorMessage })
+      );
+      thunkAPI.dispatch(setOpenSnack(true));
+      thunkAPI.dispatch(onTokenExpired());
+    }
+    return result;
   }
 );
 
@@ -56,6 +66,7 @@ export const antEpidemioInitialState = {
   },
   form3: {
     contactos: { value: [], error: false, errorText: '' },
+    institucion: { value: '0', error: false, errorText: '' },
   },
 };
 
@@ -82,9 +93,12 @@ export const formsSlice = createSlice({
     formOptions: {
       provincias: [],
       localidades: [{ id: 0, localidades: [] }],
+      instituciones: [],
       nacionalidades: [],
       tipoDoc: [],
       sexo: [],
+      signosSintomas: [],
+      comorbilidades: [],
     },
   },
   reducers: {
@@ -109,24 +123,20 @@ export const formsSlice = createSlice({
       if (typeof payload?.error !== 'undefined')
         state.antEpidemio[payload.form][payload.name].error = payload?.error;
     },
+    onInstitucionChange: (state, { payload }) => {
+      state.antEpidemio.form3.institucion.value = payload.value;
+    },
+
     onAddSignosSintomas: (state, { payload }) => {
       state.infoClinica.signosSintomas.value = [
         ...state.infoClinica.signosSintomas.value,
-        {
-          id: payload.id,
-          signoSintoma: payload.currSignosSintomas,
-          descripcion: payload.currSignosSintomasDescripcion,
-        },
+        payload.currSignosSintomas,
       ];
     },
     onAddComorbilidades: (state, { payload }) => {
       state.infoClinica.comorbilidades.value = [
         ...state.infoClinica.comorbilidades.value,
-        {
-          id: payload.id,
-          comorbilidad: payload.currComorbilidad,
-          descripcion: payload.currComorbDescripcion,
-        },
+        payload.currComorbilidad,
       ];
     },
     onAddContactos: (state, { payload }) => {
@@ -195,14 +205,30 @@ export const formsSlice = createSlice({
         }
       }
     },
+    onInstitucionValidate: (state, { payload }) => {
+      if (typeof payload?.value !== 'undefined') {
+        state.antEpidemio.form3.institucion.error = false;
+        state.antEpidemio.form3.institucion.errorText = '';
+
+        if (!payload?.isvalid) {
+          payload.value.map((o) => {
+            state.antEpidemio.form3.institucion.error = o.error;
+            state.antEpidemio.form3.institucion.errorText = o.errorText;
+          });
+        }
+      }
+    },
   },
   extraReducers: {
     [getDatosFormularios.fulfilled]: (state, { payload }) => {
       state.formOptions.provincias = payload?.provincias;
       state.formOptions.localidades = payload?.localidades;
+      state.formOptions.instituciones = payload?.instituciones;
       state.formOptions.sexo = payload?.sexo;
       state.formOptions.nacionalidades = payload?.nacionalidades;
       state.formOptions.tipoDoc = payload?.tipoDoc;
+      state.formOptions.signosSintomas = payload?.signosSintomas;
+      state.formOptions.comorbilidades = payload?.comorbilidades;
     },
   },
 });
@@ -211,6 +237,7 @@ export const {
   onAltaChange,
   onClinicaChange,
   onEpidemioChange,
+  onInstitucionChange,
   onDelSignosSintomas,
   onAddSignosSintomas,
   onDelComorbilidades,
@@ -220,5 +247,6 @@ export const {
   onAltaValidate,
   onInfoClinicaValidate,
   onEpidemioValidate,
+  onInstitucionValidate,
 } = formsSlice.actions;
 export default formsSlice.reducer;
