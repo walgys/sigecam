@@ -6,7 +6,7 @@ import {
   onAddContactos,
   onDelContactos,
   onInstitucionChange,
-} from 'redux/Forms';
+} from 'redux/GestionPacientes/Forms';
 import AddIcon from '@material-ui/icons/Add';
 import {
   Button,
@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 250,
     margin: '2%',
     alignItems: 'center',
-    border: '1px solid gainsboro'
+    border: '1px solid gainsboro',
   },
   cardContent: {
     borderBottom: '1px solid gainsboro',
@@ -142,24 +142,24 @@ const AntEpidemioForm1 = () => {
           classes={classes}
           question="¿ Viajó a alguna zona de riesgo para COVID-19 fuera del país ?"
           radioLabel="viajo-riesgo-fuera-pais"
-          radioName="viajoRiesgoFueraPais"
-          radioValue={formData?.viajoRiesgoFueraPais.value}
+          radioName="fueraPais"
+          radioValue={formData?.fueraPais.value}
           form="form1"
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Viajó a alguna zona de riesgo para COVID-19 dentro del país ?"
           radioLabel="viajo-riesgo-dentro-pais"
-          radioName="viajoRiesgoDentroPais"
-          radioValue={formData?.viajoRiesgoDentroPais.value}
+          radioName="dentroPais"
+          radioValue={formData?.dentroPais.value}
           form="form1"
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Mantuvo contacto estrecho con casos informados de COVID-19 ?"
           radioLabel="contacto-estrecho-covid"
-          radioName="contactoEstrechoCovid"
-          radioValue={formData?.contactoEstrechoCovid.value}
+          radioName="contactoCasos"
+          radioValue={formData?.contactoCasos.value}
           form="form1"
         />
         <div className={classes.formContent}>
@@ -168,16 +168,14 @@ const AntEpidemioForm1 = () => {
             <TextField
               style={{ width: '100%' }}
               required
-              id="contactoEstrechoCovidNombre-required"
+              id="nomApeCaso-required"
               label="Apellido y nombre del caso"
-              name="contactoEstrechoCovidNombre"
+              name="nomApeCaso"
               variant="outlined"
-              value={formData?.contactoEstrechoCovidNombre.value}
-              error={formData?.contactoEstrechoCovidNombre.error}
+              value={formData?.nomApeCaso.value}
+              error={formData?.nomApeCaso.error}
               helperText={
-                formData?.contactoEstrechoCovidNombre.error
-                  ? formData?.contactoEstrechoCovidNombre.errorText
-                  : ''
+                formData?.nomApeCaso.error ? formData?.nomApeCaso.errorText : ''
               }
               onChange={(e) =>
                 dispatch(
@@ -194,14 +192,14 @@ const AntEpidemioForm1 = () => {
             {' '}
             <TextField
               required
-              id="idDniSnvs-required"
+              id="idCaso-required"
               label="DNI o ID SNVS"
-              name="idDniSnvs"
+              name="idCaso"
               variant="outlined"
-              value={formData?.idDniSnvs.value}
-              error={formData?.idDniSnvs.error}
+              value={formData?.idCaso.value}
+              error={formData?.idCaso.error}
               helperText={
-                formData?.idDniSnvs.error ? formData?.idDniSnvs.errorText : ''
+                formData?.idCaso.error ? formData?.idCaso.errorText : ''
               }
               onChange={(e) =>
                 dispatch(
@@ -219,37 +217,37 @@ const AntEpidemioForm1 = () => {
           classes={classes}
           question="¿ Recibió atención en algún centro de salud que atiende casos COVID-19 ?"
           radioLabel="atencion-salud-covid"
-          radioName="atencionSaludCovid"
-          radioValue={formData?.atencionSaludCovid.value}
+          radioName="atencionEnCentro"
+          radioValue={formData?.atencionEnCentro.value}
           form="form1"
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Antecedentes vacunación gripal ?"
           radioLabel="antecedentes-vacuna-gripal"
-          radioName="vacunacionGripal"
-          radioValue={formData?.vacunacionGripal.value}
+          radioName="antVacGripal"
+          radioValue={formData?.antVacGripal.value}
           form="form1"
         >
           <div className={`${classes.formColumn} ${classes.formColumnSmall}`}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
                 margin="normal"
-                id="fechaVacunaGripal"
+                id="fecVacGripal"
                 label="Fecha de vacunación"
                 format="MM/dd/yyyy"
-                inputProps={{ name: 'fechaVacunaGripal' }}
-                value={formData?.fechaVacunaGripal.value}
-                error={formData?.fechaVacunaGripal.error}
+                inputProps={{ name: 'fecVacGripal' }}
+                value={formData?.fecVacGripal.value}
+                error={formData?.fecVacGripal.error}
                 helperText={
-                  formData?.fechaVacunaGripal.error
-                    ? formData?.fechaVacunaGripal.errorText
+                  formData?.fecVacGripal.error
+                    ? formData?.fecVacGripal.errorText
                     : ''
                 }
                 onChange={(e) =>
                   dispatch(
                     onEpidemioChange({
-                      name: 'fechaVacunaGripal',
+                      name: 'fecVacGripal',
                       value: e.getTime(),
                       form: 'form1',
                     })
@@ -266,8 +264,8 @@ const AntEpidemioForm1 = () => {
           classes={classes}
           question="¿ Es trabajador de salud ?"
           radioLabel="trabajador-salud"
-          radioName="trabajadorSalud"
-          radioValue={formData?.trabajadorSalud.value}
+          radioName="trabajoSalud"
+          radioValue={formData?.trabajoSalud.value}
           form="form1"
         />
       </form>
@@ -281,11 +279,11 @@ const AntEpidemioForm2 = () => {
   const dispatch = useDispatch();
 
   const conglomeradosInstitucionales = [
-    'Hospital / Clinica Asistencial',
-    'Institución penitenciaria',
-    'Residencia para personas mayores',
-    'Institución de salud mental',
-    'Otros',
+    { id: 1, nombre: 'Hospital / Clinica Asistencial' },
+    { id: 2, nombre: 'Institución penitenciaria' },
+    { id: 3, nombre: 'Residencia para personas mayores' },
+    { id: 4, nombre: 'Institución de salud mental' },
+    { id: 5, nombre: 'Otros' },
   ];
 
   return (
@@ -299,35 +297,35 @@ const AntEpidemioForm2 = () => {
           classes={classes}
           question="¿ Es trabajador de la salud y pudo haberse contagiado de un colega infectado ?"
           radioLabel="trabajador-salud-colega-infectado"
-          radioName="trabajadorSaludColegaInfectado"
-          radioValue={formData?.trabajadorSaludColegaInfectado.value}
+          radioName="contagioColega"
+          radioValue={formData?.contagioColega.value}
           form="form2"
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Es trabajador de la salud y desconoce el nexo epidemiológico ?"
           radioLabel="trabajador-salud-desconoce-nexo"
-          radioName="trabajadorSaludDesconoceNexo"
-          radioValue={formData?.trabajadorSaludDesconoceNexo.value}
+          radioName="nexoDesconocido"
+          radioValue={formData?.nexoDesconocido.value}
           form="form2"
         />
         <FormColumnTextYesNo
           classes={classes}
           question="¿ Asistió como personal de salud a casos confirmados de COVID-19 ?"
           radioLabel="asistio-casos-confirmados-covid"
-          radioName="asistioCasosConfirmados"
-          radioValue={formData?.asistioCasosConfirmados.value}
+          radioName="asistInfectado"
+          radioValue={formData?.asistInfectado.value}
           form="form2"
         />
-        
+
         <div className={`${classes.form} ${classes.formContentBlue}`}>
           <div className={classes.formColumnFull}>
             <FormColumnTextYesNo
               classes={classes}
               question="¿ Posible transmisión comunitaria ?"
               radioLabel="posible-transmision-comunitaria-covid"
-              radioName="posibleTransmisionComunitaria"
-              radioValue={formData?.posibleTransmisionComunitaria.value}
+              radioName="transComunitaria"
+              radioValue={formData?.transComunitaria.value}
               form="form2"
             ></FormColumnTextYesNo>
             <div className={`${classes.formContent}`}>
@@ -336,18 +334,16 @@ const AntEpidemioForm2 = () => {
                   className={classes.formControl}
                   style={{ width: '100%' }}
                 >
-                  <InputLabel id="congloInstitucional-label">
+                  <InputLabel id="congloCasos-label">
                     Conglomerado institucional
                   </InputLabel>
                   <NativeSelect
-                    labelId="congloInstitucional-label"
-                    inputProps={{ name: 'congloInstitucional' }}
-                    id="congloInstitucional"
-                    value={formData?.congloInstitucional.value}
+                    labelId="congloCasos-label"
+                    inputProps={{ name: 'congloCasos' }}
+                    id="congloCasos"
+                    value={formData?.congloCasos.value}
                     disabled={
-                      formData?.posibleTransmisionComunitaria.value === '1'
-                        ? false
-                        : true
+                      formData?.transComunitaria.value === '1' ? false : true
                     }
                     onChange={(e) =>
                       dispatch(
@@ -360,8 +356,8 @@ const AntEpidemioForm2 = () => {
                     }
                   >
                     {conglomeradosInstitucionales.map((c) => (
-                      <option key={c} aria-label={c} value={c}>
-                        {c}
+                      <option key={c.id} aria-label={c.nombre} value={c.id}>
+                        {c.nombre}
                       </option>
                     ))}
                   </NativeSelect>
@@ -417,6 +413,9 @@ const AntEpidemioForm3 = () => {
       (state) => state.forms.formOptions.provincias
     );
     const sexo = useSelector((state) => state.forms.formOptions.sexo);
+    const nacionalidades = useSelector(
+      (state) => state.forms.formOptions.nacionalidades
+    );
     const tipoDoc = useSelector((state) => state.forms.formOptions.tipoDoc);
     const localidades = useSelector(
       (state) => state.forms.formOptions.localidades
@@ -427,18 +426,18 @@ const AntEpidemioForm3 = () => {
       apellido: { value: '', error: false, errorText: '' },
       sexo: { value: '0', error: false, errorText: '' },
       tipoDoc: { value: '0', error: false, errorText: '' },
-      numeroDoc: { value: '', error: false, errorText: '' },
+      nroDoc: { value: '', error: false, errorText: '' },
       nacionalidad: { value: '0', error: false, errorText: '' },
       provincia: { value: '0', error: false, errorText: '' },
       localidad: { value: '0', error: false, errorText: '' },
-      domicilio: { value: '', error: false, errorText: '' },
+      calle: { value: '', error: false, errorText: '' },
       telefono: { value: '', error: false, errorText: '' },
-      nroDom: { value: '', error: false, errorText: '' },
-      domPiso: { value: '', error: false, errorText: '' },
-      domDto: { value: '', error: false, errorText: '' },
-      domCP: { value: '', error: false, errorText: '' },
-      domBarrio: { value: '', error: false, errorText: '' },
-      fechaUltimoContacto: { value: Date.now(), error: false, errorText: '' },
+      nroCalle: { value: '', error: false, errorText: '' },
+      piso: { value: '', error: false, errorText: '' },
+      depto: { value: '', error: false, errorText: '' },
+      codPos: { value: '', error: false, errorText: '' },
+      barrioVilla: { value: '', error: false, errorText: '' },
+      ultimoContacto: { value: Date.now(), error: false, errorText: '' },
       tipoContacto: { value: '', error: false, errorText: '' },
     });
     const localidadesFiltradas =
@@ -454,18 +453,18 @@ const AntEpidemioForm3 = () => {
         apellido: { value: '', error: false, errorText: '' },
         sexo: { value: '0', error: false, errorText: '' },
         tipoDoc: { value: '0', error: false, errorText: '' },
-        numeroDoc: { value: '', error: false, errorText: '' },
+        nroDoc: { value: '', error: false, errorText: '' },
         nacionalidad: { value: '0', error: false, errorText: '' },
         provincia: { value: '0', error: false, errorText: '' },
         localidad: { value: '0', error: false, errorText: '' },
-        domicilio: { value: '', error: false, errorText: '' },
+        calle: { value: '', error: false, errorText: '' },
         telefono: { value: '', error: false, errorText: '' },
-        nroDom: { value: '', error: false, errorText: '' },
-        domPiso: { value: '', error: false, errorText: '' },
-        domDto: { value: '', error: false, errorText: '' },
-        domCP: { value: '', error: false, errorText: '' },
-        domBarrio: { value: '', error: false, errorText: '' },
-        fechaUltimoContacto: { value: Date.now(), error: false, errorText: '' },
+        nroCalle: { value: '', error: false, errorText: '' },
+        piso: { value: '', error: false, errorText: '' },
+        depto: { value: '', error: false, errorText: '' },
+        codPos: { value: '', error: false, errorText: '' },
+        barrioVilla: { value: '', error: false, errorText: '' },
+        ultimoContacto: { value: Date.now(), error: false, errorText: '' },
         tipoContacto: { value: '', error: false, errorText: '' },
       });
       setModalOpen(false);
@@ -483,18 +482,18 @@ const AntEpidemioForm3 = () => {
               apellido: currContacto.apellido.value,
               sexo: currContacto.sexo.value,
               tipoDoc: currContacto.tipoDoc.value,
-              numeroDoc: currContacto.numeroDoc.value,
+              nroDoc: currContacto.nroDoc.value,
               nacionalidad: currContacto.nacionalidad.value,
               provincia: currContacto.provincia.value,
               localidad: currContacto.localidad.value,
-              domicilio: currContacto.domicilio.value,
+              calle: currContacto.calle.value,
               telefono: currContacto.telefono.value,
-              nroDom: currContacto.nroDom.value,
-              domPiso: currContacto.domPiso.value,
-              domDto: currContacto.domDto.value,
-              domCP: currContacto.domCP.value,
-              domBarrio: currContacto.domBarrio.value,
-              fechaUltimoContacto: currContacto.fechaUltimoContacto.value,
+              nroCalle: currContacto.nroCalle.value,
+              piso: currContacto.piso.value,
+              depto: currContacto.depto.value,
+              codPos: currContacto.codPos.value,
+              barrioVilla: currContacto.barrioVilla.value,
+              ultimoContacto: currContacto.ultimoContacto.value,
               tipoContacto: currContacto.tipoContacto.value,
             })
           );
@@ -523,18 +522,18 @@ const AntEpidemioForm3 = () => {
           apellido: { value: '', error: false, errorText: '' },
           sexo: { value: '0', error: false, errorText: '' },
           tipoDoc: { value: '0', error: false, errorText: '' },
-          numeroDoc: { value: '', error: false, errorText: '' },
+          nroDoc: { value: '', error: false, errorText: '' },
           nacionalidad: { value: '0', error: false, errorText: '' },
           provincia: { value: '0', error: false, errorText: '' },
           localidad: { value: '0', error: false, errorText: '' },
-          domicilio: { value: '', error: false, errorText: '' },
+          calle: { value: '', error: false, errorText: '' },
           telefono: { value: '', error: false, errorText: '' },
-          nroDom: { value: '', error: false, errorText: '' },
-          domPiso: { value: '', error: false, errorText: '' },
-          domDto: { value: '', error: false, errorText: '' },
-          domCP: { value: '', error: false, errorText: '' },
-          domBarrio: { value: '', error: false, errorText: '' },
-          fechaUltimoContacto: {
+          nroCalle: { value: '', error: false, errorText: '' },
+          piso: { value: '', error: false, errorText: '' },
+          depto: { value: '', error: false, errorText: '' },
+          codPos: { value: '', error: false, errorText: '' },
+          barrioVilla: { value: '', error: false, errorText: '' },
+          ultimoContacto: {
             value: Date.now(),
             error: false,
             errorText: '',
@@ -633,22 +632,20 @@ const AntEpidemioForm3 = () => {
           <div className={classes.formColumn}>
             <TextField
               required
-              id="numeroDoc-required"
-              key="numeroDoc-required"
-              inputProps={{ name: 'numeroDoc' }}
+              id="nroDoc-required"
+              key="nroDoc-required"
+              inputProps={{ name: 'nroDoc' }}
               label="Nro de documento"
-              error={currContacto?.numeroDoc.error}
+              error={currContacto?.nroDoc.error}
               helperText={
-                currContacto?.numeroDoc.error
-                  ? currContacto?.numeroDoc.errorText
-                  : ''
+                currContacto?.nroDoc.error ? currContacto?.nroDoc.errorText : ''
               }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
                   ...prevState,
-                  numeroDoc: {
-                    ...prevState.numeroDoc,
+                  nroDoc: {
+                    ...prevState.nroDoc,
                     value: e.target.value,
                   },
                 }))
@@ -690,6 +687,41 @@ const AntEpidemioForm3 = () => {
             </FormControl>
           </div>
           <div className={classes.formColumn}>
+            <FormControl className={`${classes.formControl} ${classes.field} `}>
+              <InputLabel id="nacionalidad-label">Nacionalidad</InputLabel>
+              <NativeSelect
+                labelId="nacionalidad-label"
+                inputProps={{ name: 'nacionalidad' }}
+                id="nacionalidad"
+                value={currContacto?.nacionalidad.value}
+                error={currContacto?.nacionalidad.error}
+                helperText={
+                  currContacto?.nacionalidad?.error
+                    ? currContacto?.nacionalidad?.errorText
+                    : ''
+                }
+                onChange={(e) =>
+                  setCurrContacto((prevState) => ({
+                    ...prevState,
+                    nacionalidad: {
+                      ...prevState.nacionalidad,
+                      value: e.target.value,
+                    },
+                  }))
+                }
+              >
+                <option aria-label="None" value="0" />
+                {nacionalidades?.map((p) => (
+                  <option key={`${p.id}-${p.nombre}`} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
+          </div>
+        </div>
+        <div className={classes.formContent}>
+          <div className={classes.formColumn}>
             <TextField
               required
               id="telefono-required"
@@ -711,6 +743,7 @@ const AntEpidemioForm3 = () => {
               }
             />
           </div>
+          <div className={classes.formColumn}></div>
         </div>
         <div className={classes.formContent}>
           <div className={classes.formColumn}>
@@ -784,21 +817,19 @@ const AntEpidemioForm3 = () => {
           <div className={classes.formColumn}>
             <TextField
               required
-              id="domicilio-required"
-              key="domicilio-required"
-              inputProps={{ name: 'domicilio' }}
-              label="Domicilio"
-              error={currContacto?.domicilio.error}
+              id="calle-required"
+              key="calle-required"
+              inputProps={{ name: 'calle' }}
+              label="calle"
+              error={currContacto?.calle.error}
               helperText={
-                currContacto?.domicilio.error
-                  ? currContacto?.domicilio.errorText
-                  : ''
+                currContacto?.calle.error ? currContacto?.calle.errorText : ''
               }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
                   ...prevState,
-                  domicilio: { ...prevState.domicilio, value: e.target.value },
+                  calle: { ...prevState.calle, value: e.target.value },
                 }))
               }
             />
@@ -806,19 +837,21 @@ const AntEpidemioForm3 = () => {
           <div className={classes.formColumn}>
             <TextField
               required
-              id="nroDom-required"
-              key="nroDom-required"
-              inputProps={{ name: 'nroDom' }}
+              id="nroCalle-required"
+              key="nroCalle-required"
+              inputProps={{ name: 'nroCalle' }}
               label="Nro"
-              error={currContacto?.nroDom.error}
+              error={currContacto?.nroCalle.error}
               helperText={
-                currContacto?.nroDom.error ? currContacto?.nroDom.errorText : ''
+                currContacto?.nroCalle.error
+                  ? currContacto?.nroCalle.errorText
+                  : ''
               }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
                   ...prevState,
-                  nroDom: { ...prevState.domicilio, value: e.target.value },
+                  nroCalle: { ...prevState.calle, value: e.target.value },
                 }))
               }
             />
@@ -828,19 +861,19 @@ const AntEpidemioForm3 = () => {
           <div className={classes.formColumn}>
             <TextField
               required
-              id="domCP-required"
-              key="domCP-required"
-              inputProps={{ name: 'domCP' }}
+              id="codPos-required"
+              key="codPos-required"
+              inputProps={{ name: 'codPos' }}
               label="CP"
-              error={currContacto?.domCP.error}
+              error={currContacto?.codPos.error}
               helperText={
-                currContacto?.domCP.error ? currContacto?.domCP.errorText : ''
+                currContacto?.codPos.error ? currContacto?.codPos.errorText : ''
               }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
                   ...prevState,
-                  domCP: { ...prevState.domCP, value: e.target.value },
+                  codPos: { ...prevState.codPos, value: e.target.value },
                 }))
               }
             />
@@ -848,21 +881,19 @@ const AntEpidemioForm3 = () => {
           <div className={classes.formColumn}>
             <TextField
               required
-              id="domPiso-required"
-              key="domPiso-required"
-              inputProps={{ name: 'domPiso' }}
+              id="piso-required"
+              key="piso-required"
+              inputProps={{ name: 'piso' }}
               label="Piso"
-              error={currContacto?.domPiso.error}
+              error={currContacto?.piso.error}
               helperText={
-                currContacto?.domPiso.error
-                  ? currContacto?.domPiso.errorText
-                  : ''
+                currContacto?.piso.error ? currContacto?.piso.errorText : ''
               }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
                   ...prevState,
-                  domPiso: { ...prevState.domPiso, value: e.target.value },
+                  piso: { ...prevState.piso, value: e.target.value },
                 }))
               }
             />
@@ -870,19 +901,19 @@ const AntEpidemioForm3 = () => {
           <div className={classes.formColumn}>
             <TextField
               required
-              id="domDto-required"
-              key="domDto-required"
-              inputProps={{ name: 'domDto' }}
+              id="depto-required"
+              key="depto-required"
+              inputProps={{ name: 'depto' }}
               label="Dto"
-              error={currContacto?.domDto.error}
+              error={currContacto?.depto.error}
               helperText={
-                currContacto?.domDto.error ? currContacto?.domDto.errorText : ''
+                currContacto?.depto.error ? currContacto?.depto.errorText : ''
               }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
                   ...prevState,
-                  domDto: { ...prevState.domDto, value: e.target.value },
+                  depto: { ...prevState.depto, value: e.target.value },
                 }))
               }
             />
@@ -892,22 +923,22 @@ const AntEpidemioForm3 = () => {
           <div className={classes.formColumnFull}>
             <TextField
               required
-              id="domBarrio-required"
-              key="domBarrio-required"
-              inputProps={{ name: 'domBarrio' }}
+              id="barrioVilla-required"
+              key="barrioVilla-required"
+              inputProps={{ name: 'barrioVilla' }}
               label="Barrio/Villa"
-              error={currContacto?.domBarrio.error}
+              error={currContacto?.barrioVilla.error}
               helperText={
-                currContacto?.domBarrio.error
-                  ? currContacto?.domBarrio.errorText
+                currContacto?.barrioVilla.error
+                  ? currContacto?.barrioVilla.errorText
                   : ''
               }
               variant="outlined"
               onChange={(e) =>
                 setCurrContacto((prevState) => ({
                   ...prevState,
-                  domBarrio: {
-                    ...prevState.domBarrio,
+                  barrioVilla: {
+                    ...prevState.barrioVilla,
                     value: e.target.value,
                   },
                 }))
@@ -920,21 +951,21 @@ const AntEpidemioForm3 = () => {
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
                 margin="normal"
-                id="fechaUltimoContacto"
+                id="ultimoContacto"
                 label="Ultimo Contacto"
                 format="MM/dd/yyyy"
-                error={currContacto?.fechaUltimoContacto.error}
+                error={currContacto?.ultimoContacto.error}
                 helperText={
-                  currContacto?.fechaUltimoContacto.error
-                    ? currContacto?.fechaUltimoContacto.errorText
+                  currContacto?.ultimoContacto.error
+                    ? currContacto?.ultimoContacto.errorText
                     : ''
                 }
-                value={currContacto?.fechaUltimoContacto.value}
+                value={currContacto?.ultimoContacto.value}
                 onChange={(e) =>
                   setCurrContacto((prevState) => ({
                     ...prevState,
-                    fechaUltimoContacto: {
-                      ...prevState.fechaUltimoContacto,
+                    ultimoContacto: {
+                      ...prevState.ultimoContacto,
                       value: e.getTime(),
                     },
                   }))
@@ -992,7 +1023,6 @@ const AntEpidemioForm3 = () => {
                   <Card
                     key={`${c.id}-${c.dni}`}
                     className={classes.cardRoot}
-                    
                     raised
                   >
                     <CardContent className={classes.cardContent}>
@@ -1022,7 +1052,7 @@ const AntEpidemioForm3 = () => {
                         color="textSecondary"
                         gutterBottom
                       >
-                        {c.numeroDoc}
+                        {c.nroDoc}
                       </Typography>
                     </CardContent>
                     <CardActions className={classes.button}>

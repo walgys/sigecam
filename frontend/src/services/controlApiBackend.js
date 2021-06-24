@@ -27,7 +27,7 @@ class controlApiBackend {
       .then((result) => result.data)
       .catch((err) => {
         console.log(err);
-        return { isAuth: false, data: {}, errorMessage: 'Error' };
+        return { isAuth: false, data: {}, errorMessage: 'Error de conexión' };
       });
   };
 
@@ -40,7 +40,7 @@ class controlApiBackend {
       .then((result) => result.data)
       .catch((err) => {
         console.log(err);
-        return { isAuth: false, data: {}, errorMessage: 'Error' };
+        return { isAuth: false, data: {}, errorMessage: 'Error de conexión' };
       });
   };
 
@@ -65,8 +65,7 @@ class controlApiBackend {
         })
           .then((result) => result.data)
           .catch((err) => {
-            console.log(err);
-            return { data: {}, errorMessage: 'Error' };
+            return { data: {}, errorMessage: 'Error de conexión' };
           });
       default:
         break;
@@ -104,7 +103,7 @@ class controlApiBackend {
       .then((result) => result.data)
       .catch((err) => {
         console.log(err);
-        return { data: {}, errorMessage: 'Error' };
+        return { data: {}, errorMessage: 'Error de conexión' };
       });
   };
 

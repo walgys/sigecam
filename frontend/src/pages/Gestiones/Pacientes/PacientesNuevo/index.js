@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  getDatosFormularios,
+  onPacientesDatosNuevoExit,
   onInfoClinicaValidate,
   onAltaValidate,
   onEpidemioValidate,
   onInstitucionValidate,
-} from 'redux/Forms';
+} from 'redux/GestionPacientes/Forms';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -93,12 +93,23 @@ const PacientesDatosNuevo = () => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [isCommiting, setIsCommiting] = useState(false);
-  const trabajadorSalud = useSelector(
-    (state) => state.forms.antEpidemio.form1.trabajadorSalud
+  const trabajoSalud = useSelector(
+    (state) => state.forms.antEpidemio.form1.trabajoSalud
   );
+  const resultTypes = useSelector((state) => state.constants.resultTypes);
   const history = useHistory();
   const forms = useSelector((state) => state.forms);
+  const handleExit = () => {
+    dispatch(onPacientesDatosNuevoExit());
+  };
 
+  useEffect(() => {
+    window.addEventListener('unload', handleExit);
+    return () => {
+      window.removeEventListener('unload', handleExit);
+      handleExit();
+    };
+  }, []);
   const steps = getSteps();
 
   const checkMissingData = async () => {
@@ -228,7 +239,7 @@ const PacientesDatosNuevo = () => {
     }
 
     if (isValid) {
-      if (activeStep === 2 && trabajadorSalud.value !== '1') {
+      if (activeStep === 2 && trabajoSalud.value !== '1') {
         setActiveStep((prevActiveStep) => prevActiveStep + 2);
       } else {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -252,16 +263,16 @@ const PacientesDatosNuevo = () => {
       transformPacientData(),
       1
     );
-    if (result?.message === 'OK') {
+    if (result?.message === resultTypes.SUCCESS) {
       dispatch(setSnack({ type: 'success', message: 'Nuevo paciente creado' }));
       dispatch(setOpenSnack(true));
       //history.push('/gestiones/pacientes/datos');
     }
-
-    if (result?.message === 'ERROR') {
-      dispatch(setSnack({ type: 'error', message: result.error }));
+    if (result.errorMessage === resultTypes.INVALID_TOKEN)
+      dispatch(onTokenExpired());
+    if (result?.message === resultTypes.ERROR) {
+      dispatch(setSnack({ type: 'error', message: result.errorMessage }));
       dispatch(setOpenSnack(true));
-      if (result.errorMessae === 'Token expired') dispatch(onTokenExpired());
     }
 
     setIsCommiting(false);
@@ -272,7 +283,7 @@ const PacientesDatosNuevo = () => {
   };
 
   const handleBack = () => {
-    if (activeStep === 4 && trabajadorSalud.value !== '1') {
+    if (activeStep === 4 && trabajoSalud.value !== '1') {
       setActiveStep((prevActiveStep) => prevActiveStep - 2);
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep - 1);

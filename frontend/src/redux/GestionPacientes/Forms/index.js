@@ -14,7 +14,7 @@ export const getDatosFormularios = createAsyncThunk(
         setSnack({ type: 'error', message: result.errorMessage })
       );
       thunkAPI.dispatch(setOpenSnack(true));
-      thunkAPI.dispatch(onTokenExpired());
+      if (result.error === 'INVALID_TOKEN') thunkAPI.dispatch(onTokenExpired());
     }
     return result;
   }
@@ -26,38 +26,38 @@ export const altaPacienteInitialState = {
   sexo: { value: '0', error: false, errorText: '' },
   edad: { value: '0', error: false, errorText: '' },
   tipoDoc: { value: '0', error: false, errorText: '' },
-  numeroDoc: { value: '', error: false, errorText: '' },
+  nroDoc: { value: '', error: false, errorText: '' },
   nacionalidad: { value: '0', error: false, errorText: '' },
   provincia: { value: '0', error: false, errorText: '' },
   localidad: { value: '0', error: false, errorText: '' },
-  domicilio: { value: '', error: false, errorText: '' },
+  calle: { value: '', error: false, errorText: '' },
   telefono: { value: '', error: false, errorText: '' },
-  nroDom: { value: '', error: false, errorText: '' },
-  domPiso: { value: '', error: false, errorText: '' },
-  domDto: { value: '', error: false, errorText: '' },
-  domCP: { value: '', error: false, errorText: '' },
-  domBarrio: { value: '', error: false, errorText: '' },
-  privadoLib: { value: false, error: false, errorText: '' },
+  nroCalle: { value: '', error: false, errorText: '' },
+  piso: { value: '', error: false, errorText: '' },
+  depto: { value: '', error: false, errorText: '' },
+  codPos: { value: '', error: false, errorText: '' },
+  barrioVilla: { value: '', error: false, errorText: '' },
+  privadoLibertad: { value: false, error: false, errorText: '' },
 };
 
 export const antEpidemioInitialState = {
   form1: {
-    viajoRiesgoFueraPais: { value: '0', error: false, errorText: '' },
-    viajoRiesgoDentroPais: { value: '0', error: false, errorText: '' },
-    contactoEstrechoCovid: { value: '0', error: false, errorText: '' },
-    contactoEstrechoCovidNombre: { value: '', error: false, errorText: '' },
-    idDniSnvs: { value: '', error: false, errorText: '' },
-    atencionSaludCovid: { value: '0', error: false, errorText: '' },
-    vacunacionGripal: { value: '0', error: false, errorText: '' },
-    fechaVacunaGripal: { value: Date.now(), error: false, errorText: '' },
-    trabajadorSalud: { value: '0', error: false, errorText: '' },
+    fueraPais: { value: '0', error: false, errorText: '' },
+    dentroPais: { value: '0', error: false, errorText: '' },
+    contactoCasos: { value: '0', error: false, errorText: '' },
+    nomApeCaso: { value: '', error: false, errorText: '' },
+    idCaso: { value: '', error: false, errorText: '' },
+    atencionEnCentro: { value: '0', error: false, errorText: '' },
+    antVacGripal: { value: '0', error: false, errorText: '' },
+    fecVacGripal: { value: Date.now(), error: false, errorText: '' },
+    trabajoSalud: { value: '0', error: false, errorText: '' },
   },
   form2: {
-    trabajadorSaludColegaInfectado: { value: '0', error: false, errorText: '' },
-    trabajadorSaludDesconoceNexo: { value: '0', error: false, errorText: '' },
-    asistioCasosConfirmados: { value: '0', error: false, errorText: '' },
-    posibleTransmisionComunitaria: { value: '0', error: false, errorText: '' },
-    congloInstitucional: {
+    contagioColega: { value: '0', error: false, errorText: '' },
+    nexoDesconocido: { value: '0', error: false, errorText: '' },
+    asistInfectado: { value: '0', error: false, errorText: '' },
+    transComunitaria: { value: '0', error: false, errorText: '' },
+    congloCasos: {
       value: 'Hospital / Clinica Asistencial',
       error: false,
       errorText: '',
@@ -78,8 +78,8 @@ export const infoClinicaInitialState = {
     error: false,
     errorText: '',
   },
-  primeraConsulta: { value: Date.now(), error: false, errorText: '' },
-  estadoInternacion: { value: '0', error: false, errorText: '' },
+  fechaPrimeraConsulta: { value: Date.now(), error: false, errorText: '' },
+  estadoInternacion: { value: '2', error: false, errorText: '' },
   signosSintomas: { value: [], error: false, errorText: '' },
   comorbilidades: { value: [], error: false, errorText: '' },
 };
@@ -218,6 +218,11 @@ export const formsSlice = createSlice({
         }
       }
     },
+    onPacientesDatosNuevoExit: (state) => {
+      state.altaPaciente = altaPacienteInitialState;
+      state.antEpidemio = antEpidemioInitialState;
+      state.infoClinica = infoClinicaInitialState;
+    },
   },
   extraReducers: {
     [getDatosFormularios.fulfilled]: (state, { payload }) => {
@@ -248,5 +253,6 @@ export const {
   onInfoClinicaValidate,
   onEpidemioValidate,
   onInstitucionValidate,
+  onPacientesDatosNuevoExit,
 } = formsSlice.actions;
 export default formsSlice.reducer;

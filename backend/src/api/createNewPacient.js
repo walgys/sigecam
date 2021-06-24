@@ -1,7 +1,6 @@
 const express = require('express');
 const axios = require('axios');
-const queryFormOptions = require('../DB/queryFormOptions');
-require('dotenv').config();
+const createNewPatient = require('../DB/createNewPatient');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { resultTypes } = require('../utils');
@@ -25,15 +24,20 @@ router.post('/createNewPacient', async (req, res) => {
       })
         .then((result) => result.data)
         .catch((err) => console.log(err));
-
-      res.json({ ...queryResult, message: 'OK' }).end();
+      console.log(queryResult);
+      res.json({ ...queryResult }).end();
     } else {
-      res.json({ ...queryResult, message: 'OK' }).end();
+      res
+        .json({
+          message: resultTypes.INVALID_TOKEN,
+          errorMessage: 'Token caducado',
+        })
+        .end();
     }
   } catch (err) {
     console.log(err);
     res
-      .json({ message: resultTypes.ERROR, errorMessage: 'Token expired' })
+      .json({ message: resultTypes.ERROR, errorMessage: 'Server error' })
       .end();
   }
 });
@@ -41,15 +45,22 @@ router.post('/createNewPacient', async (req, res) => {
 router.post('/internal/createNewPacient', async (req, res) => {
   try {
     const user = jwt.verify(req.headers.token, JWT_SECRET);
-    console.log(req.body);
+
+    const createNewPatientResult = await createNewPatient
+      .create(req.body)
+      .then((r) => r);
+    console.log(createNewPatientResult);
     res
       .json({
-        message: 'OK',
+        message: createNewPatientResult.result,
+        errorMessage: createNewPatientResult.message,
       })
       .end();
   } catch (err) {
     console.log(err);
-    res.json({ message: 'Error' }).end();
+    res
+      .json({ message: resultTypes.ERROR, errorMessage: 'Server error' })
+      .end();
   }
 });
 

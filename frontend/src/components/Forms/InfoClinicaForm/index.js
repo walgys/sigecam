@@ -7,7 +7,7 @@ import {
   onAddSignosSintomas,
   onDelComorbilidades,
   onAddComorbilidades,
-} from 'redux/Forms';
+} from 'redux/GestionPacientes/Forms';
 import DateFnsUtils from '@date-io/date-fns';
 import DialogModal from 'components/DialogModal';
 import {
@@ -463,21 +463,21 @@ const InfoClinicaForm = () => {
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   margin="normal"
-                  id="primeraConsulta"
+                  id="fechaPrimeraConsulta"
                   label="Fecha de 1° consulta"
                   format="MM/dd/yyyy"
                   disabled={formData?.aplica.value === '0' ? true : false}
-                  error={formData?.primeraConsulta.error}
+                  error={formData?.fechaPrimeraConsulta.error}
                   helperText={
-                    formData?.primeraConsulta.error
-                      ? formData?.primeraConsulta.errorText
+                    formData?.fechaPrimeraConsulta.error
+                      ? formData?.fechaPrimeraConsulta.errorText
                       : ''
                   }
-                  value={formData?.primeraConsulta.value}
+                  value={formData?.fechaPrimeraConsulta.value}
                   onChange={(e) =>
                     dispatch(
                       onClinicaChange({
-                        name: 'primeraConsulta',
+                        name: 'fechaPrimeraConsulta',
                         value: e.getTime(),
                       })
                     )
@@ -508,7 +508,7 @@ const InfoClinicaForm = () => {
                 >
                   <FormControlLabel
                     disabled={formData?.aplica.value === '0' ? true : false}
-                    value="0"
+                    value="2"
                     control={<Radio />}
                     label="Ambulatorio"
                   />

@@ -6,7 +6,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { onEpidemioChange } from 'redux/Forms';
+import { onEpidemioChange } from 'redux/GestionPacientes/Forms';
 import React from 'react';
 
 const FormColumnTextYesNo = (props) => {

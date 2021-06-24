@@ -8,11 +8,10 @@ import GestUsuarios from './Gestiones/GestUsuarios';
 import GestRecGenerales from './Gestiones/GestRecursos/GestRecGenerales';
 import GestRecInstituciones from './Gestiones/GestRecursos/GestRecInstituciones';
 import Pacientes from './Gestiones/Pacientes';
-import PacientesDatos from './Gestiones/Pacientes/PacientesDatos';
-import PacientesDatosExistente from './Gestiones/Pacientes/PacientesDatos/PacientesDatosExistente';
-import PacientesDatosNuevo from './Gestiones/Pacientes/PacientesDatos/PacientesDatosNuevo';
-import PacientesEstado from './Gestiones/Pacientes/PacientesEstado';
-import PacientesRecursos from './Gestiones/Pacientes/PacientesRecursos';
+import PacientesDatosExistente from './Gestiones/Pacientes/PacientesExistente';
+import PacientesDatosNuevo from './Gestiones/Pacientes/PacientesNuevo';
+import PacientesEstado from './Gestiones/Pacientes/PacientesExistente/PacientesEstado';
+import PacientesRecursos from './Gestiones/Pacientes/PacientesExistente/PacientesRecursos';
 import Estadisticas from './Estadisticas';
 import EstadisticasTotal from './Estadisticas/EstadisticasTotal';
 import EstadisticasNacional from './Estadisticas/EstadisticasNacional';
@@ -33,7 +32,6 @@ export {
   GestRecGenerales,
   GestRecInstituciones,
   Pacientes,
-  PacientesDatos,
   PacientesDatosExistente,
   PacientesDatosNuevo,
   PacientesEstado,

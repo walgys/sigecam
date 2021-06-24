@@ -11,6 +11,12 @@ export const constants = createSlice({
       darkViolet: 'darkViolet',
       lightViolet: 'lightViolet',
     },
+    resultTypes: {
+      ERROR: 'ERROR',
+      OK: 'OK',
+      SUCCESS: 'SUCCESS',
+      INVALID_TOKEN: 'INVALID_TOKEN',
+    },
     accessByUserType: [
       {
         id: 1,
@@ -27,17 +33,24 @@ export const constants = createSlice({
           },
           { route: '/gestiones/recursos/generales', page: 'GestRecGenerales' },
           { route: '/gestiones/pacientes', page: 'Pacientes' },
-          { route: '/gestiones/pacientes/recursos', page: 'PacientesRecursos' },
-          { route: '/gestiones/pacientes/datos', page: 'PacientesDatos' },
+
           {
-            route: '/gestiones/pacientes/datos/existente',
+            route: '/gestiones/pacientes/existente',
             page: 'PacientesDatosExistente',
           },
           {
-            route: '/gestiones/pacientes/datos/nuevo',
+            route: '/gestiones/pacientes/existente/recursos',
+            page: 'PacientesRecursos',
+          },
+          {
+            route: '/gestiones/pacientes/existente/estado',
+            page: 'PacientesEstado',
+          },
+          {
+            route: '/gestiones/pacientes/nuevo',
             page: 'PacientesDatosNuevo',
           },
-          { route: '/gestiones/pacientes/estado', page: 'PacientesEstado' },
+
           { route: '/estadisticas', page: 'Estadistica' },
           { route: '/estadisticas/total', page: 'EstadisticasTotal' },
           { route: '/mapa', page: 'Mapa' },
@@ -79,17 +92,22 @@ export const constants = createSlice({
             page: 'GestRecInstituciones',
           },
           { route: '/gestiones/pacientes', page: 'Pacientes' },
-          { route: '/gestiones/pacientes/recursos', page: 'PacientesRecursos' },
-          { route: '/gestiones/pacientes/datos', page: 'PacientesDatos' },
           {
-            route: '/gestiones/pacientes/datos/existente',
+            route: '/gestiones/pacientes/existente',
             page: 'PacientesDatosExistente',
           },
           {
-            route: '/gestiones/pacientes/datos/nuevo',
+            route: '/gestiones/pacientes/existente/recursos',
+            page: 'PacientesRecursos',
+          },
+          {
+            route: '/gestiones/pacientes/existente/estado',
+            page: 'PacientesEstado',
+          },
+          {
+            route: '/gestiones/pacientes/nuevo',
             page: 'PacientesDatosNuevo',
           },
-          { route: '/gestiones/pacientes/estado', page: 'PacientesEstado' },
           { route: '/estadisticas', page: 'Estadistica' },
           {
             route: '/estadisticas/institucion',
@@ -104,23 +122,72 @@ export const constants = createSlice({
         allowedRoutes: [
           { route: '/gestiones', page: 'Gestiones' },
           { route: '/gestiones/pacientes', page: 'Pacientes' },
-          { route: '/gestiones/pacientes/recursos', page: 'PacientesRecursos' },
-          { route: '/gestiones/pacientes/datos', page: 'PacientesDatos' },
+
           {
-            route: '/gestiones/pacientes/datos/existente',
+            route: '/gestiones/pacientes/existente',
             page: 'PacientesDatosExistente',
           },
           {
-            route: '/gestiones/pacientes/datos/nuevo',
+            route: '/gestiones/pacientes/existente/recursos',
+            page: 'PacientesRecursos',
+          },
+          {
+            route: '/gestiones/pacientes/existente/estado',
+            page: 'PacientesEstado',
+          },
+          {
+            route: '/gestiones/pacientes/nuevo',
             page: 'PacientesDatosNuevo',
           },
-          { route: '/gestiones/pacientes/estado', page: 'PacientesEstado' },
 
           { route: '/mapa', page: 'Mapa' },
         ],
       },
     ],
+    routeIcons: [
+      { route: '/gestiones', icon: 'AccountBoxTwoTone' },
+      { route: '/gestiones/grupos', icon: 'GroupTwoTone' },
+      { route: '/gestiones/usuarios', icon: 'AssignmentIndTwoTone' },
+      { route: '/gestiones/instituciones', icon: 'BusinessTwoTone' },
+      { route: '/gestiones/recursos', icon: 'ExtensionTwoTone' },
+      {
+        route: '/gestiones/recursos/instituciones',
+        icon: 'AssignmentIndTwoTone',
+      },
+      { route: '/gestiones/recursos/generales', icon: 'GroupTwoTone' },
+      { route: '/gestiones/pacientes', icon: 'FaceTwoTone' },
+
+      {
+        route: '/gestiones/pacientes/existente',
+        icon: 'AirlineSeatIndividualSuiteTwoTone',
+      },
+      {
+        route: '/gestiones/pacientes/existente/recursos',
+        icon: 'AccountTreeTwoTone',
+      },
+      {
+        route: '/gestiones/pacientes/existente/estado',
+        icon: 'TransferWithinAStationTwoTone',
+      },
+      {
+        route: '/gestiones/pacientes/nuevo',
+        icon: 'PersonAddTwoTone',
+      },
+
+      { route: '/estadisticas', icon: 'AssessmentTwoTone' },
+      { route: '/estadisticas/total', icon: 'AssessmentTwoTone' },
+      {
+        route: '/estadisticas/institucion',
+        icon: 'AssessmentTwoTone',
+      },
+      { route: '/estadisticas/regional', icon: 'AssessmentTwoTone' },
+      { route: '/estadisticas/provincial', icon: 'AssessmentTwoTone' },
+      { route: '/estadisticas/nacional', icon: 'AssessmentTwoTone' },
+      { route: '/mapa', icon: 'EditLocationTwoTone' },
+      { route: '/logs', icon: 'PageviewTwoTone' },
+    ],
   },
+
   reducers: {},
 });
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,6 +15,13 @@ import Link from '@material-ui/core/Link';
 import HomeIcon from '@material-ui/icons/Home';
 import WhatshotIcon from '@material-ui/icons/Whatshot';
 import GrainIcon from '@material-ui/icons/Grain';
+import {
+  AssessmentTwoTone,
+  AccountBoxTwoTone,
+  FaceTwoTone,
+  ExtensionTwoTone,
+  AirlineSeatIndividualSuiteTwoTone,
+} from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -79,7 +87,33 @@ export default function PrimarySearchAppBar(props) {
   const classes = useStyles();
   const location = useLocation();
   const pathRoutes = location?.pathname?.split('/');
-
+  const routeIconList = useSelector((state) => state.constants.routeIcons);
+  const iconList = [
+    {
+      name: 'AssessmentTwoTone',
+      icon: <AssessmentTwoTone className={classes.icon} />,
+    },
+    {
+      name: 'FaceTwoTone',
+      icon: <FaceTwoTone className={classes.icon} />,
+    },
+    {
+      name: 'AccountBoxTwoTone',
+      icon: <AccountBoxTwoTone className={classes.icon} />,
+    },
+    {
+      name: 'ExtensionTwoTone',
+      icon: <ExtensionTwoTone className={classes.icon} />,
+    },
+    {
+      name: 'ContactsTwoTone',
+      icon: <AssessmentTwoTone className={classes.icon} />,
+    },
+    {
+      name: 'AirlineSeatIndividualSuiteTwoTone',
+      icon: <AirlineSeatIndividualSuiteTwoTone className={classes.icon} />,
+    },
+  ];
   const breadcrumbs = pathRoutes?.map((p, idx) => {
     if (p === '' && idx === 0) {
       return (
@@ -108,9 +142,24 @@ export default function PrimarySearchAppBar(props) {
       );
     }
     let href = '';
-    pathRoutes?.forEach((pr, ind) => {
-      if (ind !== 0 && ind !== pathRoutes?.length - 1) href += `/${pr}`;
-    });
+    for (let i = 1; i <= idx; i++) {
+      href += `/${pathRoutes[i]}`;
+    }
+
+    const Icon = () => {
+      if (routeIconList.length > 0 && iconList.length > 0) {
+        console.log(routeIconList.filter((r) => r.route == href)[0]);
+        const icon = iconList.filter(
+          (i) => i.name == routeIconList.filter((r) => r.route == href)[0].icon
+        )[0];
+
+        return typeof icon !== 'undefined' ? (
+          icon.icon
+        ) : (
+          <WhatshotIcon className={classes.icon} />
+        );
+      }
+    };
 
     if (p !== '')
       return (
@@ -121,7 +170,7 @@ export default function PrimarySearchAppBar(props) {
           to={href}
           className={classes.link}
         >
-          <WhatshotIcon className={classes.icon} />
+          {Icon()}
           {p}
         </Link>
       );

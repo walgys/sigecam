@@ -4,7 +4,7 @@ import {
   onAltaChange,
   getFormOptionsLocalidades,
   getDatosFormularios,
-} from 'redux/Forms';
+} from 'redux/GestionPacientes/Forms';
 import { makeStyles } from '@material-ui/core/styles';
 
 import {
@@ -101,14 +101,14 @@ const AltaPacienteForm = () => {
 
   return (
     <Container>
-      <form className={classes.form} noValidate autoComplete="off">
+      <form className={classes.form} noValidate>
         <div className={classes.formContent}>
           <div className={classes.formColumn}>
             <TextField
               className={classes.field}
               required
               id="nombre-required"
-              inputProps={{ name: 'nombre' }}
+              inputProps={{ tabIndex: '1', name: 'nombre' }}
               label="Nombres del Paciente"
               variant="outlined"
               value={formData?.nombre?.value}
@@ -129,7 +129,7 @@ const AltaPacienteForm = () => {
               <InputLabel id="edad-label">Edad</InputLabel>
               <NativeSelect
                 labelId="edad-label"
-                inputProps={{ name: 'edad' }}
+                inputProps={{ tabIndex: '4', name: 'edad' }}
                 id="edad"
                 value={formData?.edad.value}
                 error={formData?.edad.error}
@@ -158,6 +158,7 @@ const AltaPacienteForm = () => {
             <TextField
               className={classes.field}
               required
+              inputProps={{ tabIndex: '2', name: 'apellido' }}
               id="apellido-required"
               name="apellido"
               label="Apellidos del Paciente"
@@ -180,7 +181,7 @@ const AltaPacienteForm = () => {
               <InputLabel id="tipoDoc-label">Tipo Doc</InputLabel>
               <NativeSelect
                 labelId="tipoDoc-label"
-                inputProps={{ name: 'tipoDoc' }}
+                inputProps={{ tabIndex: '5', name: 'tipoDoc' }}
                 id="tipoDoc"
                 value={formData?.tipoDoc.value}
                 error={formData?.tipoDoc.error}
@@ -210,7 +211,7 @@ const AltaPacienteForm = () => {
               <InputLabel id="sexo-label">Sexo</InputLabel>
               <NativeSelect
                 labelId="sexo-label"
-                inputProps={{ name: 'sexo' }}
+                inputProps={{ tabIndex: '3', name: 'sexo' }}
                 id="sexo"
                 value={formData?.sexo.value}
                 error={formData?.sexo.error}
@@ -237,14 +238,15 @@ const AltaPacienteForm = () => {
             <TextField
               className={classes.field}
               required
-              id="numeroDoc-required"
-              name="numeroDoc"
+              id="nroDoc-required"
+              inputProps={{ tabIndex: '6' }}
+              name="nroDoc"
               label="Nro Documento"
               variant="outlined"
-              value={formData?.numeroDoc.value}
-              error={formData?.numeroDoc.error}
+              value={formData?.nroDoc.value}
+              error={formData?.nroDoc.error}
               helperText={
-                formData?.numeroDoc?.error ? formData?.numeroDoc?.errorText : ''
+                formData?.nroDoc?.error ? formData?.nroDoc?.errorText : ''
               }
               onChange={(e) =>
                 dispatch(
@@ -260,7 +262,7 @@ const AltaPacienteForm = () => {
               <InputLabel id="nacionalidad-label">Nacionalidad</InputLabel>
               <NativeSelect
                 labelId="nacionalidad-label"
-                inputProps={{ name: 'nacionalidad' }}
+                inputProps={{ tabIndex: '7', name: 'nacionalidad' }}
                 id="nacionalidad"
                 value={formData?.nacionalidad.value}
                 error={formData?.nacionalidad.error}
@@ -292,6 +294,7 @@ const AltaPacienteForm = () => {
               className={classes.field}
               required
               id="telefono-required"
+              inputProps={{ tabIndex: '8' }}
               name="telefono"
               label="Número de teléfono"
               variant="outlined"
@@ -322,7 +325,7 @@ const AltaPacienteForm = () => {
                 <InputLabel id="provincia-label">Provincia</InputLabel>
                 <NativeSelect
                   labelId="provincia-label"
-                  inputProps={{ name: 'provincia' }}
+                  inputProps={{ tabIndex: '9', name: 'provincia' }}
                   id="provincia"
                   value={formData?.provincia.value}
                   error={formData?.provincia.error}
@@ -356,7 +359,7 @@ const AltaPacienteForm = () => {
                 <InputLabel id="localidad-label">Localidad</InputLabel>
                 <NativeSelect
                   labelId="localidad-label"
-                  inputProps={{ name: 'localidad' }}
+                  inputProps={{ tabIndex: '10', name: 'localidad' }}
                   id="localidad"
                   error={formData?.localidad.error}
                   value={formData?.localidad.value}
@@ -387,14 +390,15 @@ const AltaPacienteForm = () => {
               <TextField
                 className={classes.field}
                 required
-                id="domCP-required"
-                name="domCP"
+                id="codPos-required"
+                inputProps={{ tabIndex: '11' }}
+                name="codPos"
                 label="Código Postal"
                 variant="outlined"
-                value={formData?.domCP.value}
-                error={formData?.domCP.error}
+                value={formData?.codPos.value}
+                error={formData?.codPos.error}
                 helperText={
-                  formData?.domCP?.error ? formData?.domCP?.errorText : ''
+                  formData?.codPos?.error ? formData?.codPos?.errorText : ''
                 }
                 onChange={(e) =>
                   dispatch(
@@ -412,16 +416,15 @@ const AltaPacienteForm = () => {
               <TextField
                 className={classes.field}
                 required
-                id="domicilio-required"
-                name="domicilio"
+                id="calle-required"
+                inputProps={{ tabIndex: '12' }}
+                name="calle"
                 label="Domicilio"
                 variant="outlined"
-                value={formData?.domicilio.value}
-                error={formData?.domicilio.error}
+                value={formData?.calle.value}
+                error={formData?.calle.error}
                 helperText={
-                  formData?.domicilio?.error
-                    ? formData?.domicilio?.errorText
-                    : ''
+                  formData?.calle?.error ? formData?.calle?.errorText : ''
                 }
                 onChange={(e) =>
                   dispatch(
@@ -437,14 +440,15 @@ const AltaPacienteForm = () => {
               <TextField
                 className={classes.field}
                 required
-                id="nroDom-required"
+                id="nroCalle-required"
                 label="Número"
-                name="nroDom"
+                inputProps={{ tabIndex: '13' }}
+                name="nroCalle"
                 variant="outlined"
-                value={formData?.nroDom.value}
-                error={formData?.nroDom.error}
+                value={formData?.nroCalle.value}
+                error={formData?.nroCalle.error}
                 helperText={
-                  formData?.nroDom?.error ? formData?.nroDom?.errorText : ''
+                  formData?.nroCalle?.error ? formData?.nroCalle?.errorText : ''
                 }
                 onChange={(e) =>
                   dispatch(
@@ -460,14 +464,15 @@ const AltaPacienteForm = () => {
               <TextField
                 className={classes.field}
                 required
-                id="domPiso-required"
+                id="piso-required"
                 label="Piso"
-                name="domPiso"
+                inputProps={{ tabIndex: '14' }}
+                name="piso"
                 variant="outlined"
-                value={formData?.domPiso.value}
-                error={formData?.domPiso.error}
+                value={formData?.piso.value}
+                error={formData?.piso.error}
                 helperText={
-                  formData?.domPiso?.error ? formData?.domPiso?.errorText : ''
+                  formData?.piso?.error ? formData?.piso?.errorText : ''
                 }
                 onChange={(e) =>
                   dispatch(
@@ -483,14 +488,15 @@ const AltaPacienteForm = () => {
               <TextField
                 className={classes.field}
                 required
-                name="domDto"
-                id="domDto-required"
+                name="depto"
+                id="depto-required"
                 label="Dto."
+                inputProps={{ tabIndex: '15' }}
                 variant="outlined"
-                value={formData?.domDto.value}
-                error={formData?.domDto.error}
+                value={formData?.depto.value}
+                error={formData?.depto.error}
                 helperText={
-                  formData?.domDto?.error ? formData?.domDto?.errorText : ''
+                  formData?.depto?.error ? formData?.depto?.errorText : ''
                 }
                 onChange={(e) =>
                   dispatch(
@@ -508,15 +514,16 @@ const AltaPacienteForm = () => {
               <TextField
                 className={classes.field}
                 required
-                id="domBarrio-required"
-                name="domBarrio"
+                id="barrioVilla-required"
+                name="barrioVilla"
                 label="Barrio / Villa"
                 variant="outlined"
-                value={formData?.domBarrio.value}
-                error={formData?.domBarrio.error}
+                inputProps={{ tabIndex: '16' }}
+                value={formData?.barrioVilla.value}
+                error={formData?.barrioVilla.error}
                 helperText={
-                  formData?.domBarrio?.error
-                    ? formData?.domBarrio?.errorText
+                  formData?.barrioVilla?.error
+                    ? formData?.barrioVilla?.errorText
                     : ''
                 }
                 onChange={(e) =>
@@ -534,7 +541,8 @@ const AltaPacienteForm = () => {
                 style={{ justifyContent: 'center' }}
                 control={
                   <Checkbox
-                    checked={formData?.privadoLib.value}
+                    inputProps={{ tabIndex: '17' }}
+                    checked={formData?.privadoLibertad.value}
                     onChange={(e) =>
                       dispatch(
                         onAltaChange({
@@ -543,7 +551,7 @@ const AltaPacienteForm = () => {
                         })
                       )
                     }
-                    name="privadoLib"
+                    name="privadoLibertad"
                     color="primary"
                   />
                 }

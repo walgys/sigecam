@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles({
   root: {
-    width: 300,
+    width: '40vh',
     boxShadow:
       'rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px',
     backfaceVisibility: 'hidden',
@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     },
   },
   icon: {
-    fontSize: '10rem',
+    fontSize: '20vh',
     marginTop: '2%',
   },
   blue: {

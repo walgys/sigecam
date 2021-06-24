@@ -11,7 +11,7 @@ export const addContactoModalSchema = Yup.object().shape({
   tipoDoc: Yup.object({
     value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
   }), // { value: '1' },
-  numeroDoc: Yup.object({
+  nroDoc: Yup.object({
     value: Yup.number()
       .min(1000000, 'Al menos 7 digitos')
       .required('campo requerido')
@@ -23,10 +23,10 @@ export const addContactoModalSchema = Yup.object().shape({
   localidad: Yup.object({
     value: Yup.number().required('campo requerido').notOneOf(['0', '', 0]),
   }), // { value: '0', error: false },
-  domicilio: Yup.object({
+  calle: Yup.object({
     value: Yup.string().required('campo requerido'),
   }), // { value: '', error: false },
-  nroDom: Yup.object({
+  nroCalle: Yup.object({
     value: Yup.number()
       .required('campo requerido')
       .typeError('Debe ser un número'),
@@ -34,17 +34,17 @@ export const addContactoModalSchema = Yup.object().shape({
   telefono: Yup.object({
     value: Yup.string().required('campo requerido'),
   }),
-  domPiso: Yup.object({
+  piso: Yup.object({
     value: Yup.number()
       .required('campo requerido')
       .typeError('Debe ser un número'),
   }), // { value: '', error: false },
-  domDto: Yup.object({ value: Yup.string().required('campo requerido') }), // { value: '', error: false },
-  domCP: Yup.object({ value: Yup.string().required('campo requerido') }), // { value: '', error: false },
-  domBarrio: Yup.object({
+  depto: Yup.object({ value: Yup.string().required('campo requerido') }), // { value: '', error: false },
+  codPos: Yup.object({ value: Yup.string().required('campo requerido') }), // { value: '', error: false },
+  barrioVilla: Yup.object({
     value: Yup.string().required('campo requerido'),
   }),
-  fechaUltimoContacto: Yup.object({
+  ultimoContacto: Yup.object({
     value: Yup.date()
       .transform((value, originalValue) => {
         return Number.isNaN(originalValue) ? value : new Date(originalValue);

@@ -2,7 +2,7 @@ const resultTypes = {
   ERROR: 'ERROR',
   OK: 'OK',
   SUCCESS: 'SUCCESS',
-  INVALID: 'INVALID',
+  INVALID_TOKEN: 'INVALID_TOKEN',
 };
 
 module.exports = { resultTypes };

@@ -10,6 +10,8 @@ import {
   ContactsTwoTone,
   AccountTreeTwoTone,
   TransferWithinAStationTwoTone,
+  AirlineSeatIndividualSuiteTwoTone,
+  PersonAddTwoTone,
 } from '@material-ui/icons';
 import Menu from 'components/Menu';
 
@@ -19,28 +21,20 @@ const Pacientes = () => {
 
   const buttonArray = [
     {
-      title: 'DATOS DE PACIENTE',
-      text: 'Alta o modificación de datos de pacientes',
+      title: 'PACIENTE NUEVO',
+      text: 'Asignar o quitar recursos a un paciente',
       component: Link,
-      to: '/gestiones/pacientes/datos',
-      icon: ContactsTwoTone,
+      to: '/gestiones/pacientes/nuevo',
+      icon: PersonAddTwoTone,
       iconColor: colors.blue,
     },
     {
-      title: 'RECURSOS DEL PACIENTE',
-      text: 'Asignar o quitar recursos a un paciente',
+      title: 'PACIENTE EXISTENTE',
+      text: 'Alta o modificación de datos de pacientes',
       component: Link,
-      to: '/gestiones/pacientes/recursos',
-      icon: AccountTreeTwoTone,
-      iconColor: colors.red,
-    },
-    {
-      title: 'ESTADO DE PACIENTE',
-      text: 'Modificar el estado del paciente',
-      component: Link,
-      to: '/gestiones/pacientes/estado',
-      icon: TransferWithinAStationTwoTone,
-      iconColor: colors.green,
+      to: '/gestiones/pacientes/existente',
+      icon: AirlineSeatIndividualSuiteTwoTone,
+      iconColor: colors.black,
     },
   ];
 

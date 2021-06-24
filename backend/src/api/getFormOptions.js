@@ -4,6 +4,7 @@ const queryFormOptions = require('../DB/queryFormOptions');
 require('dotenv').config();
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const { resultTypes } = require('../utils');
 const JWT_SECRET = process.env.JWT_SECRET;
 const API_URL = process.env.API_URL;
 
@@ -22,13 +23,18 @@ router.post('/getFormOptions', async (req, res) => {
       })
         .then((result) => result.data)
         .catch((err) => console.log(err));
-      res.json({ ...queryResult, message: 'OK' }).end();
+      res.json({ ...queryResult, message: resultTypes.OK }).end();
     } else {
-      res.json({ message: 'Error', errorMessage: 'Token expired' }).end();
+      res
+        .json({
+          message: resultTypes.INVALID_TOKEN,
+          errorMessage: 'Token caducado',
+        })
+        .end();
     }
   } catch (err) {
     console.log(err);
-    res.json({ message: 'Error', errorMessage: 'Error' }).end();
+    res.json({ message: resultTypes.ERROR, errorMessage: 'Error' }).end();
   }
 });
 
@@ -56,7 +62,7 @@ router.post('/internal/getFormOptions', async (req, res) => {
 
     res
       .json({
-        message: 'OK',
+        message: resultTypes.OK,
         provincias,
         localidades: localidadesFiltradas,
         instituciones,
@@ -71,7 +77,10 @@ router.post('/internal/getFormOptions', async (req, res) => {
   } catch (err) {
     console.log(err);
     res
-      .json({ message: 'Error', errorMessage: 'Error procesando pedido' })
+      .json({
+        message: resultTypes.ERROR,
+        errorMessage: 'Error procesando pedido',
+      })
       .end();
   }
 });

@@ -60,7 +60,15 @@ const Login = (props) => {
   return (
     <div className={classes.container}>
       <div className={classes.form}>
-        <form className={classes.root} noValidate autoComplete="off">
+        <form
+          className={classes.root}
+          noValidate
+          autoComplete="off"
+          onKeyPress={(e) => {
+            if (e.key === 'Enter')
+              dispatch(autentificarUsuario({ userName, password }));
+          }}
+        >
           <div>
             <TextField
               error={hasError}
