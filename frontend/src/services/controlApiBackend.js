@@ -74,7 +74,7 @@ class controlApiBackend {
 
   getListaUsuarios = (criterio) => {};
 
-  getListaInstituciones = (criterio) => {};
+  getListaInstituciones = async (criterio) => {};
 
   getListaTipoInstitucion = () => {};
 
@@ -82,7 +82,22 @@ class controlApiBackend {
 
   getListaTiposRecurso = () => {};
 
-  getListaPacientes = (idInstitucion) => {};
+  getListaPacientes = async (idInstitucion) => {
+    return axios({
+      url: `${API_URL}/api/v1/getPatients  `,
+      method: 'POST', // *GET, POST, PUT, DELETE, etc
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      data: JSON.stringify(idInstitucion), // body data type must match "Content-Type" header
+    })
+      .then((result) => result.data)
+      .catch((err) => {
+        return { data: {}, errorMessage: 'Error de conexión' };
+      });
+  };
 
   getPaciente = (idPaciente) => {};
 

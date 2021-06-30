@@ -5,10 +5,11 @@ import { onTokenExpired } from 'redux/user';
 
 const controlApiBackend = new ControlApiBackend();
 
-export const getDatosFormularios = createAsyncThunk(
-  'recursosPaciente/getFormOptions',
+export const getListaPacientes = createAsyncThunk(
+  'recursosPaciente/getListaPacientes',
   async (payload, thunkAPI) => {
-    const result = await controlApiBackend.getDatosFormularios();
+    const result = await controlApiBackend.getListaPacientes(payload);
+
     if (result.errorMessage !== null) {
       thunkAPI.dispatch(
         setSnack({ type: 'error', message: result.errorMessage })
@@ -23,15 +24,20 @@ export const getDatosFormularios = createAsyncThunk(
 export const recursosPacienteSlice = createSlice({
   name: 'recursosPaciente',
   initialState: {
-    altaPaciente: altaPacienteInitialState,
+    pacientes: [],
+    selectedPaciente: 0,
   },
-  reducers: {},
+  reducers: {
+    onSelectPaciente: (state, { payload }) => {
+      state.selectedPaciente = payload.selectedPaciente;
+    },
+  },
   extraReducers: {
-    [getDatosFormularios.fulfilled]: (state, { payload }) => {
-      state.formOptions.provincias = payload?.provincias;
+    [getListaPacientes.fulfilled]: (state, { payload }) => {
+      state.pacientes = payload?.pacientes;
     },
   },
 });
 
-export const { onAltaChange } = recursosPacienteSlice.actions;
+export const { onSelectPaciente } = recursosPacienteSlice.actions;
 export default recursosPacienteSlice.reducer;
