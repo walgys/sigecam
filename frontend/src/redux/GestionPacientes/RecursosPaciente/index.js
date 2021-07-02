@@ -21,20 +21,52 @@ export const getListaPacientes = createAsyncThunk(
   }
 );
 
+export const getRecursosPaciente = createAsyncThunk(
+  'recursosPaciente/getRecursosPaciente',
+  async (payload, thunkAPI) => {
+    const result = await controlApiBackend.getRecursosPaciente(payload);
+
+    if (result.errorMessage !== null) {
+      thunkAPI.dispatch(
+        setSnack({ type: 'error', message: result.errorMessage })
+      );
+      thunkAPI.dispatch(setOpenSnack(true));
+      if (result.error === 'INVALID_TOKEN') thunkAPI.dispatch(onTokenExpired());
+    }
+    return result;
+  }
+);
+
 export const recursosPacienteSlice = createSlice({
   name: 'recursosPaciente',
   initialState: {
     pacientes: [],
-    selectedPaciente: 0,
+    selectedPaciente: {
+      id: 0,
+      recursos: [
+        {
+          id: 1,
+          nombre: 'UTI Norte 1',
+          descripcion: 'Unidad de terapia intensiva',
+          tipo: 1,
+        },
+      ],
+    },
   },
   reducers: {
     onSelectPaciente: (state, { payload }) => {
-      state.selectedPaciente = payload.selectedPaciente;
+      state.selectedPaciente.id = payload;
     },
   },
   extraReducers: {
     [getListaPacientes.fulfilled]: (state, { payload }) => {
       state.pacientes = payload?.pacientes;
+    },
+    [getRecursosPaciente.fulfilled]: (state, { payload }) => {
+      state.selectedPaciente = {
+        ...state.selectedPaciente,
+        recursos: payload?.recursos,
+      };
     },
   },
 });
