@@ -108,7 +108,7 @@ class controlApiBackend {
         'Content-Type': 'application/json',
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
-      data: JSON.stringify(idPaciente), // body data type must match "Content-Type" header
+      data: JSON.stringify({ idPaciente: idPaciente }), // body data type must match "Content-Type" header
     })
       .then((result) => result.data)
       .catch((err) => {

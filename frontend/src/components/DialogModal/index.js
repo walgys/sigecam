@@ -15,6 +15,7 @@ const useStyles = makeStyles({
       margin: '2% 0% 2% 0%',
     },
   },
+
   title: {
     textAlign: 'center',
   },
@@ -39,7 +40,12 @@ const DialogModal = (props) => {
   } = props;
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open}>
+    <Dialog
+      onClose={onClose}
+      aria-labelledby="simple-dialog-title"
+      open={open}
+      maxWidth={'false'}
+    >
       <DialogTitle id="simple-dialog-title" className={classes.title}>
         {title}
       </DialogTitle>

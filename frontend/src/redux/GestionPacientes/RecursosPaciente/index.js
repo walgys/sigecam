@@ -41,16 +41,11 @@ export const recursosPacienteSlice = createSlice({
   name: 'recursosPaciente',
   initialState: {
     pacientes: [],
+    tiposRecurso: [],
+    ubicacionesInstitucion: [],
     selectedPaciente: {
       id: 0,
-      recursos: [
-        {
-          id: 1,
-          nombre: 'UTI Norte 1',
-          descripcion: 'Unidad de terapia intensiva',
-          tipo: 1,
-        },
-      ],
+      recursos: [],
     },
   },
   reducers: {
@@ -65,8 +60,10 @@ export const recursosPacienteSlice = createSlice({
     [getRecursosPaciente.fulfilled]: (state, { payload }) => {
       state.selectedPaciente = {
         ...state.selectedPaciente,
-        recursos: payload?.recursos,
+        recursos: payload?.recursosPaciente,
       };
+      state.tiposRecurso = payload?.tiposRecurso;
+      state.ubicacionesInstitucion = payload?.ubicacionesInstitucion;
     },
   },
 });

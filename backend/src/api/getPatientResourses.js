@@ -1,6 +1,6 @@
 const express = require('express');
 const axios = require('axios');
-const queryGetPatients = require('../DB/queryGetPatients');
+const queryResourses = require('../DB/queryGetPatientResourses');
 require('dotenv').config();
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -8,11 +8,11 @@ const { resultTypes } = require('../utils');
 const JWT_SECRET = process.env.JWT_SECRET;
 const API_URL = process.env.API_URL;
 
-router.post('/getPatients', async (req, res) => {
+router.post('/getPatientResourses', async (req, res) => {
   try {
     if (typeof req.session.jwt !== 'undefined') {
       const queryResult = await axios({
-        url: `${API_URL}/api/v1/internal/getPatients`,
+        url: `${API_URL}/api/v1/internal/getPatientResourses`,
         method: 'POST', // *GET, POST, PUT, DELETE, etc
         withCredentials: true,
         headers: {
@@ -39,22 +39,29 @@ router.post('/getPatients', async (req, res) => {
   }
 });
 
-router.post('/internal/getPatients', async (req, res) => {
+router.post('/internal/getPatientResourses', async (req, res) => {
   try {
     const user = jwt.verify(req.headers.token, JWT_SECRET);
-    let pacientes = [];
-    if (user.tipoUsuario === 1) {
-      pacientes = await queryGetPatients.queryGetPatients();
-    } else {
-      pacientes = await queryGetPatients.queryGetPatients(
-        req.body?.idInstitucion
-      );
-    }
+    let recursosPaciente = [];
+    let tiposRecurso = [];
+    let ubicacionesInstitucion = [];
+
+    recursosPaciente = await queryResourses.queryGetPatientResourses(
+      req.body?.idPaciente
+    );
+
+    tiposRecurso = await queryResourses.queryGetTiposRecurso();
+
+    ubicacionesInstitucion = await queryResourses.queryGetUbicaciones(
+      req.body?.idPaciente
+    );
 
     res
       .json({
         message: resultTypes.OK,
-        pacientes,
+        recursosPaciente,
+        tiposRecurso,
+        ubicacionesInstitucion,
         errorMessage: null,
       })
       .end();
