@@ -18,6 +18,7 @@ const useStyles = makeStyles({
 
   title: {
     textAlign: 'center',
+    width: (props) => props.titleWidth,
   },
   buttons: {
     marginTop: '2rem',
@@ -27,7 +28,7 @@ const useStyles = makeStyles({
 });
 
 const DialogModal = (props) => {
-  const classes = useStyles();
+  const classes = useStyles(props);
   const {
     onClose,
     onAdd,

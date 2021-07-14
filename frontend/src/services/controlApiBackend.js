@@ -99,16 +99,19 @@ class controlApiBackend {
       });
   };
 
-  getRecursosPaciente = async (idPaciente) => {
+  getRecursosPaciente = async ({ idPaciente, idInstitucion }) => {
     return axios({
-      url: `${API_URL}/api/v1/getPatientResourses  `,
+      url: `${API_URL}/api/v1/getPatientResources  `,
       method: 'POST', // *GET, POST, PUT, DELETE, etc
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
-      data: JSON.stringify({ idPaciente: idPaciente }), // body data type must match "Content-Type" header
+      data: JSON.stringify({
+        idPaciente: idPaciente,
+        idInstitucion: idInstitucion,
+      }), // body data type must match "Content-Type" header
     })
       .then((result) => result.data)
       .catch((err) => {

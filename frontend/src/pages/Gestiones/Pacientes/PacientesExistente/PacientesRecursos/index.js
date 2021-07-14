@@ -41,12 +41,15 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
   card: {
-    padding: '1%',
     maxWidth: '200px',
     minWidth: '100px',
     minHeight: '80px',
     flexDirection: 'column',
     justifyContent: 'center',
+  },
+  cardAction: {
+    padding: '1%',
+    height: '100%',
   },
   button: {
     maxWidth: '200px',
@@ -115,11 +118,7 @@ function TabPanel(props) {
       aria-labelledby={`scrollable-auto-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
 }
@@ -136,12 +135,12 @@ const PacientesRecursos = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.user.userData);
   const pacientes = useSelector((state) => state.recursosPaciente.pacientes);
-  const recursos = useSelector(
-    (state) => state.recursosPaciente.selectedPaciente.recursos
+
+  const selectedPaciente = useSelector(
+    (state) => state.recursosPaciente.selectedPaciente
   );
 
   const [showModal, setShowModal] = useState(false);
-  const [tabValue, setTabValue] = useState(0);
 
   const getPacientes = useCallback(() => {
     dispatch(getListaPacientes({ idInstitucion: userData?.idInstitucion }));
@@ -162,17 +161,11 @@ const PacientesRecursos = () => {
     };
   }, []);
 
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
-
-  const handleModalAdd = () => {};
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const iconByResourceType = [{ tipo: 1, icon: `fas fa-procedures` }];
+  const iconByResourceType = [
+    { tipo: 1, icon: `fas fa-procedures` },
+    { tipo: 2, icon: `fas fa-procedures` },
+    { tipo: 3, icon: `fas fa-procedures` },
+  ];
 
   const RecursoIcon = (props) => {
     const { tipo, propClases } = props;
@@ -198,36 +191,58 @@ const PacientesRecursos = () => {
     },
   }))(Badge);
 
-  return (
-    <>
+  const AddResourceDialog = () => {
+    const [selectedTipoRecurso, setSelectedTipoRecurso] = useState(0);
+    const [tabValue, setTabValue] = useState(0);
+    const tiposRecurso = useSelector(
+      (state) => state.recursosPaciente.tiposRecurso
+    );
+    const ubicacionesInstitucion = useSelector(
+      (state) => state.recursosPaciente.ubicacionesInstitucion
+    );
+
+    const recursosInstitucion = useSelector(
+      (state) => state.recursosPaciente.recursosInstitucion
+    );
+
+    const recursosInstitucionFiltered = recursosInstitucion.filter(
+      (ri) => selectedPaciente.recursos.filter((r) => r.id == ri.id).length == 0
+    );
+
+    const handleModalAdd = () => {};
+
+    const handleModalClose = () => {
+      setShowModal(false);
+    };
+
+    const handleTabChange = (event, newValue) => {
+      setTabValue(newValue);
+    };
+
+    return (
       <DialogModal
         onClose={() => handleModalClose()}
         onAdd={() => handleModalAdd()}
         open={showModal}
         title={'Asignar nuevo recurso'}
+        titleWidth={'60vw'}
       >
         <div className={classes.root}>
           <FormControl className={`${classes.formControl} ${classes.field}`}>
-            <InputLabel id="paciente-label">Tipo de Recurso</InputLabel>
+            <InputLabel id="tipoRecurso-label">Tipo de Recurso</InputLabel>
             <NativeSelect
-              labelId="paciente-label"
-              inputProps={{ tabIndex: '10', name: 'paciente' }}
-              id="paciente"
-              value={pacientes?.selectedPacient}
+              labelId="tipoRecurso-label"
+              inputProps={{ tabIndex: '10', name: 'tipoRecurso' }}
+              id="tipoRecurso"
+              value={selectedTipoRecurso}
               onChange={(e) => {
-                dispatch(onSelectPaciente(e.target.id));
+                setSelectedTipoRecurso(e.target.value);
               }}
             >
               <option aria-label="None" value="0" />
-              {pacientes?.map((p) => (
+              {tiposRecurso?.map((p) => (
                 <option key={`${p.id}-${p.nombre}`} value={p.id}>
-                  {`${p.id.toString().padStart(5, '0')} - ${
-                    p.nombre[0].toUpperCase() +
-                    p.nombre.substring(1).toLowerCase()
-                  } ${
-                    p.apellido[0].toUpperCase() +
-                    p.apellido.substring(1).toLowerCase()
-                  }`}
+                  {`${p.nombre}`}
                 </option>
               ))}
             </NativeSelect>
@@ -245,78 +260,68 @@ const PacientesRecursos = () => {
                   scrollButtons="auto"
                   aria-label="scrollable auto tabs example"
                 >
-                  <Tab label="Item One" {...a11yProps(0)} />
-                  <Tab label="Item Two" {...a11yProps(1)} />
-                  <Tab label="Item Three" {...a11yProps(2)} />
-                  <Tab label="Item Four" {...a11yProps(3)} />
-                  <Tab label="Item Five" {...a11yProps(4)} />
-                  <Tab label="Item Six" {...a11yProps(5)} />
-                  <Tab label="Item Seven" {...a11yProps(6)} />
+                  {ubicacionesInstitucion?.map((u, idx) => (
+                    <Tab
+                      key={`${idx}-ubi-${u.nombre}`}
+                      label={u.nombre}
+                      {...a11yProps(idx)}
+                    />
+                  ))}
                 </Tabs>
               </AppBar>
-              <TabPanel value={tabValue} index={0}>
-                {recursos?.map((ab, idx) => (
-                  <Card className={`${classes.root} ${classes.card}`}>
-                    <RecursoIcon
-                      propClases={`${classes.iconSm}`}
-                      tipo={ab.tipo}
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {ab.nombre}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        component="p"
+              {ubicacionesInstitucion?.map((u, idx) => (
+                <TabPanel
+                  key={`${idx}-tp-${u.nombre}`}
+                  value={tabValue}
+                  index={idx}
+                >
+                  {recursosInstitucionFiltered
+                    ?.filter((r) => {
+                      return (
+                        r.tipo == selectedTipoRecurso && r.ubicacion == u.id
+                      );
+                    })
+                    .map((ab, idx) => (
+                      <Card
+                        key={`${idx}-card-${u.nombre}-${ab.nombre}`}
+                        className={`${classes.root} ${classes.card}`}
                       >
-                        {ab.descripcion}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabPanel>
-              <TabPanel value={tabValue} index={1}>
-                {recursos?.map((ab, idx) => (
-                  <Card className={`${classes.root} ${classes.card}`}>
-                    <RecursoIcon
-                      propClases={`${classes.iconSm}`}
-                      tipo={ab.tipo}
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {ab.nombre}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        component="p"
-                      >
-                        {ab.descripcion}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabPanel>
-              <TabPanel value={tabValue} index={2}>
-                Item Three
-              </TabPanel>
-              <TabPanel value={tabValue} index={3}>
-                Item Four
-              </TabPanel>
-              <TabPanel value={tabValue} index={4}>
-                Item Five
-              </TabPanel>
-              <TabPanel value={tabValue} index={5}>
-                Item Six
-              </TabPanel>
-              <TabPanel value={tabValue} index={6}>
-                Item Seven
-              </TabPanel>
+                        <CardActionArea className={classes.cardAction}>
+                          <RecursoIcon
+                            propClases={`${classes.iconSm}`}
+                            tipo={ab.tipo}
+                          />
+                          <CardContent>
+                            <Typography
+                              gutterBottom
+                              variant="h5"
+                              component="h2"
+                            >
+                              {ab.nombre}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              component="p"
+                            >
+                              {ab.descripcion}
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    ))}
+                </TabPanel>
+              ))}
             </div>
           </div>
         </div>
       </DialogModal>
+    );
+  };
+
+  return (
+    <>
+      <AddResourceDialog />
       <div className={`${classes.root} `}>
         <FormControl className={`${classes.formControl}`}>
           <InputLabel id="paciente-label">Paciente</InputLabel>
@@ -324,15 +329,26 @@ const PacientesRecursos = () => {
             labelId="paciente-label"
             inputProps={{ tabIndex: '10', name: 'paciente' }}
             id="paciente"
-            value={pacientes?.selectedPacient}
+            value={selectedPaciente?.id}
             onChange={(e) => {
               dispatch(onSelectPaciente(e.target.value));
-              dispatch(getRecursosPaciente(e.target.value));
+
+              dispatch(
+                getRecursosPaciente({
+                  idPaciente: e.target.value,
+                  idInstitucion:
+                    e.target.selectedOptions[0].getAttribute('idinstitucion'),
+                })
+              );
             }}
           >
             <option aria-label="None" value="0" />
             {pacientes?.map((p) => (
-              <option key={`${p.id}-${p.nombre}`} value={p.id}>
+              <option
+                key={`${p.id}-${p.nombre}`}
+                value={p.id}
+                idinstitucion={p.idInstitucion}
+              >
                 {`${p.id.toString().padStart(5, '0')} - ${
                   p.nombre[0].toUpperCase() +
                   p.nombre.substring(1).toLowerCase()
@@ -346,8 +362,11 @@ const PacientesRecursos = () => {
         </FormControl>
 
         <div className={classes.action}>
-          {recursos?.map((ab, idx) => (
-            <Card className={`${classes.root} ${classes.card}`}>
+          {selectedPaciente.recursos?.map((ab, idx) => (
+            <Card
+              key={`${idx}-res-${ab.nombre}`}
+              className={`${classes.root} ${classes.card}`}
+            >
               <RecursoIcon propClases={`${classes.iconSm}`} tipo={ab.tipo} />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="h2">

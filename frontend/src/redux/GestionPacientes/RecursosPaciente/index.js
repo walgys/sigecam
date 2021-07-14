@@ -43,6 +43,7 @@ export const recursosPacienteSlice = createSlice({
     pacientes: [],
     tiposRecurso: [],
     ubicacionesInstitucion: [],
+    recursosInstitucion: [],
     selectedPaciente: {
       id: 0,
       recursos: [],
@@ -64,6 +65,7 @@ export const recursosPacienteSlice = createSlice({
       };
       state.tiposRecurso = payload?.tiposRecurso;
       state.ubicacionesInstitucion = payload?.ubicacionesInstitucion;
+      state.recursosInstitucion = payload?.recursosInstitucion || [];
     },
   },
 });
