@@ -45,7 +45,7 @@ const DialogModal = (props) => {
       onClose={onClose}
       aria-labelledby="simple-dialog-title"
       open={open}
-      maxWidth={'false'}
+      maxWidth={false}
     >
       <DialogTitle id="simple-dialog-title" className={classes.title}>
         {title}

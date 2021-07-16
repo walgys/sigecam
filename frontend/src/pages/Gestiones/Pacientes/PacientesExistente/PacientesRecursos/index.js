@@ -35,10 +35,21 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     flexDirection: 'column',
   },
+  badge: {
+    width: '20px',
+    height: '20px',
+    borderRadius: '50%',
+    top: '10px',
+    right: '10px',
+  },
+
   tabRoot: {
     flexGrow: 1,
     width: '100%',
     backgroundColor: theme.palette.background.paper,
+  },
+  tabPanel: {
+    display: 'flex',
   },
   card: {
     maxWidth: '200px',
@@ -194,6 +205,15 @@ const PacientesRecursos = () => {
   const AddResourceDialog = () => {
     const [selectedTipoRecurso, setSelectedTipoRecurso] = useState(0);
     const [tabValue, setTabValue] = useState(0);
+
+    const [resourcesToAdd, setResourcesToAdd] = useState([]);
+    const [recursosInstitucionFiltered, setRecursosInstitucionFiltered] =
+      useState([]);
+
+    useEffect(() => {
+      console.log(resourcesToAdd);
+    }, [resourcesToAdd]);
+
     const tiposRecurso = useSelector(
       (state) => state.recursosPaciente.tiposRecurso
     );
@@ -205,9 +225,20 @@ const PacientesRecursos = () => {
       (state) => state.recursosPaciente.recursosInstitucion
     );
 
-    const recursosInstitucionFiltered = recursosInstitucion.filter(
-      (ri) => selectedPaciente.recursos.filter((r) => r.id == ri.id).length == 0
-    );
+    const filterResources = () => {
+      setRecursosInstitucionFiltered(
+        recursosInstitucion
+          .filter(
+            (ri) =>
+              selectedPaciente.recursos.filter((r) => r.id == ri.id).length == 0
+          )
+          .map((r) => ({ ...r, selected: false }))
+      );
+    };
+
+    useEffect(() => {
+      filterResources();
+    }, [recursosInstitucion]);
 
     const handleModalAdd = () => {};
 
@@ -217,6 +248,35 @@ const PacientesRecursos = () => {
 
     const handleTabChange = (event, newValue) => {
       setTabValue(newValue);
+    };
+
+    const onCardClick = (resource) => {
+      if (
+        selectedPaciente.recursos.filter((r) => r.tipo === resource.tipo)
+          .length > 0
+      ) {
+        console.log('desea cambiar de habitacion ?');
+        setRecursosInstitucionFiltered((prevState) =>
+          prevState.map((r) =>
+            r.id == resource.id ? { ...r, selected: !r.selected } : r
+          )
+        );
+      } else {
+        if (resourcesToAdd.filter((r) => r.id == resource.id).length == 0) {
+          setResourcesToAdd((prevState) => [...prevState, resource]);
+        } else {
+          const newResources = resourcesToAdd.filter(
+            (r) => r.id !== resource.id
+          );
+          setResourcesToAdd(newResources);
+        }
+        setRecursosInstitucionFiltered((prevState) =>
+          prevState.map((r) =>
+            r.id == resource.id ? { ...r, selected: !r.selected } : r
+          )
+        );
+        console.log(resource);
+      }
     };
 
     return (
@@ -271,6 +331,7 @@ const PacientesRecursos = () => {
               </AppBar>
               {ubicacionesInstitucion?.map((u, idx) => (
                 <TabPanel
+                  className={classes.tabPanel}
                   key={`${idx}-tp-${u.nombre}`}
                   value={tabValue}
                   index={idx}
@@ -281,34 +342,44 @@ const PacientesRecursos = () => {
                         r.tipo == selectedTipoRecurso && r.ubicacion == u.id
                       );
                     })
-                    .map((ab, idx) => (
-                      <Card
-                        key={`${idx}-card-${u.nombre}-${ab.nombre}`}
-                        className={`${classes.root} ${classes.card}`}
+                    .map((resource, idx) => (
+                      <Badge
+                        key={`${idx}-card-${u.nombre}-${resource.nombre}`}
+                        classes={{
+                          badge: classes.badge,
+                        }}
+                        color="secondary"
+                        variant="dot"
+                        invisible={!resource.selected}
                       >
-                        <CardActionArea className={classes.cardAction}>
-                          <RecursoIcon
-                            propClases={`${classes.iconSm}`}
-                            tipo={ab.tipo}
-                          />
-                          <CardContent>
-                            <Typography
-                              gutterBottom
-                              variant="h5"
-                              component="h2"
-                            >
-                              {ab.nombre}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              component="p"
-                            >
-                              {ab.descripcion}
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                      </Card>
+                        <Card className={`${classes.root} ${classes.card}`}>
+                          <CardActionArea
+                            onClick={() => onCardClick(resource)}
+                            className={classes.cardAction}
+                          >
+                            <RecursoIcon
+                              propClases={`${classes.iconSm}`}
+                              tipo={resource.tipo}
+                            />
+                            <CardContent>
+                              <Typography
+                                gutterBottom
+                                variant="h5"
+                                component="h2"
+                              >
+                                {resource.nombre}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                component="p"
+                              >
+                                {resource.descripcion}
+                              </Typography>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      </Badge>
                     ))}
                 </TabPanel>
               ))}
@@ -321,7 +392,7 @@ const PacientesRecursos = () => {
 
   return (
     <>
-      <AddResourceDialog />
+      {showModal && <AddResourceDialog />}
       <div className={`${classes.root} `}>
         <FormControl className={`${classes.formControl}`}>
           <InputLabel id="paciente-label">Paciente</InputLabel>
