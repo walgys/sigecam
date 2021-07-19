@@ -6,6 +6,7 @@ import {
   getListaPacientes,
   getRecursosPaciente,
   onSelectPaciente,
+  updatePaciente,
 } from 'redux/GestionPacientes/RecursosPaciente';
 import {
   Button,
@@ -203,16 +204,62 @@ const PacientesRecursos = () => {
   }))(Badge);
 
   const AddResourceDialog = () => {
-    const [selectedTipoRecurso, setSelectedTipoRecurso] = useState(0);
+    const [selectedTipoRecurso, setSelectedTipoRecurso] = useState({
+      tipo: 0,
+      unoXPersona: 0,
+    });
     const [tabValue, setTabValue] = useState(0);
 
     const [resourcesToAdd, setResourcesToAdd] = useState([]);
     const [recursosInstitucionFiltered, setRecursosInstitucionFiltered] =
       useState([]);
 
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [selectedResource, setSelectedResource] = useState({});
+
     useEffect(() => {
       console.log(resourcesToAdd);
     }, [resourcesToAdd]);
+
+    const ConfirmDialog = () => {
+      const handleConfirmDialogAdd = () => {
+        const newResources = resourcesToAdd.filter((r) => {
+          if (r.tipo == selectedResource.tipo) {
+            setRecursosInstitucionFiltered((prevState) =>
+              prevState.map((ri) =>
+                ri.id == r.id || ri.id == selectedResource.id
+                  ? { ...ri, selected: !ri.selected }
+                  : ri
+              )
+            );
+            return false;
+          } else {
+            return true;
+          }
+        });
+
+        setResourcesToAdd([...newResources, selectedResource]);
+
+        setShowConfirmDialog(false);
+      };
+
+      const handleConfirmDialogClose = () => {
+        setShowConfirmDialog(false);
+      };
+
+      return (
+        <DialogModal
+          onClose={() => handleConfirmDialogClose()}
+          onAdd={() => handleConfirmDialogAdd()}
+          open={showConfirmDialog}
+          title={'Asignar nueva Habitación'}
+          titleWidth={'20vw'}
+          acceptText="Aceptar"
+        >
+          <Typography>¿ Está seguro que desea cambiar el recurso ?</Typography>
+        </DialogModal>
+      );
+    };
 
     const tiposRecurso = useSelector(
       (state) => state.recursosPaciente.tiposRecurso
@@ -226,21 +273,36 @@ const PacientesRecursos = () => {
     );
 
     const filterResources = () => {
-      setRecursosInstitucionFiltered(
-        recursosInstitucion
-          .filter(
-            (ri) =>
-              selectedPaciente.recursos.filter((r) => r.id == ri.id).length == 0
-          )
-          .map((r) => ({ ...r, selected: false }))
-      );
+      const recursosPacienteToAdd = selectedPaciente.recursos.map((r) => ({
+        ...r,
+        selected: true,
+      }));
+      const recursosInstitucionToAdd = recursosInstitucion.map((r) => ({
+        ...r,
+        selected: false,
+      }));
+      setResourcesToAdd([...recursosPacienteToAdd]);
+      setRecursosInstitucionFiltered([
+        ...recursosPacienteToAdd,
+        ...recursosInstitucionToAdd,
+      ]);
     };
 
     useEffect(() => {
       filterResources();
     }, [recursosInstitucion]);
 
-    const handleModalAdd = () => {};
+    const handleModalAdd = () => {
+      console.log('add');
+      dispatch(
+        updatePaciente({
+          idPaciente: selectedPaciente.id,
+          idInstitucion: selectedPaciente.idInstitucion,
+          recursos: resourcesToAdd,
+        })
+      );
+      setShowModal(false);
+    };
 
     const handleModalClose = () => {
       setShowModal(false);
@@ -252,22 +314,33 @@ const PacientesRecursos = () => {
 
     const onCardClick = (resource) => {
       if (
-        selectedPaciente.recursos.filter((r) => r.tipo === resource.tipo)
-          .length > 0
+        resourcesToAdd.filter(
+          (r) =>
+            r.tipo === resource.tipo && selectedTipoRecurso.unoXPersona == 1
+        ).length > 0
       ) {
-        console.log('desea cambiar de habitacion ?');
-        setRecursosInstitucionFiltered((prevState) =>
-          prevState.map((r) =>
-            r.id == resource.id ? { ...r, selected: !r.selected } : r
-          )
-        );
+        if (resourcesToAdd.filter((r) => r.id == resource.id).length == 0) {
+          setSelectedResource(resource);
+          setShowConfirmDialog(true);
+        } else {
+          const newResources = resourcesToAdd.filter(
+            (r) => r.id != resource.id
+          );
+          setResourcesToAdd(newResources);
+          setRecursosInstitucionFiltered((prevState) =>
+            prevState.map((r) =>
+              r.id == resource.id ? { ...r, selected: !r.selected } : r
+            )
+          );
+        }
       } else {
         if (resourcesToAdd.filter((r) => r.id == resource.id).length == 0) {
           setResourcesToAdd((prevState) => [...prevState, resource]);
         } else {
           const newResources = resourcesToAdd.filter(
-            (r) => r.id !== resource.id
+            (r) => r.id != resource.id
           );
+
           setResourcesToAdd(newResources);
         }
         setRecursosInstitucionFiltered((prevState) =>
@@ -275,118 +348,128 @@ const PacientesRecursos = () => {
             r.id == resource.id ? { ...r, selected: !r.selected } : r
           )
         );
-        console.log(resource);
       }
     };
 
     return (
-      <DialogModal
-        onClose={() => handleModalClose()}
-        onAdd={() => handleModalAdd()}
-        open={showModal}
-        title={'Asignar nuevo recurso'}
-        titleWidth={'60vw'}
-      >
-        <div className={classes.root}>
-          <FormControl className={`${classes.formControl} ${classes.field}`}>
-            <InputLabel id="tipoRecurso-label">Tipo de Recurso</InputLabel>
-            <NativeSelect
-              labelId="tipoRecurso-label"
-              inputProps={{ tabIndex: '10', name: 'tipoRecurso' }}
-              id="tipoRecurso"
-              value={selectedTipoRecurso}
-              onChange={(e) => {
-                setSelectedTipoRecurso(e.target.value);
-              }}
-            >
-              <option aria-label="None" value="0" />
-              {tiposRecurso?.map((p) => (
-                <option key={`${p.id}-${p.nombre}`} value={p.id}>
-                  {`${p.nombre}`}
-                </option>
-              ))}
-            </NativeSelect>
-          </FormControl>
+      <>
+        {showConfirmDialog && <ConfirmDialog />}
+        <DialogModal
+          onClose={() => handleModalClose()}
+          onAdd={() => handleModalAdd()}
+          open={showModal}
+          title={'Asignar nuevo recurso'}
+          titleWidth={'60vw'}
+        >
+          <div className={classes.root}>
+            <FormControl className={`${classes.formControl} ${classes.field}`}>
+              <InputLabel id="tipoRecurso-label">Tipo de Recurso</InputLabel>
+              <NativeSelect
+                inputProps={{ tabIndex: '10', name: 'tipoRecurso' }}
+                id="tipoRecurso"
+                value={selectedTipoRecurso.tipo}
+                onChange={(e) => {
+                  setSelectedTipoRecurso({
+                    tipo: e.target.value,
+                    unoXPersona:
+                      e.target.selectedOptions[0].getAttribute('unoxpersona'),
+                  });
+                }}
+              >
+                <option aria-label="None" value="0" />
+                {tiposRecurso?.map((p) => (
+                  <option
+                    key={`${p.id}-${p.nombre}`}
+                    value={p.id}
+                    unoxpersona={p.unoXPersona}
+                  >
+                    {`${p.nombre}`}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
 
-          <div className={classes.modalAction}>
-            <div className={classes.tabRoot}>
-              <AppBar position="static" color="default">
-                <Tabs
-                  value={tabValue}
-                  onChange={handleTabChange}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  variant="scrollable"
-                  scrollButtons="auto"
-                  aria-label="scrollable auto tabs example"
-                >
-                  {ubicacionesInstitucion?.map((u, idx) => (
-                    <Tab
-                      key={`${idx}-ubi-${u.nombre}`}
-                      label={u.nombre}
-                      {...a11yProps(idx)}
-                    />
-                  ))}
-                </Tabs>
-              </AppBar>
-              {ubicacionesInstitucion?.map((u, idx) => (
-                <TabPanel
-                  className={classes.tabPanel}
-                  key={`${idx}-tp-${u.nombre}`}
-                  value={tabValue}
-                  index={idx}
-                >
-                  {recursosInstitucionFiltered
-                    ?.filter((r) => {
-                      return (
-                        r.tipo == selectedTipoRecurso && r.ubicacion == u.id
-                      );
-                    })
-                    .map((resource, idx) => (
-                      <Badge
-                        key={`${idx}-card-${u.nombre}-${resource.nombre}`}
-                        classes={{
-                          badge: classes.badge,
-                        }}
-                        color="secondary"
-                        variant="dot"
-                        invisible={!resource.selected}
-                      >
-                        <Card className={`${classes.root} ${classes.card}`}>
-                          <CardActionArea
-                            onClick={() => onCardClick(resource)}
-                            className={classes.cardAction}
-                          >
-                            <RecursoIcon
-                              propClases={`${classes.iconSm}`}
-                              tipo={resource.tipo}
-                            />
-                            <CardContent>
-                              <Typography
-                                gutterBottom
-                                variant="h5"
-                                component="h2"
-                              >
-                                {resource.nombre}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="textSecondary"
-                                component="p"
-                              >
-                                {resource.descripcion}
-                              </Typography>
-                            </CardContent>
-                          </CardActionArea>
-                        </Card>
-                      </Badge>
+            <div className={classes.modalAction}>
+              <div className={classes.tabRoot}>
+                <AppBar position="static" color="default">
+                  <Tabs
+                    value={tabValue}
+                    onChange={handleTabChange}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    aria-label="scrollable auto tabs example"
+                  >
+                    {ubicacionesInstitucion?.map((u, idx) => (
+                      <Tab
+                        key={`${idx}-ubi-${u.nombre}`}
+                        label={u.nombre}
+                        {...a11yProps(idx)}
+                      />
                     ))}
-                </TabPanel>
-              ))}
+                  </Tabs>
+                </AppBar>
+                {ubicacionesInstitucion?.map((u, idx) => (
+                  <TabPanel
+                    className={classes.tabPanel}
+                    key={`${idx}-tp-${u.nombre}`}
+                    value={tabValue}
+                    index={idx}
+                  >
+                    {recursosInstitucionFiltered
+                      ?.filter((r) => {
+                        return (
+                          r.tipo == selectedTipoRecurso.tipo &&
+                          r.ubicacion == u.id
+                        );
+                      })
+                      .map((resource, idx) => (
+                        <Badge
+                          key={`${idx}-card-${u.nombre}-${resource.nombre}`}
+                          classes={{
+                            badge: classes.badge,
+                          }}
+                          color="secondary"
+                          variant="dot"
+                          invisible={!resource.selected}
+                        >
+                          <Card className={`${classes.root} ${classes.card}`}>
+                            <CardActionArea
+                              onClick={() => onCardClick(resource)}
+                              className={classes.cardAction}
+                            >
+                              <RecursoIcon
+                                propClases={`${classes.iconSm}`}
+                                tipo={resource.tipo}
+                              />
+                              <CardContent>
+                                <Typography
+                                  gutterBottom
+                                  variant="h5"
+                                  component="h2"
+                                >
+                                  {resource.nombre}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                  component="p"
+                                >
+                                  {resource.descripcion}
+                                </Typography>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        </Badge>
+                      ))}
+                  </TabPanel>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </DialogModal>
+        </DialogModal>
+      </>
     );
   };
 
@@ -402,7 +485,13 @@ const PacientesRecursos = () => {
             id="paciente"
             value={selectedPaciente?.id}
             onChange={(e) => {
-              dispatch(onSelectPaciente(e.target.value));
+              dispatch(
+                onSelectPaciente({
+                  idPaciente: e.target.value,
+                  idInstitucion:
+                    e.target.selectedOptions[0].getAttribute('idinstitucion'),
+                })
+              );
 
               dispatch(
                 getRecursosPaciente({

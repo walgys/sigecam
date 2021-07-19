@@ -5,7 +5,7 @@ const queryGetInstitucionResources = async (idInstitucion) => {
   try {
     const [rows, fields] = await conn
       .execute(
-        `SELECT r.id, r.tipo, r.nombre, r.descripcion, r.ubicacion FROM recursos_instituciones as ri JOIN recursos as r ON r.id=ri.idRecurso WHERE ri.idInstitucion=${idInstitucion}`
+        `SELECT r.id, r.tipo, r.nombre, r.descripcion, r.ubicacion FROM recursos_instituciones as ri JOIN recursos as r ON r.id=ri.idRecurso WHERE ri.idInstitucion=${idInstitucion} AND ri.asignado=0`
       )
       .then((results) => {
         return results;

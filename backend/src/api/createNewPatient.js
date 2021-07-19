@@ -8,11 +8,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const API_URL = process.env.API_URL;
 require('../utils');
 
-router.post('/createNewPacient', async (req, res) => {
+router.post('/createNewPatient', async (req, res) => {
   try {
     if (typeof req.session.jwt !== 'undefined') {
       const queryResult = await axios({
-        url: `${API_URL}/api/v1/internal/createNewPacient`,
+        url: `${API_URL}/api/v1/internal/createNewPatient`,
         method: 'POST', // *GET, POST, PUT, DELETE, etc
         withCredentials: true,
         headers: {
@@ -42,7 +42,7 @@ router.post('/createNewPacient', async (req, res) => {
   }
 });
 
-router.post('/internal/createNewPacient', async (req, res) => {
+router.post('/internal/createNewPatient', async (req, res) => {
   try {
     const user = jwt.verify(req.headers.token, JWT_SECRET);
 

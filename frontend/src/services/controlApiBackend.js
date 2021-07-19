@@ -54,7 +54,22 @@ class controlApiBackend {
     switch (tarea) {
       case 1:
         return axios({
-          url: `${API_URL}/api/v1/createNewPacient  `,
+          url: `${API_URL}/api/v1/createNewPatient  `,
+          method: 'POST', // *GET, POST, PUT, DELETE, etc
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          data: JSON.stringify(paciente), // body data type must match "Content-Type" header
+        })
+          .then((result) => result.data)
+          .catch((err) => {
+            return { data: {}, errorMessage: 'Error de conexión' };
+          });
+      case 2: //actualizar recursos del paciente
+        return axios({
+          url: `${API_URL}/api/v1/updatePatientResources  `,
           method: 'POST', // *GET, POST, PUT, DELETE, etc
           withCredentials: true,
           headers: {
