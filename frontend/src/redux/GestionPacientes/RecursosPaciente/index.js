@@ -89,7 +89,9 @@ export const recursosPacienteSlice = createSlice({
       state.ubicacionesInstitucion = payload?.ubicacionesInstitucion;
       state.recursosInstitucion = payload?.recursosInstitucion || [];
     },
-    [updatePaciente.fulfilled]: (state, { payload }) => {},
+    [updatePaciente.fulfilled]: (state, { payload }) => {
+      
+    },
   },
 });
 

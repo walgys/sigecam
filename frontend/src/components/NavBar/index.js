@@ -21,6 +21,7 @@ import {
   FaceTwoTone,
   ExtensionTwoTone,
   AirlineSeatIndividualSuiteTwoTone,
+  PersonPinTwoTone,
 } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -112,6 +113,10 @@ export default function PrimarySearchAppBar(props) {
     {
       name: 'AirlineSeatIndividualSuiteTwoTone',
       icon: <AirlineSeatIndividualSuiteTwoTone className={classes.icon} />,
+    },
+    {
+      name: 'PersonPinTwoTone',
+      icon: <PersonPinTwoTone className={classes.icon} />,
     },
   ];
   const breadcrumbs = pathRoutes?.map((p, idx) => {

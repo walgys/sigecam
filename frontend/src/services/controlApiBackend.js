@@ -51,40 +51,36 @@ class controlApiBackend {
   crudGrupo = (grupo, tarea) => {};
 
   crudPaciente = async (paciente, tarea) => {
+    let endpoint = '';
+
     switch (tarea) {
       case 1:
-        return axios({
-          url: `${API_URL}/api/v1/createNewPatient  `,
-          method: 'POST', // *GET, POST, PUT, DELETE, etc
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          data: JSON.stringify(paciente), // body data type must match "Content-Type" header
-        })
-          .then((result) => result.data)
-          .catch((err) => {
-            return { data: {}, errorMessage: 'Error de conexión' };
-          });
+        endpoint = `/api/v1/createNewPatient`;
+        break;
       case 2: //actualizar recursos del paciente
-        return axios({
-          url: `${API_URL}/api/v1/updatePatientResources  `,
-          method: 'POST', // *GET, POST, PUT, DELETE, etc
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          data: JSON.stringify(paciente), // body data type must match "Content-Type" header
-        })
-          .then((result) => result.data)
-          .catch((err) => {
-            return { data: {}, errorMessage: 'Error de conexión' };
-          });
+        endpoint = `/api/v1/updatePatientResources`;
+        break;
+      case 3: //obtener informacion del paciente
+        endpoint = `/api/v1/getPatientData`;
+        break;
       default:
         break;
     }
+
+    return axios({
+      url: `${API_URL}${endpoint}`,
+      method: 'POST', // *GET, POST, PUT, DELETE, etc
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      data: JSON.stringify(paciente), // body data type must match "Content-Type" header
+    })
+      .then((result) => result.data)
+      .catch(() => {
+        return { data: {}, errorMessage: 'Error de conexión' };
+      });
   };
 
   getListaUsuarios = (criterio) => {};

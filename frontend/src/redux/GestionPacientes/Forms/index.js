@@ -16,6 +16,41 @@ export const getDatosFormularios = createAsyncThunk(
       thunkAPI.dispatch(setOpenSnack(true));
       if (result.error === 'INVALID_TOKEN') thunkAPI.dispatch(onTokenExpired());
     }
+    if (payload.tipoPaciente === 'existente') {
+      thunkAPI.dispatch(getListaPacientes(payload));
+    }
+    return result;
+  }
+);
+
+export const getListaPacientes = createAsyncThunk(
+  'forms/getListaPacientes',
+  async (payload, thunkAPI) => {
+    const result = await controlApiBackend.getListaPacientes(payload);
+
+    if (result.errorMessage !== null) {
+      thunkAPI.dispatch(
+        setSnack({ type: 'error', message: result.errorMessage })
+      );
+      thunkAPI.dispatch(setOpenSnack(true));
+      if (result.error === 'INVALID_TOKEN') thunkAPI.dispatch(onTokenExpired());
+    }
+    return result;
+  }
+);
+
+export const getDatosPaciente = createAsyncThunk(
+  'forms/getDatosPaciente',
+  async (payload, thunkAPI) => {
+    const result = await controlApiBackend.crudPaciente(payload, 3);
+    if (result.errorMessage !== null) {
+      thunkAPI.dispatch(
+        setSnack({ type: 'error', message: result.errorMessage })
+      );
+      thunkAPI.dispatch(setOpenSnack(true));
+      if (result.error === 'INVALID_TOKEN') thunkAPI.dispatch(onTokenExpired());
+    }
+
     return result;
   }
 );
@@ -87,10 +122,14 @@ export const infoClinicaInitialState = {
 export const formsSlice = createSlice({
   name: 'forms',
   initialState: {
+    id: 0,
+    idInfoClinica: 0,
+    idAntEpidemiologicos: 0,
     altaPaciente: altaPacienteInitialState,
     antEpidemio: antEpidemioInitialState,
     infoClinica: infoClinicaInitialState,
     formOptions: {
+      listaPacientes: [],
       provincias: [],
       localidades: [{ id: 0, localidades: [] }],
       instituciones: [],
@@ -234,6 +273,183 @@ export const formsSlice = createSlice({
       state.formOptions.tipoDoc = payload?.tipoDoc;
       state.formOptions.signosSintomas = payload?.signosSintomas;
       state.formOptions.comorbilidades = payload?.comorbilidades;
+    },
+
+    [getDatosPaciente.fulfilled]: (state, { payload }) => {
+      const { paciente } = payload;
+      let { altaPaciente, antEpidemio, infoClinica } = {};
+      state.id = paciente.id;
+      state.idInfoClinica = paciente.idInfoClinica;
+      state.idAntEpidemiologicos = paciente.idAntEpidemiologicos;
+      //transformacion de datos
+      altaPaciente = {
+        nombre: { value: paciente.nombre, error: false, errorText: '' },
+        apellido: { value: paciente.apellido, error: false, errorText: '' },
+        sexo: { value: paciente.sexo, error: false, errorText: '' },
+        edad: { value: paciente.edad, error: false, errorText: '' },
+        tipoDoc: { value: paciente.tipoDoc, error: false, errorText: '' },
+        nroDoc: { value: paciente.nroDoc, error: false, errorText: '' },
+        nacionalidad: {
+          value: paciente.nacionalidad,
+          error: false,
+          errorText: '',
+        },
+        provincia: { value: paciente.provincia, error: false, errorText: '' },
+        localidad: { value: paciente.localidad, error: false, errorText: '' },
+        calle: { value: paciente.calle, error: false, errorText: '' },
+        telefono: { value: paciente.telefono, error: false, errorText: '' },
+        nroCalle: { value: paciente.nroCalle, error: false, errorText: '' },
+        piso: { value: paciente.piso, error: false, errorText: '' },
+        depto: { value: paciente.depto, error: false, errorText: '' },
+        codPos: { value: paciente.codPos, error: false, errorText: '' },
+        barrioVilla: {
+          value: paciente.barrioVilla,
+          error: false,
+          errorText: '',
+        },
+        privadoLibertad: {
+          value: paciente.privadoLibertad,
+          error: false,
+          errorText: '',
+        },
+      };
+      antEpidemio = {
+        form1: {
+          fueraPais: {
+            value: paciente.antEpidemio.fueraPais,
+            error: false,
+            errorText: '',
+          },
+          dentroPais: {
+            value: paciente.antEpidemio.dentroPais,
+            error: false,
+            errorText: '',
+          },
+          contactoCasos: {
+            value: paciente.antEpidemio.contactoCasos,
+            error: false,
+            errorText: '',
+          },
+          nomApeCaso: {
+            value: paciente.antEpidemio.nomApeCaso,
+            error: false,
+            errorText: '',
+          },
+          idCaso: {
+            value: paciente.antEpidemio.idCaso,
+            error: false,
+            errorText: '',
+          },
+          atencionEnCentro: {
+            value: paciente.antEpidemio.atencionEnCentro,
+            error: false,
+            errorText: '',
+          },
+          antVacGripal: {
+            value: paciente.antEpidemio.antVacGripal,
+            error: false,
+            errorText: '',
+          },
+          fecVacGripal: {
+            value: new Date(paciente.antEpidemio.fecVacGripal),
+            error: false,
+            errorText: '',
+          },
+          trabajoSalud: {
+            value: paciente.antEpidemio.trabajoSalud,
+            error: false,
+            errorText: '',
+          },
+        },
+        form2: {
+          contagioColega: {
+            value: paciente.antEpidemio.contagioColega,
+            error: false,
+            errorText: '',
+          },
+          nexoDesconocido: {
+            value: paciente.antEpidemio.nexoDesconocido,
+            error: false,
+            errorText: '',
+          },
+          asistInfectado: {
+            value: paciente.antEpidemio.asistInfectado,
+            error: false,
+            errorText: '',
+          },
+          transComunitaria: {
+            value: paciente.antEpidemio.transComunitaria,
+            error: false,
+            errorText: '',
+          },
+          congloCasos: {
+            value: paciente.antEpidemio.congloCasos,
+            error: false,
+            errorText: '',
+          },
+          nombreDireccionInstitucion: {
+            value: paciente.antEpidemio.nombreDireccionInstitucion,
+            error: false,
+            errorText: '',
+          },
+        },
+        form3: {
+          contactos: {
+            value: paciente.antEpidemio.contactos.map((c, idx) => ({
+              ...c,
+              id: idx + 1,
+            })),
+            error: false,
+            errorText: '',
+          },
+          institucion: {
+            value: paciente.idInstitucion,
+            error: false,
+            errorText: '',
+          },
+        },
+      };
+
+      infoClinica = {
+        aplica: { value: '1' },
+        fechaFis: {
+          value: new Date(paciente.infoClinica.fechaFis),
+          error: false,
+          errorText: '',
+        },
+        semanaFis: {
+          value: paciente.infoClinica.semanaFis,
+          error: false,
+          errorText: '',
+        },
+        fechaPrimeraConsulta: {
+          value: new Date(paciente.infoClinica.fechaPrimeraConsulta),
+          error: false,
+          errorText: '',
+        },
+        estadoInternacion: {
+          value: paciente.infoClinica.estadoInternacion,
+          error: false,
+          errorText: '',
+        },
+        signosSintomas: {
+          value: paciente.infoClinica.signosSintomas,
+          error: false,
+          errorText: '',
+        },
+        comorbilidades: {
+          value: paciente.infoClinica.comorbilidades,
+          error: false,
+          errorText: '',
+        },
+      };
+
+      state.altaPaciente = altaPaciente;
+      state.antEpidemio = antEpidemio;
+      state.infoClinica = infoClinica;
+    },
+    [getListaPacientes.fulfilled]: (state, { payload }) => {
+      state.formOptions.listaPacientes = payload?.pacientes;
     },
   },
 });

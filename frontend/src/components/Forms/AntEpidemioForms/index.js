@@ -119,7 +119,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AntEpidemioForm1 = () => {
+const AntEpidemioForm1 = (props) => {
+  const { tipoPaciente } = props;
   const classes = useStyles();
   const formData = useSelector((state) => state.forms.antEpidemio.form1);
   const dispatch = useDispatch();
@@ -273,7 +274,8 @@ const AntEpidemioForm1 = () => {
   );
 };
 
-const AntEpidemioForm2 = () => {
+const AntEpidemioForm2 = (props) => {
+  const { tipoPaciente } = props;
   const classes = useStyles();
   const formData = useSelector((state) => state.forms.antEpidemio.form2);
   const dispatch = useDispatch();
@@ -397,12 +399,14 @@ const AntEpidemioForm2 = () => {
   );
 };
 
-const AntEpidemioForm3 = () => {
+const AntEpidemioForm3 = (props) => {
+  const { tipoPaciente } = props;
   const classes = useStyles();
   const [modalOpen, setModalOpen] = useState(false);
   const formData = useSelector((state) => state.forms.antEpidemio.form3);
   const dispatch = useDispatch();
-  const [modalIndex, setModalIndex] = useState(1);
+  const [modalIndex, setModalIndex] = useState(formData.contactos.length + 1);
+
   const instituciones = useSelector(
     (state) => state.forms.formOptions.instituciones
   );

@@ -87,7 +87,8 @@ function getStepContent(stepIndex) {
 
 const controlApiBackend = new ControlApiBackend();
 
-const PacientesDatosNuevo = () => {
+const PacientesDatos = (props) => {
+  const { tipoPaciente } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -99,6 +100,7 @@ const PacientesDatosNuevo = () => {
   const resultTypes = useSelector((state) => state.constants.resultTypes);
   const history = useHistory();
   const forms = useSelector((state) => state.forms);
+
   const handleExit = () => {
     dispatch(onPacientesDatosNuevoExit());
   };
@@ -110,6 +112,7 @@ const PacientesDatosNuevo = () => {
       handleExit();
     };
   }, []);
+
   const steps = getSteps();
 
   const checkMissingData = async () => {
@@ -336,11 +339,11 @@ const PacientesDatosNuevo = () => {
         ))}
       </Stepper>
 
-      {activeStep === 0 && <AltaPacienteForm />}
-      {activeStep === 1 && <InfoClinicaForm />}
-      {activeStep === 2 && <AntEpidemioForm1 />}
-      {activeStep === 3 && <AntEpidemioForm2 />}
-      {activeStep === 4 && <AntEpidemioForm3 />}
+      {activeStep === 0 && <AltaPacienteForm tipoPaciente={tipoPaciente} />}
+      {activeStep === 1 && <InfoClinicaForm tipoPaciente={tipoPaciente} />}
+      {activeStep === 2 && <AntEpidemioForm1 tipoPaciente={tipoPaciente} />}
+      {activeStep === 3 && <AntEpidemioForm2 tipoPaciente={tipoPaciente} />}
+      {activeStep === 4 && <AntEpidemioForm3 tipoPaciente={tipoPaciente} />}
 
       <div>
         {activeStep === steps.length ? (
@@ -387,4 +390,4 @@ const PacientesDatosNuevo = () => {
   );
 };
 
-export default PacientesDatosNuevo;
+export default PacientesDatos;

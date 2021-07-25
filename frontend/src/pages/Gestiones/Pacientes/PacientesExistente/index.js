@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import {
   AccountTreeTwoTone,
   TransferWithinAStationTwoTone,
+  PersonPinTwoTone,
 } from '@material-ui/icons';
 import Menu from 'components/Menu';
 
@@ -27,6 +28,14 @@ const PacientesExistente = () => {
       to: '/gestiones/pacientes/existente/estado',
       icon: TransferWithinAStationTwoTone,
       iconColor: colors.green,
+    },
+    {
+      title: 'DATOS DEL PACIENTE',
+      text: 'Modificar datos del paciente',
+      component: Link,
+      to: '/gestiones/pacientes/existente/datos',
+      icon: PersonPinTwoTone,
+      iconColor: colors.blue,
     },
   ];
 

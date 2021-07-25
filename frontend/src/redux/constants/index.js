@@ -36,11 +36,15 @@ export const constants = createSlice({
 
           {
             route: '/gestiones/pacientes/existente',
-            page: 'PacientesDatosExistente',
+            page: 'PacientesExistente',
           },
           {
             route: '/gestiones/pacientes/existente/recursos',
             page: 'PacientesRecursos',
+          },
+          {
+            route: '/gestiones/pacientes/existente/datos',
+            page: 'PacientesDatosExistente',
           },
           {
             route: '/gestiones/pacientes/existente/estado',
@@ -94,11 +98,15 @@ export const constants = createSlice({
           { route: '/gestiones/pacientes', page: 'Pacientes' },
           {
             route: '/gestiones/pacientes/existente',
-            page: 'PacientesDatosExistente',
+            page: 'PacientesExistente',
           },
           {
             route: '/gestiones/pacientes/existente/recursos',
             page: 'PacientesRecursos',
+          },
+          {
+            route: '/gestiones/pacientes/existente/datos',
+            page: 'PacientesDatosExistente',
           },
           {
             route: '/gestiones/pacientes/existente/estado',
@@ -125,11 +133,15 @@ export const constants = createSlice({
 
           {
             route: '/gestiones/pacientes/existente',
-            page: 'PacientesDatosExistente',
+            page: 'PacientesExistente',
           },
           {
             route: '/gestiones/pacientes/existente/recursos',
             page: 'PacientesRecursos',
+          },
+          {
+            route: '/gestiones/pacientes/existente/datos',
+            page: 'PacientesDatosExistente',
           },
           {
             route: '/gestiones/pacientes/existente/estado',
@@ -168,6 +180,10 @@ export const constants = createSlice({
       {
         route: '/gestiones/pacientes/existente/estado',
         icon: 'TransferWithinAStationTwoTone',
+      },
+      {
+        route: '/gestiones/pacientes/existente/datos',
+        icon: 'PersonPinTwoTone',
       },
       {
         route: '/gestiones/pacientes/nuevo',

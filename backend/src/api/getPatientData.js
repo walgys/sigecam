@@ -1,18 +1,18 @@
 const express = require('express');
 const axios = require('axios');
-const updatePatientResources = require('../DB/updatePatientResources');
+const queryGetPatientData = require('../DB/queryGetPatientData');
+require('dotenv').config();
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { resultTypes } = require('../utils');
 const JWT_SECRET = process.env.JWT_SECRET;
 const API_URL = process.env.API_URL;
-require('../utils');
 
-router.post('/updatePatientResources', async (req, res) => {
+router.post('/getPatientData', async (req, res) => {
   try {
     if (typeof req.session.jwt !== 'undefined') {
       const queryResult = await axios({
-        url: `${API_URL}/api/v1/internal/updatePatientResources`,
+        url: `${API_URL}/api/v1/internal/getPatientData`,
         method: 'POST', // *GET, POST, PUT, DELETE, etc
         withCredentials: true,
         headers: {
@@ -24,8 +24,7 @@ router.post('/updatePatientResources', async (req, res) => {
       })
         .then((result) => result.data)
         .catch((err) => console.log(err));
-      console.log(queryResult);
-      res.json({ ...queryResult }).end();
+      res.json({ ...queryResult, message: resultTypes.OK }).end();
     } else {
       res
         .json({
@@ -36,31 +35,34 @@ router.post('/updatePatientResources', async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res
-      .json({ message: resultTypes.ERROR, errorMessage: 'Server error' })
-      .end();
+    res.json({ message: resultTypes.ERROR, errorMessage: 'Error' }).end();
   }
 });
 
-router.post('/internal/updatePatientResources', async (req, res) => {
+router.post('/internal/getPatientData', async (req, res) => {
+  const { idPaciente } = req.body;
+
   try {
     const user = jwt.verify(req.headers.token, JWT_SECRET);
-    console.log(req.body);
-    const updatePatientResult = await updatePatientResources
-      .updatePatientResources(req.body)
-      .then((r) => r);
-    console.log(updatePatientResult);
+    let paciente = {};
+
+    if (typeof idPaciente !== 'undefined')
+      paciente = await queryGetPatientData.queryGetPatientData(idPaciente);
+
     res
       .json({
-        message: updatePatientResult.result,
-
-        errorMessage: updatePatientResult.message,
+        message: resultTypes.OK,
+        paciente: paciente,
+        errorMessage: null,
       })
       .end();
   } catch (err) {
     console.log(err);
     res
-      .json({ message: resultTypes.ERROR, errorMessage: 'Server error' })
+      .json({
+        message: resultTypes.ERROR,
+        errorMessage: 'Error procesando pedido',
+      })
       .end();
   }
 });

@@ -1,9 +1,9 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   onAltaChange,
-  getFormOptionsLocalidades,
   getDatosFormularios,
+  getDatosPaciente,
 } from 'redux/GestionPacientes/Forms';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -67,10 +67,15 @@ const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  pacientCmbo: {
+    minWidth: '250px',
+  },
 }));
 
-const AltaPacienteForm = () => {
+const AltaPacienteForm = (props) => {
+  const { tipoPaciente } = props;
   const classes = useStyles();
+  const userData = useSelector((state) => state.user.userData);
   const provincias = useSelector((state) => state.forms.formOptions.provincias);
   const nacionalidades = useSelector(
     (state) => state.forms.formOptions.nacionalidades
@@ -84,6 +89,12 @@ const AltaPacienteForm = () => {
   const provincia = useSelector(
     (state) => state.forms.altaPaciente.provincia.value
   );
+  const listaPacientes = useSelector(
+    (state) => state.forms.formOptions.listaPacientes
+  );
+
+  const [selectedPaciente, setSelectedPaciente] = useState(0);
+
   const localidadesFiltradas = localidades.filter(
     (l) => l.id === parseInt(provincia, 0)
   )[0];
@@ -91,7 +102,12 @@ const AltaPacienteForm = () => {
   const dispatch = useDispatch();
 
   const getProvincias = useCallback(() => {
-    dispatch(getDatosFormularios());
+    dispatch(
+      getDatosFormularios({
+        tipoPaciente: tipoPaciente,
+        idInstitucion: userData?.idInstitucion,
+      })
+    );
   }, [dispatch]);
 
   useEffect(() => {
@@ -101,6 +117,29 @@ const AltaPacienteForm = () => {
 
   return (
     <Container>
+      {tipoPaciente === 'existente' && (
+        <FormControl
+          className={`${classes.formControl} ${classes.pacientCmbo}`}
+        >
+          <InputLabel id="edad-label">Paciente</InputLabel>
+          <NativeSelect
+            labelId="edad-label"
+            inputProps={{ tabIndex: '0', name: 'edad' }}
+            id="edad"
+            value={selectedPaciente}
+            onChange={(e) =>
+              dispatch(getDatosPaciente({ idPaciente: e.target.value }))
+            }
+          >
+            <option aria-label="None" value="0" />
+            {listaPacientes?.map((k) => (
+              <option key={k.id} value={k.id}>
+                {`${k.nombre} ${k.apellido}`}
+              </option>
+            ))}
+          </NativeSelect>
+        </FormControl>
+      )}
       <form className={classes.form} noValidate>
         <div className={classes.formContent}>
           <div className={classes.formColumn}>

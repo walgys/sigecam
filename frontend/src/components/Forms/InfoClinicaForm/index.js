@@ -126,7 +126,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InfoClinicaForm = () => {
+const InfoClinicaForm = (props) => {
+  const {tipoPaciente} = props;
   const classes = useStyles();
   const formData = useSelector((state) => state.forms.infoClinica);
   const signosSintomas =

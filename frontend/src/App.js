@@ -23,6 +23,7 @@ const pageComponentMap = {
   GestRecInstituciones: <pages.GestRecInstituciones />,
   GestRecGenerales: <pages.GestRecGenerales />,
   Pacientes: <pages.Pacientes />,
+  PacientesExistente: <pages.PacientesExistente />,
   PacientesRecursos: <pages.PacientesRecursos />,
   PacientesDatosExistente: <pages.PacientesDatosExistente />,
   PacientesDatosNuevo: <pages.PacientesDatosNuevo />,

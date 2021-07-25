@@ -179,6 +179,10 @@ const create = async (pacienteData) => {
       }
       try {
         await conn.commit();
+        returnMessage = {
+          result: resultTypes.OK,
+          messsage: null,
+        };
       } catch (err) {
         console.log(err);
       }
