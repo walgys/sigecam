@@ -52,16 +52,23 @@ class controlApiBackend {
 
   crudPaciente = async (paciente, tarea) => {
     let endpoint = '';
-
+    let method = '';
     switch (tarea) {
       case 1:
         endpoint = `/api/v1/createNewPatient`;
+        method = 'POST';
         break;
       case 2: //actualizar recursos del paciente
         endpoint = `/api/v1/updatePatientResources`;
+        method = 'POST';
         break;
       case 3: //obtener informacion del paciente
         endpoint = `/api/v1/getPatientData`;
+        method = 'POST';
+        break;
+      case 4: //actualizar informacion del paciente
+        endpoint = `/api/v1/updatePatientData`;
+        method = 'PUT';
         break;
       default:
         break;
@@ -69,7 +76,7 @@ class controlApiBackend {
 
     return axios({
       url: `${API_URL}${endpoint}`,
-      method: 'POST', // *GET, POST, PUT, DELETE, etc
+      method: method, // *GET, POST, PUT, DELETE, etc
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
@@ -78,8 +85,12 @@ class controlApiBackend {
       data: JSON.stringify(paciente), // body data type must match "Content-Type" header
     })
       .then((result) => result.data)
-      .catch(() => {
-        return { data: {}, errorMessage: 'Error de conexión' };
+      .catch((err) => {
+        return {
+          data: {},
+          message: 'ERROR',
+          errorMessage: 'Error de conexión',
+        };
       });
   };
 

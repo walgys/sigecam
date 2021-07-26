@@ -262,14 +262,29 @@ const PacientesDatos = (props) => {
 
   const commitData = async () => {
     setIsCommiting(true);
-    const result = await controlApiBackend.crudPaciente(
-      transformPacientData(),
-      1
-    );
+    let result;
+    if (tipoPaciente === 'existente') {
+      result = await controlApiBackend.crudPaciente(transformPacientData(), 4);
+    } else {
+      result = await controlApiBackend.crudPaciente(transformPacientData(), 1);
+    }
+
     if (result?.message === resultTypes.SUCCESS) {
-      dispatch(setSnack({ type: 'success', message: 'Nuevo paciente creado' }));
+      dispatch(
+        setSnack({
+          type: 'success',
+          message:
+            tipoPaciente === 'existente'
+              ? 'Paciente modificado'
+              : 'Nuevo paciente creado',
+        })
+      );
       dispatch(setOpenSnack(true));
-      //history.push('/gestiones/pacientes/datos');
+      const historyPushTo =
+        tipoPaciente === 'existente'
+          ? '/gestiones/pacientes/existente'
+          : '/gestiones/pacientes';
+      history.push(historyPushTo);
     }
     if (result.errorMessage === resultTypes.INVALID_TOKEN)
       dispatch(onTokenExpired());
@@ -277,7 +292,6 @@ const PacientesDatos = (props) => {
       dispatch(setSnack({ type: 'error', message: result.errorMessage }));
       dispatch(setOpenSnack(true));
     }
-
     setIsCommiting(false);
   };
 
@@ -312,7 +326,9 @@ const PacientesDatos = (props) => {
         onClose={() => handleModalClose()}
         onAdd={() => handleModalYes()}
         open={modalOpen}
-        title={'Crear Paciente'}
+        title={
+          tipoPaciente === 'existente' ? 'modificar Paciente' : 'Crear Paciente'
+        }
         cancelText="NO"
         acceptText="SI"
       >
@@ -321,7 +337,9 @@ const PacientesDatos = (props) => {
           color="textSecondary"
           gutterBottom
         >
-          ¿ Está seguro que desea crear el Paciente ?
+          {tipoPaciente === 'existente'
+            ? '¿ Está seguro que desea modificar el Paciente ?'
+            : '¿ Está seguro que desea crear el Paciente ?'}
         </Typography>
       </DialogModal>
     );
@@ -349,7 +367,9 @@ const PacientesDatos = (props) => {
         {activeStep === steps.length ? (
           <div>
             <Typography className={classes.instructions}>
-              Se ha creado el paciente
+              {tipoPaciente === 'existente'
+                ? 'Se ha modificado el Paciente'
+                : 'Se ha creado el Paciente'}
             </Typography>
             <Button onClick={handleReset}>Volver</Button>
           </div>
@@ -379,7 +399,9 @@ const PacientesDatos = (props) => {
                   />
                 )}
                 {activeStep === steps.length - 1
-                  ? 'Crear Paciente'
+                  ? tipoPaciente === 'existente'
+                    ? 'modificar Paciente'
+                    : 'Crear Paciente'
                   : 'Continuar'}
               </Button>
             </div>

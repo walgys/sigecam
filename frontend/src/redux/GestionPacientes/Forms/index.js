@@ -308,7 +308,7 @@ export const formsSlice = createSlice({
           errorText: '',
         },
         privadoLibertad: {
-          value: paciente.privadoLibertad,
+          value: paciente.privadoLibertad == 0 ? false : true,
           error: false,
           errorText: '',
         },
@@ -316,17 +316,17 @@ export const formsSlice = createSlice({
       antEpidemio = {
         form1: {
           fueraPais: {
-            value: paciente.antEpidemio.fueraPais,
+            value: paciente.antEpidemio.fueraPais + '',
             error: false,
             errorText: '',
           },
           dentroPais: {
-            value: paciente.antEpidemio.dentroPais,
+            value: paciente.antEpidemio.dentroPais + '',
             error: false,
             errorText: '',
           },
           contactoCasos: {
-            value: paciente.antEpidemio.contactoCasos,
+            value: paciente.antEpidemio.contactoCasos + '',
             error: false,
             errorText: '',
           },
@@ -341,44 +341,44 @@ export const formsSlice = createSlice({
             errorText: '',
           },
           atencionEnCentro: {
-            value: paciente.antEpidemio.atencionEnCentro,
+            value: paciente.antEpidemio.atencionEnCentro + '',
             error: false,
             errorText: '',
           },
           antVacGripal: {
-            value: paciente.antEpidemio.antVacGripal,
+            value: paciente.antEpidemio.antVacGripal + '',
             error: false,
             errorText: '',
           },
           fecVacGripal: {
-            value: new Date(paciente.antEpidemio.fecVacGripal),
+            value: Date.parse(paciente.antEpidemio.fecVacGripal),
             error: false,
             errorText: '',
           },
           trabajoSalud: {
-            value: paciente.antEpidemio.trabajoSalud,
+            value: paciente.antEpidemio.trabajoSalud + '',
             error: false,
             errorText: '',
           },
         },
         form2: {
           contagioColega: {
-            value: paciente.antEpidemio.contagioColega,
+            value: paciente.antEpidemio.contagioColega + '',
             error: false,
             errorText: '',
           },
           nexoDesconocido: {
-            value: paciente.antEpidemio.nexoDesconocido,
+            value: paciente.antEpidemio.nexoDesconocido + '',
             error: false,
             errorText: '',
           },
           asistInfectado: {
-            value: paciente.antEpidemio.asistInfectado,
+            value: paciente.antEpidemio.asistInfectado + '',
             error: false,
             errorText: '',
           },
           transComunitaria: {
-            value: paciente.antEpidemio.transComunitaria,
+            value: paciente.antEpidemio.transComunitaria + '',
             error: false,
             errorText: '',
           },
@@ -413,7 +413,7 @@ export const formsSlice = createSlice({
       infoClinica = {
         aplica: { value: '1' },
         fechaFis: {
-          value: new Date(paciente.infoClinica.fechaFis),
+          value: Date.parse(paciente.infoClinica.fechaFis),
           error: false,
           errorText: '',
         },
@@ -423,12 +423,12 @@ export const formsSlice = createSlice({
           errorText: '',
         },
         fechaPrimeraConsulta: {
-          value: new Date(paciente.infoClinica.fechaPrimeraConsulta),
+          value: Date.parse(paciente.infoClinica.fechaPrimeraConsulta),
           error: false,
           errorText: '',
         },
         estadoInternacion: {
-          value: paciente.infoClinica.estadoInternacion,
+          value: paciente.infoClinica.estadoInternacion + '',
           error: false,
           errorText: '',
         },

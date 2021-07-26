@@ -127,7 +127,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const InfoClinicaForm = (props) => {
-  const {tipoPaciente} = props;
+  const { tipoPaciente } = props;
   const classes = useStyles();
   const formData = useSelector((state) => state.forms.infoClinica);
   const signosSintomas =
@@ -180,19 +180,17 @@ const InfoClinicaForm = (props) => {
           isValid = false;
         });
       if (isValid) {
-        setCurrComorbilidad({
-          id: '0',
-          nombre: '',
-          descripcion: '',
-          error: false,
-          errorText: '',
-        });
         setModalOpen((prevState) => ({
           ...prevState,
           comorbilidades: false,
         }));
       }
     };
+    const filteredComorbilidades = comorbilidades.filter(
+      (ss) =>
+        formData.comorbilidades.value.filter((css) => css.id == ss.id).length ==
+        0
+    );
 
     return (
       <DialogModal
@@ -223,7 +221,7 @@ const InfoClinicaForm = (props) => {
             }
           >
             <option aria-label="None" value="0" />
-            {comorbilidades?.map((p) => (
+            {filteredComorbilidades?.map((p) => (
               <option
                 key={`${p.id}-${p.nombre}`}
                 value={p.id}
@@ -290,16 +288,15 @@ const InfoClinicaForm = (props) => {
           isValid = false;
         });
       if (isValid) {
-        setCurrSignosSintomas({
-          id: '0',
-          nombre: '',
-          descripcion: '',
-          error: false,
-          errorText: '',
-        });
         setModalOpen((prevState) => ({ ...prevState, signosSintomas: false }));
       }
     };
+    const filteredSignosSintomas = signosSintomas.filter(
+      (ss) =>
+        formData.signosSintomas.value.filter((css) => css.id == ss.id).length ==
+        0
+    );
+
     return (
       <DialogModal
         onClose={() => handleModalClose('SignosSintomas')}
@@ -330,7 +327,7 @@ const InfoClinicaForm = (props) => {
             }}
           >
             <option aria-label="None" value="0" />
-            {signosSintomas?.map((p) => (
+            {filteredSignosSintomas?.map((p) => (
               <option
                 key={`${p.id}-${p.nombre}`}
                 value={p.id}

@@ -127,9 +127,10 @@ const AltaPacienteForm = (props) => {
             inputProps={{ tabIndex: '0', name: 'edad' }}
             id="edad"
             value={selectedPaciente}
-            onChange={(e) =>
-              dispatch(getDatosPaciente({ idPaciente: e.target.value }))
-            }
+            onChange={(e) => {
+              setSelectedPaciente(e.target.value);
+              dispatch(getDatosPaciente({ idPaciente: e.target.value }));
+            }}
           >
             <option aria-label="None" value="0" />
             {listaPacientes?.map((k) => (
