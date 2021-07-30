@@ -62,7 +62,7 @@ const create = async (pacienteData) => {
         });
       }
 
-      if (pacienteData.trabajadorSalud === '1') {
+      if (pacienteData.trabajoSalud === '1') {
         try {
           const fecVacGripal = await new Date(pacienteData.fecVacGripal)
             .toISOString()

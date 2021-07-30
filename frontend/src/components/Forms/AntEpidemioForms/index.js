@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -6,6 +6,7 @@ import {
   onAddContactos,
   onDelContactos,
   onInstitucionChange,
+  onModifyContactos,
 } from 'redux/GestionPacientes/Forms';
 import AddIcon from '@material-ui/icons/Add';
 import {
@@ -29,6 +30,7 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import DialogModal from 'components/DialogModal';
 import { addContactoModalSchema } from './validation';
+import { ContactsOutlined } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -405,14 +407,19 @@ const AntEpidemioForm3 = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const formData = useSelector((state) => state.forms.antEpidemio.form3);
   const dispatch = useDispatch();
-  const [modalIndex, setModalIndex] = useState(formData.contactos.length + 1);
+  const [modalIndex, setModalIndex] = useState(
+    formData.contactos.value.length + 1
+  );
 
   const instituciones = useSelector(
     (state) => state.forms.formOptions.instituciones
   );
   const user = useSelector((state) => state.user.userData);
+  const [modify, setModify] = useState(false);
+  const [contacto, setContacto] = useState({});
 
-  const AddContactoModal = () => {
+  const AddContactoModal = (props) => {
+    const { modify, contacto } = props;
     const provincias = useSelector(
       (state) => state.forms.formOptions.provincias
     );
@@ -425,7 +432,49 @@ const AntEpidemioForm3 = (props) => {
       (state) => state.forms.formOptions.localidades
     );
 
-    const [currContacto, setCurrContacto] = useState({
+    useEffect(() => {
+      if (modify === true)
+        setCurrContacto({
+          nombre: { value: contacto.nombre, error: false, errorText: '' },
+          apellido: { value: contacto.apellido, error: false, errorText: '' },
+          sexo: { value: contacto.sexo, error: false, errorText: '' },
+          tipoDoc: { value: contacto.tipoDoc, error: false, errorText: '' },
+          nroDoc: { value: contacto.nroDoc, error: false, errorText: '' },
+          nacionalidad: {
+            value: contacto.nacionalidad,
+            error: false,
+            errorText: '',
+          },
+          provincia: { value: contacto.provincia, error: false, errorText: '' },
+          localidad: { value: contacto.localidad, error: false, errorText: '' },
+          calle: { value: contacto.calle, error: false, errorText: '' },
+          telefono: { value: contacto.telefono, error: false, errorText: '' },
+          nroCalle: { value: contacto.nroCalle, error: false, errorText: '' },
+          piso: { value: contacto.piso, error: false, errorText: '' },
+          depto: { value: contacto.depto, error: false, errorText: '' },
+          codPos: { value: contacto.codPos, error: false, errorText: '' },
+          barrioVilla: {
+            value: contacto.barrioVilla,
+            error: false,
+            errorText: '',
+          },
+          ultimoContacto: {
+            value:
+              typeof contacto.ultimoContacto === 'number'
+                ? contacto.ultimoContacto
+                : Date.parse(contacto.ultimoContacto),
+            error: false,
+            errorText: '',
+          },
+          tipoContacto: {
+            value: contacto.tipoContacto,
+            error: false,
+            errorText: '',
+          },
+        });
+      return () => {};
+    }, [modify]);
+    const initialState = {
       nombre: { value: '', error: false, errorText: '' },
       apellido: { value: '', error: false, errorText: '' },
       sexo: { value: '0', error: false, errorText: '' },
@@ -443,7 +492,9 @@ const AntEpidemioForm3 = (props) => {
       barrioVilla: { value: '', error: false, errorText: '' },
       ultimoContacto: { value: Date.now(), error: false, errorText: '' },
       tipoContacto: { value: '', error: false, errorText: '' },
-    });
+    };
+    const [currContacto, setCurrContacto] = useState(initialState);
+
     const localidadesFiltradas =
       currContacto.provincia.value === '0'
         ? { localidades: [] }
@@ -452,25 +503,6 @@ const AntEpidemioForm3 = (props) => {
           )[0];
 
     const handleModalClose = () => {
-      setCurrContacto({
-        nombre: { value: '', error: false, errorText: '' },
-        apellido: { value: '', error: false, errorText: '' },
-        sexo: { value: '0', error: false, errorText: '' },
-        tipoDoc: { value: '0', error: false, errorText: '' },
-        nroDoc: { value: '', error: false, errorText: '' },
-        nacionalidad: { value: '0', error: false, errorText: '' },
-        provincia: { value: '0', error: false, errorText: '' },
-        localidad: { value: '0', error: false, errorText: '' },
-        calle: { value: '', error: false, errorText: '' },
-        telefono: { value: '', error: false, errorText: '' },
-        nroCalle: { value: '', error: false, errorText: '' },
-        piso: { value: '', error: false, errorText: '' },
-        depto: { value: '', error: false, errorText: '' },
-        codPos: { value: '', error: false, errorText: '' },
-        barrioVilla: { value: '', error: false, errorText: '' },
-        ultimoContacto: { value: Date.now(), error: false, errorText: '' },
-        tipoContacto: { value: '', error: false, errorText: '' },
-      });
       setModalOpen(false);
     };
 
@@ -479,28 +511,55 @@ const AntEpidemioForm3 = (props) => {
       await addContactoModalSchema
         .validate(currContacto, { abortEarly: false })
         .then(async (value) => {
-          await dispatch(
-            onAddContactos({
-              id: modalIndex,
-              nombre: currContacto.nombre.value,
-              apellido: currContacto.apellido.value,
-              sexo: currContacto.sexo.value,
-              tipoDoc: currContacto.tipoDoc.value,
-              nroDoc: currContacto.nroDoc.value,
-              nacionalidad: currContacto.nacionalidad.value,
-              provincia: currContacto.provincia.value,
-              localidad: currContacto.localidad.value,
-              calle: currContacto.calle.value,
-              telefono: currContacto.telefono.value,
-              nroCalle: currContacto.nroCalle.value,
-              piso: currContacto.piso.value,
-              depto: currContacto.depto.value,
-              codPos: currContacto.codPos.value,
-              barrioVilla: currContacto.barrioVilla.value,
-              ultimoContacto: currContacto.ultimoContacto.value,
-              tipoContacto: currContacto.tipoContacto.value,
-            })
-          );
+          if (modify === true) {
+            await dispatch(
+              onModifyContactos({
+                id: contacto.id,
+                idPc: contacto.idPc,
+                nombre: currContacto.nombre.value,
+                apellido: currContacto.apellido.value,
+                sexo: currContacto.sexo.value,
+                tipoDoc: currContacto.tipoDoc.value,
+                nroDoc: currContacto.nroDoc.value,
+                nacionalidad: currContacto.nacionalidad.value,
+                provincia: currContacto.provincia.value,
+                localidad: currContacto.localidad.value,
+                calle: currContacto.calle.value,
+                telefono: currContacto.telefono.value,
+                nroCalle: currContacto.nroCalle.value,
+                piso: currContacto.piso.value,
+                depto: currContacto.depto.value,
+                codPos: currContacto.codPos.value,
+                barrioVilla: currContacto.barrioVilla.value,
+                ultimoContacto: currContacto.ultimoContacto.value,
+                tipoContacto: currContacto.tipoContacto.value,
+              })
+            );
+          } else {
+            await dispatch(
+              onAddContactos({
+                id: modalIndex,
+                nombre: currContacto.nombre.value,
+                apellido: currContacto.apellido.value,
+                sexo: currContacto.sexo.value,
+                tipoDoc: currContacto.tipoDoc.value,
+                nroDoc: currContacto.nroDoc.value,
+                nacionalidad: currContacto.nacionalidad.value,
+                provincia: currContacto.provincia.value,
+                localidad: currContacto.localidad.value,
+                calle: currContacto.calle.value,
+                telefono: currContacto.telefono.value,
+                nroCalle: currContacto.nroCalle.value,
+                piso: currContacto.piso.value,
+                depto: currContacto.depto.value,
+                codPos: currContacto.codPos.value,
+                barrioVilla: currContacto.barrioVilla.value,
+                ultimoContacto: currContacto.ultimoContacto.value,
+                tipoContacto: currContacto.tipoContacto.value,
+              })
+            );
+          }
+
           setModalIndex((prevState) => prevState + 1);
           isValid = true;
         })
@@ -515,36 +574,13 @@ const AntEpidemioForm3 = (props) => {
               };
             });
 
-            console.log(JSON.stringify(updateCurrContacto));
             setCurrContacto(updateCurrContacto);
             isValid = false;
           }
         });
       if (isValid) {
-        setCurrContacto({
-          nombre: { value: '', error: false, errorText: '' },
-          apellido: { value: '', error: false, errorText: '' },
-          sexo: { value: '0', error: false, errorText: '' },
-          tipoDoc: { value: '0', error: false, errorText: '' },
-          nroDoc: { value: '', error: false, errorText: '' },
-          nacionalidad: { value: '0', error: false, errorText: '' },
-          provincia: { value: '0', error: false, errorText: '' },
-          localidad: { value: '0', error: false, errorText: '' },
-          calle: { value: '', error: false, errorText: '' },
-          telefono: { value: '', error: false, errorText: '' },
-          nroCalle: { value: '', error: false, errorText: '' },
-          piso: { value: '', error: false, errorText: '' },
-          depto: { value: '', error: false, errorText: '' },
-          codPos: { value: '', error: false, errorText: '' },
-          barrioVilla: { value: '', error: false, errorText: '' },
-          ultimoContacto: {
-            value: Date.now(),
-            error: false,
-            errorText: '',
-          },
-          tipoContacto: { value: '', error: false, errorText: '' },
-        });
-
+        setModify(false);
+        setCurrContacto(initialState);
         setModalOpen(false);
       }
     };
@@ -555,6 +591,7 @@ const AntEpidemioForm3 = (props) => {
         onAdd={() => handleModalAdd()}
         open={modalOpen}
         title={'Agregar un contacto'}
+        acceptText={modify === true ? 'Modificar' : 'Agregar'}
       >
         <div className={classes.formContent}>
           <div className={classes.formColumn}>
@@ -640,6 +677,7 @@ const AntEpidemioForm3 = (props) => {
               key="nroDoc-required"
               inputProps={{ name: 'nroDoc' }}
               label="Nro de documento"
+              value={currContacto?.nroDoc.value}
               error={currContacto?.nroDoc.error}
               helperText={
                 currContacto?.nroDoc.error ? currContacto?.nroDoc.errorText : ''
@@ -732,6 +770,7 @@ const AntEpidemioForm3 = (props) => {
               key="telefono-required"
               inputProps={{ name: 'telefono' }}
               label="Telefono"
+              value={currContacto?.telefono.value}
               error={currContacto?.telefono.error}
               helperText={
                 currContacto?.telefono.error
@@ -825,6 +864,7 @@ const AntEpidemioForm3 = (props) => {
               key="calle-required"
               inputProps={{ name: 'calle' }}
               label="calle"
+              value={currContacto?.calle.value}
               error={currContacto?.calle.error}
               helperText={
                 currContacto?.calle.error ? currContacto?.calle.errorText : ''
@@ -845,6 +885,7 @@ const AntEpidemioForm3 = (props) => {
               key="nroCalle-required"
               inputProps={{ name: 'nroCalle' }}
               label="Nro"
+              value={currContacto?.nroCalle.value}
               error={currContacto?.nroCalle.error}
               helperText={
                 currContacto?.nroCalle.error
@@ -869,6 +910,7 @@ const AntEpidemioForm3 = (props) => {
               key="codPos-required"
               inputProps={{ name: 'codPos' }}
               label="CP"
+              value={currContacto?.codPos.value}
               error={currContacto?.codPos.error}
               helperText={
                 currContacto?.codPos.error ? currContacto?.codPos.errorText : ''
@@ -889,6 +931,7 @@ const AntEpidemioForm3 = (props) => {
               key="piso-required"
               inputProps={{ name: 'piso' }}
               label="Piso"
+              value={currContacto?.piso.value}
               error={currContacto?.piso.error}
               helperText={
                 currContacto?.piso.error ? currContacto?.piso.errorText : ''
@@ -909,6 +952,7 @@ const AntEpidemioForm3 = (props) => {
               key="depto-required"
               inputProps={{ name: 'depto' }}
               label="Dto"
+              value={currContacto?.depto.value}
               error={currContacto?.depto.error}
               helperText={
                 currContacto?.depto.error ? currContacto?.depto.errorText : ''
@@ -931,6 +975,7 @@ const AntEpidemioForm3 = (props) => {
               key="barrioVilla-required"
               inputProps={{ name: 'barrioVilla' }}
               label="Barrio/Villa"
+              value={currContacto?.barrioVilla.value}
               error={currContacto?.barrioVilla.error}
               helperText={
                 currContacto?.barrioVilla.error
@@ -987,6 +1032,7 @@ const AntEpidemioForm3 = (props) => {
               key="tipoContacto-required"
               inputProps={{ name: 'tipoContacto' }}
               label="Tipo de contacto"
+              value={currContacto?.tipoContacto.value}
               error={currContacto?.tipoContacto.error}
               helperText={
                 currContacto?.tipoContacto.error
@@ -1012,7 +1058,7 @@ const AntEpidemioForm3 = (props) => {
 
   return (
     <>
-      <AddContactoModal />
+      <AddContactoModal modify={modify} contacto={contacto} />
       <Container>
         <div className={classes.form}>
           <h3 style={{ margin: '0.3rem' }}>
@@ -1060,6 +1106,17 @@ const AntEpidemioForm3 = (props) => {
                       </Typography>
                     </CardContent>
                     <CardActions className={classes.button}>
+                      <Button
+                        onClick={() => {
+                          setContacto(c);
+                          setModify(true);
+                          setModalOpen(true);
+                        }}
+                        size="small"
+                      >
+                        Editar
+                      </Button>
+
                       <Button
                         onClick={() => {
                           dispatch(onDelContactos({ id: c.id }));

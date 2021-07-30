@@ -257,6 +257,14 @@ const PacientesDatos = (props) => {
       _.reduce(forms.antEpidemio, (res, v, k) => (res = { ...res, ...v }), {}),
       (o) => o.value
     );
+    if (tipoPaciente === 'existente') {
+      const ids = {
+        id: forms.id,
+        idInfoClinica: forms.idInfoClinica,
+        idAntEpidemiologicos: forms.idAntEpidemiologicos,
+      };
+      return _.merge(ids, altaPaciente, infoClinica, antEpidemio);
+    }
     return _.merge(altaPaciente, infoClinica, antEpidemio);
   };
 
@@ -283,7 +291,7 @@ const PacientesDatos = (props) => {
       const historyPushTo =
         tipoPaciente === 'existente'
           ? '/gestiones/pacientes/existente'
-          : '/gestiones/pacientes';
+          : '/gestiones/pacientes..';
       history.push(historyPushTo);
     }
     if (result.errorMessage === resultTypes.INVALID_TOKEN)
