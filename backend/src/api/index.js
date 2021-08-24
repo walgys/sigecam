@@ -1,5 +1,6 @@
 const express = require('express');
 const login = require('./login');
+const logout = require('./logout');
 const getFormOptions = require('./getFormOptions');
 const createNewPacient = require('./createNewPatient');
 const getPatients = require('./getPatients');
@@ -10,6 +11,7 @@ const updatePatientData = require('./updatePatientData');
 
 const router = express.Router();
 router.use(login);
+router.use(logout);
 router.use(getFormOptions);
 router.use(createNewPacient);
 router.use(getPatients);

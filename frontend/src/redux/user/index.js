@@ -36,6 +36,19 @@ export const validarSesion = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk(
+  'user/logout',
+  async (payload, thunkAPI) => {
+    const result = await controlApiBackend.logout();
+    if (result.errorMessage !== null) {
+      thunkAPI.dispatch(
+        setSnack({ type: 'error', message: result.errorMessage })
+      );
+    }
+    return result;
+  }
+);
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -62,6 +75,14 @@ export const userSlice = createSlice({
       state.userData = payload.data;
       state.errorMessage = payload.errorMessage;
       state.sessionChecked = true;
+    },
+    [logout.fulfilled]: (state, { payload }) => {
+      if (payload.message === 'TOKEN_REVOKED') {
+        state.isAuth = false;
+        state.userData = {};
+        state.errorMessage = null;
+        state.sessionChecked = false;
+      }
     },
   },
 });

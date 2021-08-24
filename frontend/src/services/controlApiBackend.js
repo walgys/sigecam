@@ -44,6 +44,19 @@ class controlApiBackend {
       });
   };
 
+  logout = async () => {
+    return axios({
+      url: `${API_URL}/api/v1/logout`,
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      withCredentials: true,
+    })
+      .then((result) => result.data)
+      .catch((err) => {
+        console.log(err);
+        return { isAuth: false, data: {}, errorMessage: 'Error de conexión' };
+      });
+  };
+
   crudUsuario = (usuario, tarea) => {};
 
   crudInstitucion = (institucion, tarea) => {};

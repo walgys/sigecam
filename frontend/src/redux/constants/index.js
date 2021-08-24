@@ -16,6 +16,7 @@ export const constants = createSlice({
       OK: 'OK',
       SUCCESS: 'SUCCESS',
       INVALID_TOKEN: 'INVALID_TOKEN',
+      TOKEN_REVOKED: 'TOKEN_REVOKED'
     },
     accessByUserType: [
       {
@@ -62,7 +63,7 @@ export const constants = createSlice({
         ],
       },
       {
-        id: 2,
+        id: 3,
         role: 'Responsable estadística nacional',
         allowedRoutes: [
           { route: '/estadisticas', page: 'Estadistica' },
@@ -70,7 +71,7 @@ export const constants = createSlice({
         ],
       },
       {
-        id: 3,
+        id: 4,
         role: 'Responsable estadística provincial',
         allowedRoutes: [
           { route: '/estadisticas', page: 'Estadistica' },
@@ -78,7 +79,7 @@ export const constants = createSlice({
         ],
       },
       {
-        id: 4,
+        id: 5,
         role: 'Responsable estadística regional',
         allowedRoutes: [
           { route: '/estadisticas', page: 'Estadistica' },
@@ -86,7 +87,7 @@ export const constants = createSlice({
         ],
       },
       {
-        id: 5,
+        id: 6,
         role: 'Administrador de institución',
         allowedRoutes: [
           { route: '/gestiones', page: 'Gestiones' },
@@ -125,7 +126,7 @@ export const constants = createSlice({
         ],
       },
       {
-        id: 6,
+        id: 7,
         role: 'Operador',
         allowedRoutes: [
           { route: '/gestiones', page: 'Gestiones' },

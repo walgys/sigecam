@@ -548,9 +548,7 @@ const PacientesRecursos = () => {
           </Fab>
         </div>
         <div className={classes.footer}>
-          <Button variant="contained" color="primary">
-            Volver atrás
-          </Button>
+          
         </div>
       </div>
     </>
